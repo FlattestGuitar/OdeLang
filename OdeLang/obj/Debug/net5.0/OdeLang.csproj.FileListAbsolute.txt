@@ -1,0 +1,16 @@
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\bin\Debug\net5.0\OdeLang.exe
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\bin\Debug\net5.0\OdeLang.deps.json
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\bin\Debug\net5.0\OdeLang.runtimeconfig.json
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\bin\Debug\net5.0\OdeLang.runtimeconfig.dev.json
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\bin\Debug\net5.0\OdeLang.dll
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\bin\Debug\net5.0\ref\OdeLang.dll
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\bin\Debug\net5.0\OdeLang.pdb
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\obj\Debug\net5.0\OdeLang.csproj.AssemblyReference.cache
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\obj\Debug\net5.0\OdeLang.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\obj\Debug\net5.0\OdeLang.AssemblyInfoInputs.cache
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\obj\Debug\net5.0\OdeLang.AssemblyInfo.cs
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\obj\Debug\net5.0\OdeLang.csproj.CoreCompileInputs.cache
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\obj\Debug\net5.0\OdeLang.dll
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\obj\Debug\net5.0\ref\OdeLang.dll
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\obj\Debug\net5.0\OdeLang.pdb
+C:\Users\miesz\RiderProjects\OdeLangTest\OdeLang\obj\Debug\net5.0\OdeLang.genruntimeconfig.cache
