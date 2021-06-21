@@ -39,6 +39,11 @@ namespace OdeLang
         {
             return new(TokenType.Newline, "");
         }
+
+        public static Token Whitespace()
+        {
+            return new(TokenType.Whitespace, "");
+        }
         
         public class Token
         {
@@ -87,6 +92,7 @@ namespace OdeLang
         CloseParenthesis,
         OpenParenthesis,
         Newline,
+        Whitespace,
         EndOfFile,
     }
 }

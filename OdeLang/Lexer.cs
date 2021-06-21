@@ -41,6 +41,20 @@ namespace OdeLang
 
             List<Token> result = new List<Token>();
 
+            while (iterator < length && line[iterator] == ' ')
+            {
+                if (line[iterator] == ' ' && line[iterator + 1] == ' ')
+                {
+                    result.Add(Whitespace());
+                    iterator += 2;
+                }
+                else
+                {
+                    throw new ArgumentException(
+                        "Illegal number of spaces at start of line. The number should be divisible by 2.");
+                }
+            }
+
             while (iterator < length)
             {
                 var character = line[iterator];
