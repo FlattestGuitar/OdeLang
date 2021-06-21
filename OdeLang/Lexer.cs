@@ -10,6 +10,9 @@ namespace OdeLang
     public class Lexer
     {
         private static readonly Regex digitRegex = new Regex(@"\d", RegexOptions.Compiled);
+        
+        //digits, optional (period and optional digits), anything
+        private static readonly Regex numberAtStartOfStringRegex = new Regex(@"^\d+(\.\d*)?", RegexOptions.Compiled);
 
 
         private string code;
@@ -51,14 +54,9 @@ namespace OdeLang
                     iterator++;
                 } else if (IsDigit(character))
                 {
-                    var start = iterator;
-                    while (iterator < length && IsDigit(line[iterator]))
-                    {
-                        iterator++;
-                    }
-                    var end = iterator;
-                    var number = line.Substring(start, end - start);
-                    result.Add(Number(float.Parse(number)));
+                    var numberString = numberAtStartOfStringRegex.Match(line.Substring(iterator)).ToString();
+                    iterator += numberString.Length;
+                    result.Add(Number(float.Parse(numberString)));
                 } else if (character == '(')
                 {
                     result.Add(OpenParenthesis());
