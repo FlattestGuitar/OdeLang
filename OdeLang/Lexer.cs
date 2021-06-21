@@ -68,8 +68,8 @@ namespace OdeLang
                 }
                 else
                 {
-                    //todo throw an exception with the entire next token
-                    throw new ArgumentException("Unknown character: " + character);
+                    //todo print line and column #
+                    throw new ArgumentException("Unexpected character: " + character);
                 }
 
             }
@@ -77,7 +77,6 @@ namespace OdeLang
             return result;
         }
 
-        //todo use regex?
         private bool IsDigit(char character)
         {
             return digitRegex.IsMatch(character.ToString());
