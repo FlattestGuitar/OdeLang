@@ -78,7 +78,7 @@ namespace OdeLang
         private Statement Term()
         {
             var statement = Factor();
-            while (CurrentToken().TokenType == TokenType.Asterisk || CurrentToken().TokenType == TokenType.Slash)
+            while (CurrentToken().TokenType is TokenType.Asterisk or TokenType.Slash)
             {
                 var operation = PopCurrentToken();
 
@@ -110,12 +110,22 @@ namespace OdeLang
             throw UnexpectedTokenException();
         }
 
+        private Statement FunctionCallStatement()
+        {
+            var identifier = PopCurrentToken();
+            EatAndAdvance(TokenType.OpenParenthesis);
+            var expression = Expression();
+            EatAndAdvance(TokenType.CloseParenthesis);
+
+            return new FunctionCallStatement(expression, (string)identifier.Value);
+        }
+
         private Statement CompoundStatement()
         {
             List<Statement> statements = new List<Statement>();
             while (CurrentToken().TokenType != TokenType.EndOfFile)
             {
-                statements.Add(new LoggingStatement(Expression())); //todo remove logging statement after we're done with debug
+                statements.Add(FunctionCallStatement());
                 EatAndAdvance(TokenType.Newline);
             }
             

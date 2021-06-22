@@ -9,24 +9,6 @@ namespace OdeLang
         public abstract object? Eval(InterpretingContext context);
     }
 
-    //todo this is ugly and for debugging only
-    public class LoggingStatement : Statement
-    {
-        private Statement _statement;
-        
-        public LoggingStatement(Statement statement)
-        {
-            _statement = statement;
-        }
-
-
-        public override object? Eval(InterpretingContext context)
-        {
-            var result = _statement.Eval(context);
-            context.addOutput(result.ToString());
-            return result;
-        }
-    }
     public class NoOpStatement : Statement
     {
         public override object? Eval(InterpretingContext context)
@@ -72,6 +54,22 @@ namespace OdeLang
         }
     }
 
+    public class FunctionCallStatement : Statement
+    {
+        private readonly Statement _argument;
+        private readonly string _functionName;
+        
+        public FunctionCallStatement(Statement argument, string functionName)
+        {
+            _argument = argument;
+            _functionName = functionName;
+        }
+
+        public override object? Eval(InterpretingContext context)
+        {
+            return context.CallFunction(_functionName, (float)_argument.Eval(context));
+        }
+    }
     
     public class UnaryArithmeticStatement : Statement
     {
