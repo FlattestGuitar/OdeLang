@@ -24,16 +24,23 @@ namespace OdeLang
         //analyze code and return tokens
         public List<Token> LexicalAnalysis()
         {
-            var result = code.Split("\n")
-                .Select(ProcessLine)
-                .Aggregate((a, b) => a.Concat(b).ToList());
+            int lineNum = 0;
+            var splitCode = code.Split('\n');
+
+            List<Token> result = new List<Token>();
             
-            result.Add(EOF());
+            foreach (var line in splitCode)
+            {
+                result.AddRange(ProcessLine(line, lineNum));
+                lineNum++;
+            }
+
+            result.Add(EOF(lineNum + 1, 0));
             return new List<Token>(result);
         }
 
         //this looks kind of ugly, but depending on the type of token read we need full control over the iteration
-        private IList<Token> ProcessLine(string line)
+        private IList<Token> ProcessLine(string line, int lineNum)
         {
             int iterator = 0;
             int length = line.Length;
@@ -44,7 +51,7 @@ namespace OdeLang
             {
                 if (line[iterator] == ' ' && line[iterator + 1] == ' ')
                 {
-                    result.Add(Whitespace());
+                    result.Add(Whitespace(lineNum, iterator));
                     iterator += 2;
                 }
                 else
@@ -59,43 +66,42 @@ namespace OdeLang
                 var character = line[iterator];
                 if (character == '+')
                 {
-                    result.Add(Plus());
+                    result.Add(Plus(lineNum, iterator));
                     iterator++;
                 } else if (character == '-')
                 {
-                    result.Add(Minus());
+                    result.Add(Minus(lineNum, iterator));
                     iterator++;
                 } else if (character == '*')
                 {
-                    result.Add(Asterisk());
+                    result.Add(Asterisk(lineNum, iterator));
                     iterator++;
                 } else if (character == '/')
                 {
-                    result.Add(Slash());
+                    result.Add(Slash(lineNum, iterator));
                     iterator++;
                 }
                 else if (IsDigit(character))
                 {
                     var numberString = numberAtStartOfStringRegex.Match(line.Substring(iterator)).ToString();
                     iterator += numberString.Length;
-                    result.Add(Number(float.Parse(numberString)));
+                    result.Add(Number(float.Parse(numberString), lineNum, iterator));
                 } else if (character == '(')
                 {
-                    result.Add(OpenParenthesis());
+                    result.Add(OpenParenthesis(lineNum, iterator));
                     iterator++;
                 } else if (character == ')')
                 {
-                    result.Add(CloseParenthesis());
+                    result.Add(CloseParenthesis(lineNum, iterator));
                     iterator++;
                 }
                 else
                 {
-                    //todo print line and column #
-                    throw new ArgumentException("Unexpected character: " + character);
+                    throw new ArgumentException(String.Format("Unexpected character {0}, at {1}:{2}", character, lineNum, iterator));
                 }
 
             }
-            result.Add(Newline());
+            result.Add(Newline(lineNum, iterator));
             return result;
         }
 

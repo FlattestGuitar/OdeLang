@@ -7,7 +7,6 @@ using static OdeLang.Tokens;
 
 namespace OdeLang
 {
-    //todo errors should be far more verbose and less copypasty
     public class Parser
     {
         private List<Token> tokens;
@@ -39,32 +38,32 @@ namespace OdeLang
         private void EatAndAdvance(TokenType type)
         {
             var token = PopCurrentToken();
-            if (token.GetTokenType() != type)
+            if (token.TokenType != type)
             {
-                throw new ArgumentException("Unexpected token");
+                throw UnexpectedTokenException();
             }
         }
 
         private NumberStatement Number()
         {
             var currentToken = PopCurrentToken();
-            if (currentToken.GetTokenType() != TokenType.Number)
+            if (currentToken.TokenType != TokenType.Number)
             {
-                throw new ArgumentException("Expected number here");
+                throw UnexpectedTokenException();
             }
-            return new NumberStatement((float) currentToken.GetValue());
+            return new NumberStatement((float) currentToken.Value);
         }
 
         private Statement Expression()
         {
             var statement = Term();
-            while (CurrentToken().GetTokenType() == TokenType.Plus || CurrentToken().GetTokenType() == TokenType.Minus)
+            while (CurrentToken().TokenType == TokenType.Plus || CurrentToken().TokenType == TokenType.Minus)
             {
                 var operation = PopCurrentToken();
                 var right = Term();
 
                 statement = new BinaryArithmeticStatement(statement, right,
-                    arithmeticTokenToOperation(operation.GetTokenType()));
+                    arithmeticTokenToOperation(operation.TokenType));
             }
 
             return statement;
@@ -73,14 +72,14 @@ namespace OdeLang
         private Statement Term()
         {
             var statement = Factor();
-            while (CurrentToken().GetTokenType() == TokenType.Asterisk || CurrentToken().GetTokenType() == TokenType.Slash)
+            while (CurrentToken().TokenType == TokenType.Asterisk || CurrentToken().TokenType == TokenType.Slash)
             {
                 var operation = PopCurrentToken();
 
                 var right = Factor();
 
                 statement = new BinaryArithmeticStatement(statement, right,
-                    arithmeticTokenToOperation(operation.GetTokenType()));
+                    arithmeticTokenToOperation(operation.TokenType));
             }
 
             return statement;
@@ -89,7 +88,7 @@ namespace OdeLang
         private Statement Factor()
         {
 
-            if (CurrentToken().GetTokenType() == TokenType.OpenParenthesis)
+            if (CurrentToken().TokenType == TokenType.OpenParenthesis)
             {
                 EatAndAdvance(TokenType.OpenParenthesis);
                 var expression = Expression();
@@ -97,18 +96,35 @@ namespace OdeLang
                 return expression;
             }
 
-            if (CurrentToken().GetTokenType() == TokenType.Number)
+            if (CurrentToken().TokenType == TokenType.Number)
             {
                 return Number();
             }
 
-            throw new ArgumentException("Unexpected token");
+            throw UnexpectedTokenException();
+        }
+
+        private Statement CompoundStatement()
+        {
+            List<Statement> statements = new List<Statement>();
+            while (CurrentToken().TokenType != TokenType.EndOfFile)
+            {
+                statements.Add(Expression());
+            }
+            
+            return new CompoundStatement(statements);
         }
 
 
         public Statement Parse()
         {
-            return new LoggingStatement(Expression());
+            return new LoggingStatement(CompoundStatement());
+        }
+
+        private ArgumentException UnexpectedTokenException()
+        {
+            var token = CurrentToken();
+            return new ArgumentException($"Unexpected token {token.Value} at {token.Line}:{token.Column}");
         }
     }
 }

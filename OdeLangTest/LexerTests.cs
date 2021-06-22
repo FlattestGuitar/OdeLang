@@ -16,15 +16,15 @@ namespace OdeLangTest
 
             var expected = new ArrayList()
             {
-                Number(16.2f),
-                Plus(),
-                Number(52),
-                Plus(),
-                Number(51),
-                Newline(),
-                Number(61),
-                Newline(),
-                EOF()
+                Number(16.2f, 0, 0),
+                Plus(0, 0),
+                Number(52, 0, 0),
+                Plus(0, 0),
+                Number(51, 0, 0),
+                Newline(0, 0),
+                Number(61, 0, 0),
+                Newline(0, 0),
+                EOF(0, 0)
             };
 
             CollectionAssert.AreEqual(result, expected);

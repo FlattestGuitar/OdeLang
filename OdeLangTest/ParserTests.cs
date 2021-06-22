@@ -15,11 +15,11 @@ namespace OdeLangTest
         {
             List<Token> input = new List<Token>()
             {
-                Number(61),
-                Plus(),
-                Number(21),
-                Newline(),
-                EOF()
+                Number(61, 0, 0),
+                Plus(0, 0),
+                Number(21, 0, 0),
+                Newline(0, 0),
+                EOF(0, 0)
             };
             
             var result = new Parser(input).Parse();

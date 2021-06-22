@@ -5,77 +5,72 @@ namespace OdeLang
 
     public static class Tokens
     {
-        public static Token Plus()
+        public static Token Plus(int line, int column)
         {
-            return new(TokenType.Plus, "");
+            return new(TokenType.Plus, "+", line, column);
         }
         
-        public static Token Minus()
+        public static Token Minus(int line, int column)
         {
-            return new(TokenType.Minus, "");
+            return new(TokenType.Minus, "-", line, column);
         } 
         
-        public static Token Asterisk()
+        public static Token Asterisk(int line, int column)
         {
-            return new(TokenType.Asterisk, "");
+            return new(TokenType.Asterisk, "*", line, column);
         }
         
-        public static Token Slash()
+        public static Token Slash(int line, int column)
         {
-            return new(TokenType.Slash, "");
+            return new(TokenType.Slash, "/", line, column);
         }
 
-        public static Token Number(float value)
+        public static Token Number(float value, int line, int column)
         {
-            return new(TokenType.Number, value);
+            return new(TokenType.Number, value, line, column);
         }
 
-        public static Token OpenParenthesis()
+        public static Token OpenParenthesis(int line, int column)
         {
-            return new(TokenType.OpenParenthesis, "");
+            return new(TokenType.OpenParenthesis, "(", line, column);
         }
         
-        public static Token CloseParenthesis()
+        public static Token CloseParenthesis(int line, int column)
         {
-            return new(TokenType.CloseParenthesis, "");
+            return new(TokenType.CloseParenthesis, ")", line, column);
         }
 
-        public static Token EOF()
+        public static Token EOF(int line, int column)
         {
-            return new(TokenType.EndOfFile, "");
+            return new(TokenType.EndOfFile, "[eof]", line, column);
         }
 
-        public static Token Newline()
+        public static Token Newline(int line, int column)
         {
-            return new(TokenType.Newline, "");
+            return new(TokenType.Newline, "[newline]", line, column);
         }
 
-        public static Token Whitespace()
+        public static Token Whitespace(int line, int column)
         {
-            return new(TokenType.Whitespace, "");
+            return new(TokenType.Whitespace, "[whitespace]", line, column);
         }
         
         public class Token
         {
-            private TokenType TokenType;
-            private object Value;
+            public TokenType TokenType { get; }
+            public object Value { get; }
+            public int Line { get; }
+            public int Column { get; }
 
             //todo how do I hide this constructor from things outside of the Tokens class
-            public Token(TokenType type, object value)
+            public Token(TokenType type, object value, int line, int column)
             {
                 TokenType = type;
                 Value = value;
+                Line = line;
+                Column = column;
             }
-            public TokenType GetTokenType()
-            {
-                return TokenType; //todo how the fuck do getters and setters work what the fuck
-            }
-
-            public object GetValue()
-            {
-                return Value;
-            }
-
+            
             public override bool Equals(object? obj)
             {
                 if (obj == null || ! this.GetType().Equals(obj.GetType()))
@@ -84,12 +79,12 @@ namespace OdeLang
                 }
 
                 Token token = (Token) obj;
-                return (GetTokenType().Equals(token.GetTokenType())) && (GetValue().Equals(token.GetValue()));
+                return (TokenType.Equals(token.TokenType)) && (Value.Equals(token.Value));
             }
 
             public override int GetHashCode()
             {
-                return (TokenType, Value).GetHashCode();
+                return (TokenType: TokenType, Value: Value).GetHashCode();
             }
         }
     }
