@@ -5,7 +5,6 @@ namespace OdeLangTest
 {
     public class InterpreterTest
     {
-        
         [Test]
         public void BasicArithmeticOperation()
         {
@@ -13,10 +12,9 @@ namespace OdeLangTest
 
             var context = new Interpreter(code).run();
             
-            Assert.AreEqual(context.getOutput(), "3");
+            Assert.AreEqual(context.getOutput(), "\n3");
         }
 
-       
         [Test]
         public void ComplexArithmeticOperation()
         {
@@ -24,7 +22,7 @@ namespace OdeLangTest
 
             var context = new Interpreter(code).run();
             
-            Assert.AreEqual(context.getOutput(), "17.147541");
+            Assert.AreEqual(context.getOutput(), "\n17.147541");
         }
         
         [Test]

@@ -12,6 +12,9 @@ namespace OdeLang
         
         //digits, optional (period and optional digits), anything
         private static readonly Regex numberAtStartOfStringRegex = new Regex(@"^\d+(\.\d*)?", RegexOptions.Compiled);
+        
+        private static readonly Regex legalStartOfIdentifier = new Regex(@"[a-zA-Z_]", RegexOptions.Compiled);
+        private static readonly Regex identifierAtStartOfStringRegex = new Regex(@"[a-zA-Z_]+[a-zA-Z_0-9]*", RegexOptions.Compiled);
 
 
         private string code;
@@ -64,7 +67,11 @@ namespace OdeLang
             while (iterator < length)
             {
                 var character = line[iterator];
-                if (character == '+')
+                if (character == ' ')
+                {
+                    iterator++;
+                }
+                else if (character == '+')
                 {
                     result.Add(Plus(lineNum, iterator));
                     iterator++;
@@ -80,13 +87,11 @@ namespace OdeLang
                 {
                     result.Add(Slash(lineNum, iterator));
                     iterator++;
-                }
-                else if (IsDigit(character))
+                } else if (character == '=')
                 {
-                    var numberString = numberAtStartOfStringRegex.Match(line.Substring(iterator)).ToString();
-                    iterator += numberString.Length;
-                    result.Add(Number(float.Parse(numberString), lineNum, iterator));
-                } else if (character == '(')
+                    result.Add(Assignment(lineNum, iterator));
+                    iterator++;
+                }else if (character == '(')
                 {
                     result.Add(OpenParenthesis(lineNum, iterator));
                     iterator++;
@@ -94,6 +99,17 @@ namespace OdeLang
                 {
                     result.Add(CloseParenthesis(lineNum, iterator));
                     iterator++;
+                } 
+                else if (IsDigit(character))
+                {
+                    var numberString = numberAtStartOfStringRegex.Match(line.Substring(iterator)).ToString();
+                    iterator += numberString.Length;
+                    result.Add(Number(float.Parse(numberString), lineNum, iterator));
+                } else if (IsLegalStartOfIdentifier((character)))
+                {
+                    var id = identifierAtStartOfStringRegex.Match(line.Substring(iterator)).ToString();
+                    iterator += id.Length;
+                    result.Add(Identifier(id, lineNum, iterator));
                 }
                 else
                 {
@@ -108,6 +124,11 @@ namespace OdeLang
         private bool IsDigit(char character)
         {
             return digitRegex.IsMatch(character.ToString());
+        }
+
+        private bool IsLegalStartOfIdentifier(char character)
+        {
+            return legalStartOfIdentifier.IsMatch(character.ToString());
         }
     }
 }

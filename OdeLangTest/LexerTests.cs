@@ -27,7 +27,26 @@ namespace OdeLangTest
                 EOF(0, 0)
             };
 
-            CollectionAssert.AreEqual(result, expected);
+            CollectionAssert.AreEqual(expected, result);
+        }
+        
+        
+        [Test]
+        public void IdentifierTest()
+        {
+            const string code = "x = 15";
+            var result = new Lexer(code).LexicalAnalysis();
+
+            var expected = new ArrayList()
+            {
+                Identifier("x", 0, 0),
+                Assignment(0, 0),
+                Number(15, 0, 0),
+                Newline(0, 0),
+                EOF(0, 0)
+            };
+
+            CollectionAssert.AreEqual(expected, result);
         }
     }
 }

@@ -40,6 +40,16 @@ namespace OdeLang
             return new(TokenType.CloseParenthesis, ")", line, column);
         }
 
+        public static Token Identifier(string id, int line, int column)
+        {
+            return new(TokenType.Identifier, id, line, column);
+        }
+        
+        public static Token Assignment(int line, int column)
+        {
+            return new(TokenType.Assignment, "=", line, column);
+        }
+
         public static Token EOF(int line, int column)
         {
             return new(TokenType.EndOfFile, "[eof]", line, column);
@@ -96,6 +106,8 @@ namespace OdeLang
         Asterisk,
         Slash,
         Number,
+        Identifier,
+        Assignment,
         CloseParenthesis,
         OpenParenthesis,
         Newline,
