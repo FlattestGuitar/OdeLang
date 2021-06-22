@@ -35,5 +35,29 @@ namespace OdeLangTest
             
             Assert.AreEqual(context.getOutput(), "17.147541\n509\n");
         }
+        
+        
+        [Test]
+        public void AssignmentTest()
+        {
+            string code = "x = 5\n" +
+                          "println(x)";
+
+            var context = new Interpreter(code).run();
+            
+            Assert.AreEqual(context.getOutput(), "5\n");
+        }
+        
+        [Test]
+        public void ComplexAssignmentTest()
+        {
+            string code = "x = 5+13\n" +
+                          "y = 1/2\n" +
+                          "println(x - y)";
+
+            var context = new Interpreter(code).run();
+            
+            Assert.AreEqual(context.getOutput(), "17.5\n");
+        }
     }
 }

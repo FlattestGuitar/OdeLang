@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
 using static OdeLang.Helpers;
 using static OdeLang.Tokens;
 
@@ -10,7 +8,7 @@ namespace OdeLang
     public class Parser
     {
         private List<Token> tokens;
-        private int i = 0;
+        private int i;
 
         public Parser(List<Token> tokens)
         {
@@ -38,7 +36,7 @@ namespace OdeLang
             {
                 return null;
             }
-            
+
         }
 
         private void EatAndAdvance(TokenType type)
@@ -57,6 +55,7 @@ namespace OdeLang
             {
                 throw UnexpectedTokenException();
             }
+
             return new NumberStatement((float) currentToken.Value);
         }
 
@@ -107,17 +106,39 @@ namespace OdeLang
                 return Number();
             }
 
+            if (CurrentToken().TokenType == TokenType.Identifier)
+            {
+                return Variable();
+            }
+
             throw UnexpectedTokenException();
         }
 
-        private Statement FunctionCallStatement()
+        private Statement Variable()
         {
             var identifier = PopCurrentToken();
-            EatAndAdvance(TokenType.OpenParenthesis);
-            var expression = Expression();
-            EatAndAdvance(TokenType.CloseParenthesis);
+            return new VariableReadStatement((string) identifier.Value);
+        }
 
-            return new FunctionCallStatement(expression, (string)identifier.Value);
+        private Statement Statement()
+        {
+            var identifier = PopCurrentToken();
+            if (CurrentToken().TokenType == TokenType.OpenParenthesis)
+            {
+                EatAndAdvance(TokenType.OpenParenthesis);
+                var expression = Expression();
+                EatAndAdvance(TokenType.CloseParenthesis);
+                return new FunctionCallStatement(expression, (string) identifier.Value);
+            }
+
+            if (CurrentToken().TokenType == TokenType.Assignment)
+            {
+                EatAndAdvance(TokenType.Assignment);
+                var expression = Expression();
+                return new VariableAssignmentStatement(expression, (string) identifier.Value);
+            }
+
+            throw UnexpectedTokenException();
         }
 
         private Statement CompoundStatement()
@@ -125,7 +146,7 @@ namespace OdeLang
             List<Statement> statements = new List<Statement>();
             while (CurrentToken().TokenType != TokenType.EndOfFile)
             {
-                statements.Add(FunctionCallStatement());
+                statements.Add(Statement());
                 EatAndAdvance(TokenType.Newline);
             }
             

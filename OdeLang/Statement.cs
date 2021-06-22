@@ -70,6 +70,40 @@ namespace OdeLang
             return context.CallFunction(_functionName, (float)_argument.Eval(context));
         }
     }
+
+    public class VariableAssignmentStatement : Statement
+    {
+        private readonly Statement _value;
+        private readonly string _variableName;
+
+        public VariableAssignmentStatement(Statement value, string variableName)
+        {
+            _value = value;
+            _variableName = variableName;
+        }
+
+
+        public override object? Eval(InterpretingContext context)
+        {
+            context.setVariable(_variableName, (float)_value.Eval(context));
+            return null;
+        }
+    }
+
+    public class VariableReadStatement : Statement
+    {
+        private readonly string _variableName;
+
+        public VariableReadStatement(string variableName)
+        {
+            _variableName = variableName;
+        }
+
+        public override object? Eval(InterpretingContext context)
+        {
+            return context.getVariable(_variableName);
+        }
+    }
     
     public class UnaryArithmeticStatement : Statement
     {
