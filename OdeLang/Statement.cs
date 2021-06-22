@@ -33,7 +33,7 @@ namespace OdeLang
             return null;
         }
     }
-    
+
     //any arithmetic operation on two numbers
     public class BinaryArithmeticStatement : Statement
     {
@@ -50,7 +50,7 @@ namespace OdeLang
 
         public override object? Eval(InterpretingContext context)
         {
-            return _operation.Invoke((float) _left.Eval(context), (float)_right.Eval(context));
+            return _operation.Invoke((float) _left.Eval(context), (float) _right.Eval(context));
         }
     }
 
@@ -58,7 +58,7 @@ namespace OdeLang
     {
         private readonly Statement _argument;
         private readonly string _functionName;
-        
+
         public FunctionCallStatement(Statement argument, string functionName)
         {
             _argument = argument;
@@ -67,7 +67,7 @@ namespace OdeLang
 
         public override object? Eval(InterpretingContext context)
         {
-            return context.CallFunction(_functionName, (float)_argument.Eval(context));
+            return context.CallFunction(_functionName, (float) _argument.Eval(context));
         }
     }
 
@@ -85,7 +85,7 @@ namespace OdeLang
 
         public override object? Eval(InterpretingContext context)
         {
-            context.setVariable(_variableName, (float)_value.Eval(context));
+            context.SetVariable(_variableName, (float) _value.Eval(context));
             return null;
         }
     }
@@ -101,13 +101,12 @@ namespace OdeLang
 
         public override object? Eval(InterpretingContext context)
         {
-            return context.getVariable(_variableName);
+            return context.GetVariable(_variableName);
         }
     }
-    
+
     public class UnaryArithmeticStatement : Statement
     {
-
         private readonly Statement _number;
         private readonly bool _negation;
 
@@ -120,8 +119,8 @@ namespace OdeLang
 
         public override object? Eval(InterpretingContext context)
         {
-            var num = (float)_number.Eval(context);
-            
+            var num = (float) _number.Eval(context);
+
             return _negation
                 ? -num
                 : num;

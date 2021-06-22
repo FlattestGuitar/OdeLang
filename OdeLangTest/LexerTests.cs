@@ -7,7 +7,6 @@ namespace OdeLangTest
 {
     public class LexerTests
     {
-
         [Test]
         public void BasicArithmetic()
         {
@@ -24,13 +23,13 @@ namespace OdeLangTest
                 Newline(0, 0),
                 Number(61, 0, 0),
                 Newline(0, 0),
-                EOF(0, 0)
+                Eof(0, 0)
             };
 
             CollectionAssert.AreEqual(expected, result);
         }
-        
-        
+
+
         [Test]
         public void IdentifierTest()
         {
@@ -43,7 +42,7 @@ namespace OdeLangTest
                 Assignment(0, 0),
                 Number(15, 0, 0),
                 Newline(0, 0),
-                EOF(0, 0)
+                Eof(0, 0)
             };
 
             CollectionAssert.AreEqual(expected, result);

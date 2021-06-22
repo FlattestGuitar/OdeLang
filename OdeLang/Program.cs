@@ -1,12 +1,9 @@
-﻿using System;
-
-namespace OdeLang
+﻿namespace OdeLang
 {
     class Program
     {
         static void Main(string[] args)
         {
-            
         }
     }
 }

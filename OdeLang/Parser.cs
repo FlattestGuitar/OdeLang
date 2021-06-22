@@ -7,12 +7,12 @@ namespace OdeLang
 {
     public class Parser
     {
-        private List<Token> tokens;
-        private int i;
+        private List<Token> _tokens;
+        private int _i;
 
         public Parser(List<Token> tokens)
         {
-            this.tokens = tokens;
+            this._tokens = tokens;
         }
 
         public Statement Parse()
@@ -22,21 +22,20 @@ namespace OdeLang
 
         private Token PopCurrentToken()
         {
-            i++;
-            return tokens[i - 1];
+            _i++;
+            return _tokens[_i - 1];
         }
 
         private Token CurrentToken()
         {
             try
             {
-                return tokens[i];
+                return _tokens[_i];
             }
             catch (ArgumentOutOfRangeException e)
             {
                 return null;
             }
-
         }
 
         private void EatAndAdvance(TokenType type)
@@ -68,7 +67,7 @@ namespace OdeLang
                 var right = Term();
 
                 statement = new BinaryArithmeticStatement(statement, right,
-                    arithmeticTokenToOperation(operation.TokenType));
+                    ArithmeticTokenToOperation(operation.TokenType));
             }
 
             return statement;
@@ -84,7 +83,7 @@ namespace OdeLang
                 var right = Factor();
 
                 statement = new BinaryArithmeticStatement(statement, right,
-                    arithmeticTokenToOperation(operation.TokenType));
+                    ArithmeticTokenToOperation(operation.TokenType));
             }
 
             return statement;
@@ -92,7 +91,6 @@ namespace OdeLang
 
         private Statement Factor()
         {
-
             if (CurrentToken().TokenType == TokenType.OpenParenthesis)
             {
                 EatAndAdvance(TokenType.OpenParenthesis);
@@ -149,7 +147,7 @@ namespace OdeLang
                 statements.Add(Statement());
                 EatAndAdvance(TokenType.Newline);
             }
-            
+
             return new CompoundStatement(statements);
         }
 

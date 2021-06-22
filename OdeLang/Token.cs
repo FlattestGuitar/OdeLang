@@ -1,25 +1,22 @@
-﻿using static OdeLang.TokenType;
-
-namespace OdeLang
+﻿namespace OdeLang
 {
-
     public static class Tokens
     {
         public static Token Plus(int line, int column)
         {
             return new(TokenType.Plus, "+", line, column);
         }
-        
+
         public static Token Minus(int line, int column)
         {
             return new(TokenType.Minus, "-", line, column);
-        } 
-        
+        }
+
         public static Token Asterisk(int line, int column)
         {
             return new(TokenType.Asterisk, "*", line, column);
         }
-        
+
         public static Token Slash(int line, int column)
         {
             return new(TokenType.Slash, "/", line, column);
@@ -34,7 +31,7 @@ namespace OdeLang
         {
             return new(TokenType.OpenParenthesis, "(", line, column);
         }
-        
+
         public static Token CloseParenthesis(int line, int column)
         {
             return new(TokenType.CloseParenthesis, ")", line, column);
@@ -44,13 +41,13 @@ namespace OdeLang
         {
             return new(TokenType.Identifier, id, line, column);
         }
-        
+
         public static Token Assignment(int line, int column)
         {
             return new(TokenType.Assignment, "=", line, column);
         }
 
-        public static Token EOF(int line, int column)
+        public static Token Eof(int line, int column)
         {
             return new(TokenType.EndOfFile, "[eof]", line, column);
         }
@@ -64,7 +61,7 @@ namespace OdeLang
         {
             return new(TokenType.Whitespace, "[whitespace]", line, column);
         }
-        
+
         public class Token
         {
             public TokenType TokenType { get; }
@@ -80,10 +77,10 @@ namespace OdeLang
                 Line = line;
                 Column = column;
             }
-            
+
             public override bool Equals(object? obj)
             {
-                if (obj == null || ! this.GetType().Equals(obj.GetType()))
+                if (obj == null || !this.GetType().Equals(obj.GetType()))
                 {
                     return false;
                 }
@@ -98,7 +95,7 @@ namespace OdeLang
             }
         }
     }
-    
+
     public enum TokenType
     {
         Plus,

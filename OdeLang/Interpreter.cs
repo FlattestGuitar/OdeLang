@@ -4,27 +4,27 @@ namespace OdeLang
 {
     public class Interpreter
     {
-        private string code;
+        private string _code;
 
         public Interpreter(string code)
         {
-            this.code = code;
+            this._code = code;
         }
 
-        public InterpretingContext run()
+        public InterpretingContext Run()
         {
             var tokens = LexicalAnalysis();
-            
+
             var rootStatement = Parsing(tokens);
-            
+
             var context = Interpretation(rootStatement);
 
             return context;
-}
+        }
 
         private List<Tokens.Token> LexicalAnalysis()
         {
-            var lexer = new Lexer(code);
+            var lexer = new Lexer(_code);
             var tokens = lexer.LexicalAnalysis();
             return tokens;
         }

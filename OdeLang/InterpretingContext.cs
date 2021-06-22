@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace OdeLang
 {
@@ -10,21 +9,21 @@ namespace OdeLang
         //todo add support for context-based variable resolution
         private Dictionary<string, float> _variables = new();
         private Dictionary<string, Func<float, float?>> _functions = new();
-        
-        private string output = "";
+
+        private string _output = "";
 
         public InterpretingContext()
         {
-            _functions["print"] = number => print(number.ToString());
-            _functions["println"] = number => println(number.ToString());
+            _functions["print"] = number => Print(number.ToString());
+            _functions["println"] = number => Println(number.ToString());
         }
 
-        public void setVariable(string name, float value)
+        public void SetVariable(string name, float value)
         {
             _variables[name] = value;
         }
 
-        public float getVariable(string name)
+        public float GetVariable(string name)
         {
             return _variables[name];
         }
@@ -39,26 +38,23 @@ namespace OdeLang
             {
                 throw new ArgumentException($"No such function {name}");
             }
-            
         }
 
-        private float? print(string output)
+        private float? Print(string output)
         {
-            this.output += output;
-            return null;
-        }
-        
-        private float? println(string output)
-        {
-            this.output += output + "\n";
+            this._output += output;
             return null;
         }
 
-        public string getOutput()
+        private float? Println(string output)
         {
-            return this.output;
+            this._output += output + "\n";
+            return null;
         }
-        
+
+        public string GetOutput()
+        {
+            return this._output;
+        }
     }
-
 }
