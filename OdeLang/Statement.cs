@@ -33,29 +33,24 @@ namespace OdeLang
             return null;
         }
     }
-    //this statement type is exclusively for addition and subtraction.
-    //this is because multiplication and division are treated with a different operator priority
-    //and so are different grammar rules
-    public class Factor : Statement
+    
+    //any arithmetic operation on two numbers
+    public class BinaryArithmeticStatement : Statement
     {
         private readonly Statement _left;
         private readonly Statement _right;
-        private readonly bool _addition; //false for subtraction
+        private readonly Func<float, float, float> _operation;
 
-
-        public Factor(Statement left, Statement right, bool addition)
+        public BinaryArithmeticStatement(Statement left, Statement right, Func<float, float, float> operation)
         {
             _left = left;
             _right = right;
-            _addition = addition;
+            _operation = operation;
         }
-
 
         public override object? Eval(InterpretingContext context)
         {
-            return _addition
-                ? (float) _left.Eval(context) + (float) _right.Eval(context)
-                : (float) _left.Eval(context) - (float) _right.Eval(context);
+            return _operation.Invoke((float) _left.Eval(context), (float)_right.Eval(context));
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static OdeLang.Helpers;
 using static OdeLang.Tokens;
 
 namespace OdeLang
@@ -50,25 +51,15 @@ namespace OdeLang
             return new NumberStatement((float) currentToken.GetValue());
         }
 
-        private Factor factor()
+        private BinaryArithmeticStatement factor()
         {
             bool addition = false;
             var left = number();
-            switch (popCurrentToken().GetTokenType())
-            {
-                case TokenType.Minus:
-                    addition = false;
-                    break;
-                case TokenType.Plus:
-                    addition = true;
-                    break;
-                default:
-                    throw new ArgumentException("Unexpected token");
-            }
-            
+            var operatorToken = popCurrentToken().GetTokenType();
+            var operation = arithmeticTokenToOperation(operatorToken);
             var right = number();
             
-            return new Factor(left, right, addition);
+            return new BinaryArithmeticStatement(left, right, operation);
         }
         
         public Statement Parse()
