@@ -59,5 +59,27 @@ namespace OdeLangTest
 
             Assert.AreEqual(context.GetOutput(), "17.5\n");
         }
+        
+        [Test]
+        public void StringAssignmentTest()
+        {
+            string code = "x = \"asd\"\n" +
+                          "print(x)";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual(context.GetOutput(), "asd");
+        }
+        
+        [Test]
+        public void BooleanAssignmentTest()
+        {
+            string code = "x = true\n" +
+                          "print(x)";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual(context.GetOutput(), "true");
+        }
     }
 }

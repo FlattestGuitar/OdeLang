@@ -7,22 +7,22 @@ namespace OdeLang
 {
     public class Lexer
     {
-        private static readonly Regex DigitRegex = new Regex(@"\d", RegexOptions.Compiled);
+        private static readonly Regex DigitRegex = new(@"\d", RegexOptions.Compiled);
 
         //digits, optional (period and optional digits), anything
-        private static readonly Regex NumberAtStartOfStringRegex = new Regex(@"^\d+(\.\d*)?", RegexOptions.Compiled);
+        private static readonly Regex NumberAtStartOfStringRegex = new(@"^\d+(\.\d*)?", RegexOptions.Compiled);
 
-        private static readonly Regex LegalStartOfIdentifier = new Regex(@"[a-zA-Z_]", RegexOptions.Compiled);
+        private static readonly Regex LegalStartOfIdentifier = new(@"[a-zA-Z_]", RegexOptions.Compiled);
 
         private static readonly Regex IdentifierAtStartOfStringRegex =
-            new Regex(@"[a-zA-Z_]+[a-zA-Z_0-9]*", RegexOptions.Compiled);
+            new(@"[a-zA-Z_]+[a-zA-Z_0-9]*", RegexOptions.Compiled);
 
 
         private string _code;
 
         public Lexer(string code)
         {
-            this._code = code;
+            _code = code;
         }
 
         //analyze code and return tokens
@@ -107,6 +107,40 @@ namespace OdeLang
                     result.Add(CloseParenthesis(lineNum, iterator));
                     iterator++;
                 }
+                else if (character == '"')
+                {
+                    bool ignoreNext = false;
+                    string resultString = "";
+
+                    iterator++;
+
+                    while (line[iterator] != '"' || ignoreNext)
+                    {
+                        if (line[iterator] == '\\' && !ignoreNext)
+                        {
+                            ignoreNext = true;
+                            iterator++;
+                            continue;
+                        }
+
+                        resultString += line[iterator];
+                        ignoreNext = false;
+                        iterator++;
+                    }
+
+                    iterator++;
+                    result.Add(String(resultString, lineNum, iterator));
+                }
+                else if (line.Substring(iterator).StartsWith("true"))
+                {
+                    result.Add(Boolean(true, lineNum, iterator));
+                    iterator += 4;
+                }
+                else if (line.Substring(iterator).StartsWith("false"))
+                {
+                    result.Add(Boolean(false, lineNum, iterator));
+                    iterator += 5;
+                }
                 else if (IsDigit(character))
                 {
                     var numberString = NumberAtStartOfStringRegex.Match(line.Substring(iterator)).ToString();
@@ -121,8 +155,7 @@ namespace OdeLang
                 }
                 else
                 {
-                    throw new ArgumentException(String.Format("Unexpected character {0}, at {1}:{2}", character,
-                        lineNum, iterator));
+                    throw new ArgumentException($"Unexpected character {character}, at {lineNum}:{iterator}");
                 }
             }
 

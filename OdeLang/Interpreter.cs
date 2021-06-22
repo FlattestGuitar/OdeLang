@@ -8,7 +8,7 @@ namespace OdeLang
 
         public Interpreter(string code)
         {
-            this._code = code;
+            _code = code;
         }
 
         public InterpretingContext Run()

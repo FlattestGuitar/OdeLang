@@ -47,6 +47,18 @@
             return new(TokenType.Assignment, "=", line, column);
         }
 
+        public static Token String(string value, int line, int column)
+        {
+            return new(TokenType.String, value, line, column);
+        }
+
+        public static Token Boolean(bool value, int line, int column)
+        {
+            return value
+                ? new Token(TokenType.Boolean, Language.BooleanTrue, line, column)
+                : new Token(TokenType.Boolean, Language.BooleanFalse, line, column);
+        }
+
         public static Token Eof(int line, int column)
         {
             return new(TokenType.EndOfFile, "[eof]", line, column);
@@ -80,7 +92,7 @@
 
             public override bool Equals(object? obj)
             {
-                if (obj == null || !this.GetType().Equals(obj.GetType()))
+                if (obj == null || !GetType().Equals(obj.GetType()))
                 {
                     return false;
                 }
@@ -104,6 +116,8 @@
         Slash,
         Number,
         Identifier,
+        String,
+        Boolean,
         Assignment,
         CloseParenthesis,
         OpenParenthesis,

@@ -1,19 +1,20 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using static OdeLang.Value;
 
 namespace OdeLang
 {
     public abstract class Statement
     {
-        public abstract object? Eval(InterpretingContext context);
+        public abstract Value Eval(InterpretingContext context);
     }
 
     public class NoOpStatement : Statement
     {
-        public override object? Eval(InterpretingContext context)
+        public override Value Eval(InterpretingContext context)
         {
-            return null;
+            return NullValue();
         }
     }
 
@@ -27,10 +28,10 @@ namespace OdeLang
             _children = children;
         }
 
-        public override object? Eval(InterpretingContext context)
+        public override Value Eval(InterpretingContext context)
         {
             _children.ForEach(child => child.Eval(context));
-            return null;
+            return NullValue();
         }
     }
 
@@ -39,18 +40,18 @@ namespace OdeLang
     {
         private readonly Statement _left;
         private readonly Statement _right;
-        private readonly Func<float, float, float> _operation;
+        private readonly Func<Value, Value, Value> _operation;
 
-        public BinaryArithmeticStatement(Statement left, Statement right, Func<float, float, float> operation)
+        public BinaryArithmeticStatement(Statement left, Statement right, Func<Value, Value, Value> operation)
         {
             _left = left;
             _right = right;
             _operation = operation;
         }
 
-        public override object? Eval(InterpretingContext context)
+        public override Value Eval(InterpretingContext context)
         {
-            return _operation.Invoke((float) _left.Eval(context), (float) _right.Eval(context));
+            return _operation.Invoke(_left.Eval(context), _right.Eval(context));
         }
     }
 
@@ -65,9 +66,9 @@ namespace OdeLang
             _functionName = functionName;
         }
 
-        public override object? Eval(InterpretingContext context)
+        public override Value Eval(InterpretingContext context)
         {
-            return context.CallFunction(_functionName, (float) _argument.Eval(context));
+            return context.CallFunction(_functionName, _argument.Eval(context));
         }
     }
 
@@ -83,9 +84,9 @@ namespace OdeLang
         }
 
 
-        public override object? Eval(InterpretingContext context)
+        public override Value Eval(InterpretingContext context)
         {
-            context.SetVariable(_variableName, (float) _value.Eval(context));
+            context.SetVariable(_variableName, _value.Eval(context));
             return null;
         }
     }
@@ -99,7 +100,7 @@ namespace OdeLang
             _variableName = variableName;
         }
 
-        public override object? Eval(InterpretingContext context)
+        public override Value Eval(InterpretingContext context)
         {
             return context.GetVariable(_variableName);
         }
@@ -117,13 +118,13 @@ namespace OdeLang
             _negation = negation;
         }
 
-        public override object? Eval(InterpretingContext context)
+        public override Value Eval(InterpretingContext context)
         {
-            var num = (float) _number.Eval(context);
+            var num = _number.Eval(context).GetNumericalValue();
 
             return _negation
-                ? -num
-                : num;
+                ? NumericalValue(-num)
+                : NumericalValue(num);
         }
     }
 
@@ -136,9 +137,37 @@ namespace OdeLang
             _number = number;
         }
 
-        public override object? Eval(InterpretingContext context)
+        public override Value Eval(InterpretingContext context)
         {
-            return _number;
+            return NumericalValue(_number);
+        }
+    }
+    public class StringStatement : Statement
+    {
+        private readonly string _string;
+
+        public StringStatement(string stringy)
+        {
+            _string = stringy;
+        }
+
+        public override Value Eval(InterpretingContext context)
+        {
+            return StringValue(_string);
+        }
+    }
+    public class BooleanStatement : Statement
+    {
+        private readonly bool _bool;
+
+        public BooleanStatement(bool booly)
+        {
+            _bool = booly;
+        }
+
+        public override Value Eval(InterpretingContext context)
+        {
+            return BooleanValue(_bool);
         }
     }
 }

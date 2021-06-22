@@ -47,5 +47,41 @@ namespace OdeLangTest
 
             CollectionAssert.AreEqual(expected, result);
         }
+        
+        [Test]
+        public void StringAssignmentTest()
+        {
+            const string code = "x = \"15\"";
+            var result = new Lexer(code).LexicalAnalysis();
+
+            var expected = new ArrayList()
+            {
+                Identifier("x", 0, 0),
+                Assignment(0, 0),
+                String("15", 0, 0),
+                Newline(0, 0),
+                Eof(0, 0)
+            };
+
+            CollectionAssert.AreEqual(expected, result);
+        }
+        
+        [Test]
+        public void BooleanAssignmentTest()
+        {
+            const string code = "x = true";
+            var result = new Lexer(code).LexicalAnalysis();
+
+            var expected = new ArrayList()
+            {
+                Identifier("x", 0, 0),
+                Assignment(0, 0),
+                Boolean(true, 0, 0),
+                Newline(0, 0),
+                Eof(0, 0)
+            };
+
+            CollectionAssert.AreEqual(expected, result);
+        }
     }
 }

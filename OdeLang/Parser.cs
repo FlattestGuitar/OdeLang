@@ -12,7 +12,7 @@ namespace OdeLang
 
         public Parser(List<Token> tokens)
         {
-            this._tokens = tokens;
+            _tokens = tokens;
         }
 
         public Statement Parse()
@@ -58,10 +58,39 @@ namespace OdeLang
             return new NumberStatement((float) currentToken.Value);
         }
 
+        private StringStatement String()
+        {
+            var currentToken = PopCurrentToken();
+            if (currentToken.TokenType != TokenType.String)
+            {
+                throw UnexpectedTokenException();
+            }
+
+            return new StringStatement((string) currentToken.Value);
+        }
+
+        private BooleanStatement Boolean()
+        {
+            var currentToken = PopCurrentToken();
+            if (currentToken.TokenType != TokenType.Boolean)
+            {
+                throw UnexpectedTokenException();
+            }
+
+            if ((string) currentToken.Value == Language.BooleanTrue)
+            {
+                return new BooleanStatement(true);
+            }
+            else
+            {
+                return new BooleanStatement(false);
+            }
+        }
+
         private Statement Expression()
         {
             var statement = Term();
-            while (CurrentToken().TokenType == TokenType.Plus || CurrentToken().TokenType == TokenType.Minus)
+            while (CurrentToken().TokenType is TokenType.Plus or TokenType.Minus)
             {
                 var operation = PopCurrentToken();
                 var right = Term();
@@ -91,6 +120,16 @@ namespace OdeLang
 
         private Statement Factor()
         {
+            if (CurrentToken().TokenType == TokenType.String)
+            {
+                return String();
+            }
+
+            if (CurrentToken().TokenType == TokenType.Boolean)
+            {
+                return Boolean();
+            }
+
             if (CurrentToken().TokenType == TokenType.OpenParenthesis)
             {
                 EatAndAdvance(TokenType.OpenParenthesis);

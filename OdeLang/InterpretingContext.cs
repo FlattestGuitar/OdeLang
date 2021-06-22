@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 
 namespace OdeLang
 {
@@ -7,28 +8,36 @@ namespace OdeLang
     {
         //todo add support for non-float types
         //todo add support for context-based variable resolution
-        private Dictionary<string, float> _variables = new();
-        private Dictionary<string, Func<float, float?>> _functions = new();
+        private Dictionary<string, Value> _variables = new();
+        private Dictionary<string, Func<Value, Value>> _functions = new();
 
         private string _output = "";
 
         public InterpretingContext()
         {
-            _functions["print"] = number => Print(number.ToString());
-            _functions["println"] = number => Println(number.ToString());
+            _functions["print"] = number =>
+            {
+                Print(number.GetStringValue());
+                return Value.NullValue();
+            };
+            _functions["println"] = number =>
+            {
+                Println(number.GetStringValue());
+                return Value.NullValue();
+            };
         }
 
-        public void SetVariable(string name, float value)
+        public void SetVariable(string name, Value value)
         {
             _variables[name] = value;
         }
 
-        public float GetVariable(string name)
+        public Value GetVariable(string name)
         {
             return _variables[name];
         }
 
-        public float? CallFunction(string name, float argument)
+        public Value CallFunction(string name, Value argument)
         {
             try
             {
@@ -42,19 +51,19 @@ namespace OdeLang
 
         private float? Print(string output)
         {
-            this._output += output;
+            _output += output;
             return null;
         }
 
         private float? Println(string output)
         {
-            this._output += output + "\n";
+            _output += output + "\n";
             return null;
         }
 
         public string GetOutput()
         {
-            return this._output;
+            return _output;
         }
     }
 }
