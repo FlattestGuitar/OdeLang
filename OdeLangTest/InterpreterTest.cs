@@ -72,6 +72,17 @@ namespace OdeLangTest
         }
         
         [Test]
+        public void StringArithmeticTest()
+        {
+            string code = "x = \"asd\" + \"qwe\"\n" +
+                          "print(x + 2)";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual(context.GetOutput(), "asdqwe2");
+        }
+        
+        [Test]
         public void BooleanAssignmentTest()
         {
             string code = "x = true\n" +
