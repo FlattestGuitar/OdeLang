@@ -5,6 +5,17 @@ namespace OdeLangTest
 {
     public class InterpreterTest
     {
+        
+        [Test]
+        public void BasicArithmeticOperation()
+        {
+            string code = "1+2";
+
+            var context = new Interpreter(code).run();
+            
+            Assert.AreEqual(context.getOutput(), "3");
+        }
+
        
         [Test]
         public void ComplexArithmeticOperation()
@@ -24,7 +35,7 @@ namespace OdeLangTest
 
             var context = new Interpreter(code).run();
             
-            Assert.AreEqual(context.getOutput(), "17.147541");
+            Assert.AreEqual(context.getOutput(), "\n17.147541\n509");
         }
     }
 }

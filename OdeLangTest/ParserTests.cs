@@ -24,7 +24,9 @@ namespace OdeLangTest
             
             var result = new Parser(input).Parse();
 
-            Assert.AreEqual(result.Eval(new InterpretingContext()), 82);
+            //todo this test is not actually going to verify the AST is correct
+            //we have no sensible way of doing that, so we might as well remove it once we can properly print output
+           Assert.AreEqual("OdeLang.CompoundStatement", result.ToString());
         }
     }
 }

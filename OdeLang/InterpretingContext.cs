@@ -24,7 +24,7 @@ namespace OdeLang
 
         public void addOutput(string output)
         {
-            this.output += output;
+            this.output += "\n" + output;
         }
 
         public string getOutput()

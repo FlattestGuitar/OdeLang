@@ -17,11 +17,17 @@ namespace OdeLang
             this.tokens = tokens;
         }
 
+        public Statement Parse()
+        {
+            return CompoundStatement();
+        }
+
         private Token PopCurrentToken()
         {
             i++;
             return tokens[i - 1];
         }
+
         private Token CurrentToken()
         {
             try
@@ -109,17 +115,13 @@ namespace OdeLang
             List<Statement> statements = new List<Statement>();
             while (CurrentToken().TokenType != TokenType.EndOfFile)
             {
-                statements.Add(Expression());
+                statements.Add(new LoggingStatement(Expression())); //todo remove logging statement after we're done with debug
+                EatAndAdvance(TokenType.Newline);
             }
             
             return new CompoundStatement(statements);
         }
 
-
-        public Statement Parse()
-        {
-            return new LoggingStatement(CompoundStatement());
-        }
 
         private ArgumentException UnexpectedTokenException()
         {
