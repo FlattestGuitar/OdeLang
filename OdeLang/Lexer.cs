@@ -23,14 +23,14 @@ namespace OdeLang
         }
 
         //analyze code and return tokens
-        public IList<Token> LexicalAnalysis()
+        public List<Token> LexicalAnalysis()
         {
             var result = code.Split("\n")
                 .Select(ProcessLine)
                 .Aggregate((a, b) => a.Concat(b).ToList());
             
             result.Add(EOF());
-            return result;
+            return new List<Token>(result);
         }
 
         //this looks kind of ugly, but depending on the type of token read we need full control over the iteration

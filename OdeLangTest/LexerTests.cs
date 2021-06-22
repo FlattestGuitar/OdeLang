@@ -1,13 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using NUnit.Framework;
 using OdeLang;
 using static OdeLang.Tokens;
 
 namespace OdeLangTest
 {
-    public class Tests
+    public class LexerTests
     {
 
         [Test]
