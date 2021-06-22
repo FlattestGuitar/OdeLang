@@ -26,6 +26,11 @@ namespace OdeLang
         {
             this.output += output;
         }
+
+        public string getOutput()
+        {
+            return this.output;
+        }
         
     }
 

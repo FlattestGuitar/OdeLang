@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using static OdeLang.Tokens;
 
@@ -66,7 +65,16 @@ namespace OdeLang
                 {
                     result.Add(Minus());
                     iterator++;
-                } else if (IsDigit(character))
+                } else if (character == '*')
+                {
+                    result.Add(Asterisk());
+                    iterator++;
+                } else if (character == '/')
+                {
+                    result.Add(Slash());
+                    iterator++;
+                }
+                else if (IsDigit(character))
                 {
                     var numberString = numberAtStartOfStringRegex.Match(line.Substring(iterator)).ToString();
                     iterator += numberString.Length;

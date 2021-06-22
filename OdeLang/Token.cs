@@ -13,6 +13,16 @@ namespace OdeLang
         public static Token Minus()
         {
             return new(TokenType.Minus, "");
+        } 
+        
+        public static Token Asterisk()
+        {
+            return new(TokenType.Asterisk, "");
+        }
+        
+        public static Token Slash()
+        {
+            return new(TokenType.Slash, "");
         }
 
         public static Token Number(float value)
@@ -88,6 +98,8 @@ namespace OdeLang
     {
         Plus,
         Minus,
+        Asterisk,
+        Slash,
         Number,
         CloseParenthesis,
         OpenParenthesis,

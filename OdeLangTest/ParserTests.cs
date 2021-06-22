@@ -17,7 +17,9 @@ namespace OdeLangTest
             {
                 Number(61),
                 Plus(),
-                Number(21)
+                Number(21),
+                Newline(),
+                EOF()
             };
             
             var result = new Parser(input).Parse();

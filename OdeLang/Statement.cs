@@ -9,6 +9,24 @@ namespace OdeLang
         public abstract object? Eval(InterpretingContext context);
     }
 
+    //todo this is ugly and for debugging only
+    public class LoggingStatement : Statement
+    {
+        private Statement _statement;
+        
+        public LoggingStatement(Statement statement)
+        {
+            _statement = statement;
+        }
+
+
+        public override object? Eval(InterpretingContext context)
+        {
+            var result = _statement.Eval(context);
+            context.addOutput(result.ToString());
+            return result;
+        }
+    }
     public class NoOpStatement : Statement
     {
         public override object? Eval(InterpretingContext context)

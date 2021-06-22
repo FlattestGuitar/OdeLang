@@ -5,15 +5,15 @@ namespace OdeLangTest
 {
     public class InterpreterTest
     {
+       
         [Test]
-        public void arithmeticOperation()
+        public void ComplexArithmeticOperation()
         {
-            string code = "56+12";
+            string code = "(56+12)*(12/(72+1.2))+2";
 
             var context = new Interpreter(code).run();
             
-            //no output, but at least no exceptions
-
+            Assert.AreEqual(context.getOutput(), "13.147542");
         }
     }
 }
