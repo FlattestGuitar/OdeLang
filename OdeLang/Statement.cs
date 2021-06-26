@@ -173,10 +173,10 @@ namespace OdeLang
 
     public class ConditionalStatement : Statement
     {
-        private readonly bool _if;
+        private readonly BooleanStatement _if;
         private readonly CompoundStatement _compoundStatement;
 
-        public ConditionalStatement(bool @if, CompoundStatement compoundStatement)
+        public ConditionalStatement(BooleanStatement @if, CompoundStatement compoundStatement)
         {
             _if = @if;
             _compoundStatement = compoundStatement;
@@ -185,7 +185,7 @@ namespace OdeLang
 
         public override Value Eval(InterpretingContext context)
         {
-            if (_if)
+            if (_if.Eval(context).GetBoolValue())
             {
                 return _compoundStatement.Eval(context);
             }

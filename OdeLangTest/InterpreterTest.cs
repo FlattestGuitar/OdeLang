@@ -92,5 +92,35 @@ namespace OdeLangTest
 
             Assert.AreEqual(context.GetOutput(), "true");
         }
+
+        [Test]
+        public void BasicConditionalTest()
+        {
+            string code = "if(true)\n" +
+                          "  print(\"x\")";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual(context.GetOutput(), "x");
+        }
+        
+        
+        [Test]
+        public void NestedConditionalTest()
+        {
+            string code = "if(true)\n" +
+                          "  if(true)\n" +
+                          "    print(\"x\")\n" +
+                          "  if(false)\n" +
+                          "    print(\"y\")\n" +
+                          "  if(true)\n" +
+                          "    print(\"z\")\n" +
+                          "if(true)\n" +
+                          "  print(\"o\")";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual(context.GetOutput(), "xzo");
+        }
     }
 }

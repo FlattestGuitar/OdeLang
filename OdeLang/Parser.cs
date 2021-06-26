@@ -17,7 +17,7 @@ namespace OdeLang
 
         public Statement Parse()
         {
-            return CompoundStatement();
+            return CompoundStatement(0);
         }
 
         private Token PopCurrentToken()
@@ -81,10 +81,8 @@ namespace OdeLang
             {
                 return new BooleanStatement(true);
             }
-            else
-            {
-                return new BooleanStatement(false);
-            }
+
+            return new BooleanStatement(false);
         }
 
         private Statement Expression()
@@ -157,39 +155,96 @@ namespace OdeLang
             return new VariableReadStatement((string) identifier.Value);
         }
 
-        private Statement Statement()
+        private ConditionalStatement ConditionalStatement(int nestingLevel)
         {
+            EatAndAdvance(TokenType.If);
+            EatAndAdvance(TokenType.OpenParenthesis);
+            BooleanStatement boolean = Boolean();
+            EatAndAdvance(TokenType.CloseParenthesis);
+            EatAndAdvance(TokenType.Newline);
+            var compound = CompoundStatement(nestingLevel + 1);
+
+            return new ConditionalStatement(boolean, compound);
+        }
+
+        private Statement Statement(int nestingLevel)
+        {
+            for (int i = 0; i < nestingLevel; i++)
+            {
+                try
+                {
+                    EatAndAdvance(TokenType.Whitespace);
+                }
+                catch (ArgumentException e)
+                { 
+                    //todo better line+col number
+                    throw new ArgumentException($"Incorrect indentation, expected {nestingLevel} levels.");
+                }
+                
+            }
+            
+            if (CurrentToken().TokenType == TokenType.If)
+            {
+                return ConditionalStatement(nestingLevel);
+            }
+            
             var identifier = PopCurrentToken();
+
             if (CurrentToken().TokenType == TokenType.OpenParenthesis)
             {
                 EatAndAdvance(TokenType.OpenParenthesis);
                 var expression = Expression();
                 EatAndAdvance(TokenType.CloseParenthesis);
-                return new FunctionCallStatement(expression, (string) identifier.Value);
+                var result = new FunctionCallStatement(expression, (string) identifier.Value);
+                EatAndAdvance(TokenType.Newline);
+                return result;
             }
 
             if (CurrentToken().TokenType == TokenType.Assignment)
             {
                 EatAndAdvance(TokenType.Assignment);
                 var expression = Expression();
-                return new VariableAssignmentStatement(expression, (string) identifier.Value);
+                var result = new VariableAssignmentStatement(expression, (string) identifier.Value);
+                EatAndAdvance(TokenType.Newline);
+                return result;
             }
 
             throw UnexpectedTokenException();
         }
 
-        private Statement CompoundStatement()
+        private CompoundStatement CompoundStatement(int nestingLevel)
         {
             List<Statement> statements = new List<Statement>();
             while (CurrentToken().TokenType != TokenType.EndOfFile)
             {
-                statements.Add(Statement());
-                EatAndAdvance(TokenType.Newline);
+                var nextWhitespace = WhitespaceTokensNextInQueue();
+                if (nextWhitespace < nestingLevel)
+                {
+                    break;
+                }
+
+                if (nextWhitespace > nestingLevel)
+                {
+                    throw new ArgumentException("Inconsistent indentation!"); //todo better exception
+                }
+
+                statements.Add(Statement(nestingLevel));
+
             }
 
             return new CompoundStatement(statements);
         }
 
+        private int WhitespaceTokensNextInQueue()
+        {
+            var iterator = _i;
+            while (_tokens[iterator].TokenType == TokenType.Whitespace)
+            {
+                iterator++;
+            }
+            
+            return iterator - _i;
+        }
 
         private ArgumentException UnexpectedTokenException()
         {
