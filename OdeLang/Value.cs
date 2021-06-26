@@ -40,12 +40,19 @@ namespace OdeLang
 
         public float GetNumericalValue()
         {
-            if (_number == null)
+            if (_number != null)
             {
-                throw new ArgumentException("Not a numerical value"); //todo better exceptions
+                return _number.Value;
             }
 
-            return _number.Value;
+            if (_boolean != null)
+            {
+                return _boolean.Value
+                    ? 1
+                    : 0;
+            }
+            
+            throw new ArgumentException("Not a numerical value");
         }
 
         public string GetStringValue()
@@ -82,7 +89,19 @@ namespace OdeLang
                 return _number != 0;
             }
 
-            throw new ArgumentException("Not a boolean"); //todo better exceptions
+            if (_stringy != null)
+            {
+                return _stringy.Length > 0;
+            }
+
+            return false;
+        }
+
+        public bool LangEquals(Value other)
+        {
+            return _number == other._number
+                   && _boolean == other._boolean
+                   && _stringy == other._stringy;
         }
     }
 }

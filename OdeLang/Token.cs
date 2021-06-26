@@ -15,6 +15,36 @@
         public static Token Asterisk(int line, int column)
         {
             return new(TokenType.Asterisk, "*", line, column);
+        } 
+        
+        public static Token MoreThan(int line, int column)
+        {
+            return new(TokenType.MoreThan, ">", line, column);
+        }
+        
+        public static Token LessThan(int line, int column)
+        {
+            return new(TokenType.LessThan, "<", line, column);
+        }
+        
+        public static Token NotEqual(int line, int column)
+        {
+            return new(TokenType.NotEqual, "!=", line, column);
+        }
+        
+        public static Token Equal(int line, int column)
+        {
+            return new(TokenType.Equal, "==", line, column);
+        }
+        
+        public static Token Or(int line, int column)
+        {
+            return new(TokenType.Or, "or", line, column);
+        }
+        
+        public static Token And(int line, int column)
+        {
+            return new(TokenType.And, "and", line, column);
         }
 
         public static Token Slash(int line, int column)
@@ -124,6 +154,12 @@
         String,
         Boolean,
         Assignment,
+        MoreThan,
+        LessThan,
+        NotEqual,
+        Equal,
+        Or,
+        And,
         CloseParenthesis,
         OpenParenthesis,
         Newline,

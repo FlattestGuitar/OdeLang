@@ -40,6 +40,18 @@ namespace OdeLang
                     return (a, b) => Value.NumericalValue(a.GetNumericalValue() * b.GetNumericalValue());
                 case TokenType.Slash:
                     return (a, b) => Value.NumericalValue(a.GetNumericalValue() / b.GetNumericalValue());
+                case TokenType.MoreThan:
+                    return (a, b) => Value.BooleanValue(a.GetNumericalValue() > b.GetNumericalValue());
+                case TokenType.LessThan:
+                    return (a, b) => Value.BooleanValue(a.GetNumericalValue() < b.GetNumericalValue());
+                case TokenType.Equal:
+                    return (a, b) => Value.BooleanValue(a.LangEquals(b));
+                case TokenType.NotEqual:
+                    return (a, b) => Value.BooleanValue(!a.LangEquals(b));
+                case TokenType.And:
+                    return (a, b) => Value.BooleanValue(a.GetBoolValue() && b.GetBoolValue());
+                case TokenType.Or:
+                    return (a, b) => Value.BooleanValue(a.GetBoolValue() || b.GetBoolValue());
                 default:
                     throw new ArgumentException("Can't fetch operation type for non-arithmetic token");
             }

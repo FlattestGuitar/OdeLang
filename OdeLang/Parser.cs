@@ -88,12 +88,12 @@ namespace OdeLang
         private Statement Expression()
         {
             var statement = Term();
-            while (CurrentToken().TokenType is TokenType.Plus or TokenType.Minus)
+            while (CurrentToken().TokenType is TokenType.Plus or TokenType.Minus or TokenType.Or or TokenType.And)
             {
                 var operation = PopCurrentToken();
                 var right = Term();
 
-                statement = new BinaryArithmeticStatement(statement, right,
+                statement = new BinaryStatement(statement, right,
                     ArithmeticTokenToOperation(operation.TokenType));
             }
 
@@ -103,13 +103,13 @@ namespace OdeLang
         private Statement Term()
         {
             var statement = Factor();
-            while (CurrentToken().TokenType is TokenType.Asterisk or TokenType.Slash)
+            while (CurrentToken().TokenType is TokenType.Asterisk or TokenType.Slash or TokenType.LessThan or TokenType.MoreThan or TokenType.Equal or TokenType.NotEqual)
             {
                 var operation = PopCurrentToken();
 
                 var right = Factor();
 
-                statement = new BinaryArithmeticStatement(statement, right,
+                statement = new BinaryStatement(statement, right,
                     ArithmeticTokenToOperation(operation.TokenType));
             }
 

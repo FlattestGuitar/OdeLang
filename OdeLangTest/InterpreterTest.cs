@@ -136,5 +136,23 @@ print(""t"")";
 
             Assert.AreEqual(context.GetOutput(), "xzot");
         }
+
+        [Test]
+        public void LogicalArithmeticTest()
+        {
+            string code = 
+@"x = 6 < 5
+println(x)
+y = 7 > 1 == 5 < 1
+println(y)
+z = (7 > 1) == (5 < 1)
+println(z)
+a = false or (6 > 2 and true)
+println(a)";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual(context.GetOutput(), "false\ntrue\nfalse\ntrue\n");
+        }
     }
 }

@@ -28,13 +28,13 @@ namespace OdeLang
     }
 
     //any arithmetic operation on two numbers
-    public class BinaryArithmeticStatement : Statement
+    public class BinaryStatement : Statement
     {
         private readonly Statement _left;
         private readonly Statement _right;
         private readonly Func<Value, Value, Value> _operation;
 
-        public BinaryArithmeticStatement(Statement left, Statement right, Func<Value, Value, Value> operation)
+        public BinaryStatement(Statement left, Statement right, Func<Value, Value, Value> operation)
         {
             _left = left;
             _right = right;
@@ -143,10 +143,10 @@ namespace OdeLang
 
     public class ConditionalStatement : Statement
     {
-        private readonly BooleanStatement _if;
+        private readonly Statement _if;
         private readonly CompoundStatement _compoundStatement;
 
-        public ConditionalStatement(BooleanStatement @if, CompoundStatement compoundStatement)
+        public ConditionalStatement(Statement @if, CompoundStatement compoundStatement)
         {
             _if = @if;
             _compoundStatement = compoundStatement;
