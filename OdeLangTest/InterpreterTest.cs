@@ -116,11 +116,14 @@ namespace OdeLangTest
                           "  if(true)\n" +
                           "    print(\"z\")\n" +
                           "if(true)\n" +
-                          "  print(\"o\")";
+                          "  print(\"o\")\n" +
+                          "if(false)\n" +
+                          "  print(\"u\")\n" +
+                          "print(\"t\")";
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "xzo");
+            Assert.AreEqual(context.GetOutput(), "xzot");
         }
     }
 }
