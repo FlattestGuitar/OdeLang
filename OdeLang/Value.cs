@@ -97,11 +97,31 @@ namespace OdeLang
             return false;
         }
 
+        //how we check equality - this has some consequences
+        //if the types of two values is the same we just compare their raw value, nothing interesting
+        //if the types differ we will compare their numerical representations:
+        //true == 1
+        //false == 0
+        //true != 2
+        //"any string" != false | true | any #
         public bool LangEquals(Value other)
         {
-            return _number == other._number
-                   && _boolean == other._boolean
-                   && _stringy == other._stringy;
+            if (_stringy != null && other._stringy != null)
+            {
+                return _stringy == other._stringy;
+            }
+
+            if (_number != null && other._number != null)
+            {
+                return _number == other._number;
+            }
+
+            if (_boolean != null && other._boolean != null)
+            {
+                return _boolean == other._boolean;
+            }
+
+            return GetNumericalValue() == other.GetNumericalValue();
         }
     }
 }

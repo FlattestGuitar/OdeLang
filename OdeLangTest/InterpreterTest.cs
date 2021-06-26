@@ -154,5 +154,25 @@ println(a)";
 
             Assert.AreEqual(context.GetOutput(), "false\ntrue\nfalse\ntrue\n");
         }
+        
+        [Test]
+        public void IfStatementAndLogicalArithmeticTest()
+        {
+            string code = 
+@"if(6 < 5)
+  print(""6"")
+if(3 > 2 and true)
+  if(3 > 1)
+    print(""y"")
+  if(1 < 3)
+    if(false)
+      print(""1"")
+    if true == 1
+      print(""2"")";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual(context.GetOutput(), "y2");
+        }
     }
 }

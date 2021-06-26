@@ -158,9 +158,9 @@ namespace OdeLang
         private ConditionalStatement ConditionalStatement(int nestingLevel)
         {
             EatAndAdvance(TokenType.If);
-            EatAndAdvance(TokenType.OpenParenthesis);
-            BooleanStatement boolean = Boolean();
-            EatAndAdvance(TokenType.CloseParenthesis);
+            
+            Statement boolean = Expression();
+            
             EatAndAdvance(TokenType.Newline);
             var compound = CompoundStatement(nestingLevel + 1);
 
