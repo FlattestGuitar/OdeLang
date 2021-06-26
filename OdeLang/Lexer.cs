@@ -17,9 +17,30 @@ namespace OdeLang
         private static readonly Regex IdentifierAtStartOfStringRegex =
             new(@"[a-zA-Z_]+[a-zA-Z_0-9]*", RegexOptions.Compiled);
 
-
+        private static readonly Dictionary<string, Func<int, int, Token>> literals = new()
+        {
+            {"+", Plus},
+            {"-", Minus},
+            {"*", Asterisk},
+            {"/", Slash},
+            {"=", Assignment},
+            {"(", OpenParenthesis},
+            {")", CloseParenthesis},
+            {"if", If},
+            {"true", (ln, col) => Boolean(true, ln, col)},
+            {"false", (ln, col) => Boolean(false, ln, col)},
+        
+        };
+        
         private string _code;
 
+        int lineNum = 0;
+        int iterator = 0;
+
+        private bool finished = false;
+        
+        List<Token> result = new List<Token>();
+        
         public Lexer(string code)
         {
             _code = code;
@@ -28,14 +49,19 @@ namespace OdeLang
         //analyze code and return tokens
         public List<Token> LexicalAnalysis()
         {
-            int lineNum = 0;
+            if (finished)
+            {
+                throw new ApplicationException("Can't run lexical analysis twice using the same Lexer object!");
+            }
+            finished = true;
+            
             var splitCode = _code.Split('\n');
 
-            List<Token> result = new List<Token>();
+            
 
             foreach (var line in splitCode)
             {
-                result.AddRange(ProcessLine(line, lineNum));
+                ProcessLine(line);
                 lineNum++;
             }
 
@@ -44,12 +70,10 @@ namespace OdeLang
         }
 
         //this looks kind of ugly, but depending on the type of token read we need full control over the iteration
-        private IList<Token> ProcessLine(string line, int lineNum)
+        private IList<Token> ProcessLine(string line)
         {
-            int iterator = 0;
+            iterator = 0;
             int length = line.Length;
-
-            List<Token> result = new List<Token>();
 
             while (iterator < length && line[iterator] == ' ')
             {
@@ -67,44 +91,27 @@ namespace OdeLang
 
             while (iterator < length)
             {
-                var character = line[iterator];
+                bool foundLiteral = false;
+
+                foreach (var literal in literals)
+                {
+                    var found = TryEatLiteral(line, literal.Key, literal.Value);
+                    if (found)
+                    {
+                        foundLiteral = true;
+                        break;
+                    }
+                }
+
+                if (foundLiteral)
+                {
+                    continue;
+                }
+
+                char character = line[iterator];
+                
                 if (character == ' ')
                 {
-                    iterator++;
-                }
-                else if (character == '+')
-                {
-                    result.Add(Plus(lineNum, iterator));
-                    iterator++;
-                }
-                else if (character == '-')
-                {
-                    result.Add(Minus(lineNum, iterator));
-                    iterator++;
-                }
-                else if (character == '*')
-                {
-                    result.Add(Asterisk(lineNum, iterator));
-                    iterator++;
-                }
-                else if (character == '/')
-                {
-                    result.Add(Slash(lineNum, iterator));
-                    iterator++;
-                }
-                else if (character == '=')
-                {
-                    result.Add(Assignment(lineNum, iterator));
-                    iterator++;
-                }
-                else if (character == '(')
-                {
-                    result.Add(OpenParenthesis(lineNum, iterator));
-                    iterator++;
-                }
-                else if (character == ')')
-                {
-                    result.Add(CloseParenthesis(lineNum, iterator));
                     iterator++;
                 }
                 else if (character == '"')
@@ -131,16 +138,7 @@ namespace OdeLang
                     iterator++;
                     result.Add(String(resultString, lineNum, iterator));
                 }
-                else if (line.Substring(iterator).StartsWith("true"))
-                {
-                    result.Add(Boolean(true, lineNum, iterator));
-                    iterator += 4;
-                }
-                else if (line.Substring(iterator).StartsWith("false"))
-                {
-                    result.Add(Boolean(false, lineNum, iterator));
-                    iterator += 5;
-                }
+               
                 else if (IsDigit(character))
                 {
                     var numberString = NumberAtStartOfStringRegex.Match(line.Substring(iterator)).ToString();
@@ -171,6 +169,18 @@ namespace OdeLang
         private bool IsLegalStartOfIdentifier(char character)
         {
             return LegalStartOfIdentifier.IsMatch(character.ToString());
+        }
+
+        private bool TryEatLiteral(string line, string literal, Func<int, int, Token> generator)
+        {
+            if (line.Substring(iterator).StartsWith(literal))
+            {
+                result.Add(generator.Invoke(lineNum, iterator));
+                iterator += literal.Length;
+                return true;
+            }
+
+            return false;
         }
     }
 }

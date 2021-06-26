@@ -83,5 +83,31 @@ namespace OdeLangTest
 
             CollectionAssert.AreEqual(expected, result);
         }
+        
+        [Test]
+        public void ConditionalStatementTest()
+        {
+            const string code = "if(true)\n" +
+                                "  print(\"nice\")";
+            var result = new Lexer(code).LexicalAnalysis();
+
+            var expected = new ArrayList()
+            {
+                If(0, 0),
+                OpenParenthesis(0, 0),
+                Boolean(true, 0, 0),
+                CloseParenthesis(0, 0),
+                Newline(0, 0),
+                Whitespace(0, 0),
+                Identifier("print", 0, 0),
+                OpenParenthesis(0, 0),
+                String("nice", 0, 0),
+                CloseParenthesis(0, 0),
+                Newline(0, 0),
+                Eof(0, 0)
+            };
+
+            CollectionAssert.AreEqual(expected, result);
+        }
     }
 }

@@ -32,6 +32,11 @@
             return new(TokenType.OpenParenthesis, "(", line, column);
         }
 
+        public static Token If(int line, int column)
+        {
+            return new(TokenType.If, "if", line, column);
+        }
+
         public static Token CloseParenthesis(int line, int column)
         {
             return new(TokenType.CloseParenthesis, ")", line, column);
@@ -124,5 +129,6 @@
         Newline,
         Whitespace,
         EndOfFile,
+        If
     }
 }
