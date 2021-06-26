@@ -10,14 +10,6 @@ namespace OdeLang
         public abstract Value Eval(InterpretingContext context);
     }
 
-    public class NoOpStatement : Statement
-    {
-        public override Value Eval(InterpretingContext context)
-        {
-            return NullValue();
-        }
-    }
-
     //a compound statement is just a parent for a list of statements, it does not have a value
     public class CompoundStatement : Statement
     {
@@ -103,28 +95,6 @@ namespace OdeLang
         public override Value Eval(InterpretingContext context)
         {
             return context.GetVariable(_variableName);
-        }
-    }
-
-    public class UnaryArithmeticStatement : Statement
-    {
-        private readonly Statement _number;
-        private readonly bool _negation;
-
-
-        public UnaryArithmeticStatement(Statement number, bool negation)
-        {
-            _number = number;
-            _negation = negation;
-        }
-
-        public override Value Eval(InterpretingContext context)
-        {
-            var num = _number.Eval(context).GetNumericalValue();
-
-            return _negation
-                ? NumericalValue(-num)
-                : NumericalValue(num);
         }
     }
 
