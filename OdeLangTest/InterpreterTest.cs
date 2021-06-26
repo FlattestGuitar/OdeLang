@@ -3,6 +3,9 @@ using OdeLang;
 
 namespace OdeLangTest
 {
+    
+    //the string literals in this file are kinda weird,
+    //but because indentation matters they need to be completely left-aligned
     public class InterpreterTest
     {
         [Test]
@@ -28,8 +31,9 @@ namespace OdeLangTest
         [Test]
         public void ComplexMultilineArithmeticOperation()
         {
-            string code = "println((56+12)*(12/(72+1.2))+2+4)\n" +
-                          "println(12+5+82*6)";
+            string code = 
+@"println((56+12)*(12/(72+1.2))+2+4)
+println(12+5+82*6)";
 
             var context = new Interpreter(code).Run();
 
@@ -40,8 +44,9 @@ namespace OdeLangTest
         [Test]
         public void AssignmentTest()
         {
-            string code = "x = 5\n" +
-                          "println(x)";
+            string code = 
+@"x = 5
+println(x)";
 
             var context = new Interpreter(code).Run();
 
@@ -51,9 +56,10 @@ namespace OdeLangTest
         [Test]
         public void ComplexAssignmentTest()
         {
-            string code = "x = 5+13\n" +
-                          "y = 1/2\n" +
-                          "println(x - y)";
+            string code = 
+@"x = 5+13
+y = 1/2
+println(x - y)";
 
             var context = new Interpreter(code).Run();
 
@@ -63,8 +69,9 @@ namespace OdeLangTest
         [Test]
         public void StringAssignmentTest()
         {
-            string code = "x = \"asd\"\n" +
-                          "print(x)";
+            string code = 
+@"x = ""asd""
+print(x)";
 
             var context = new Interpreter(code).Run();
 
@@ -74,8 +81,9 @@ namespace OdeLangTest
         [Test]
         public void StringArithmeticTest()
         {
-            string code = "x = \"asd\" + \"qwe\"\n" +
-                          "print(x + 2)";
+            string code = 
+@"x = ""asd"" + ""qwe""
+print(x + 2)";
 
             var context = new Interpreter(code).Run();
 
@@ -85,8 +93,9 @@ namespace OdeLangTest
         [Test]
         public void BooleanAssignmentTest()
         {
-            string code = "x = true\n" +
-                          "print(x)";
+            string code = 
+@"x = true
+print(x)";
 
             var context = new Interpreter(code).Run();
 
@@ -96,8 +105,9 @@ namespace OdeLangTest
         [Test]
         public void BasicConditionalTest()
         {
-            string code = "if(true)\n" +
-                          "  print(\"x\")";
+            string code = 
+@"if(true)
+  print(""x"")";
 
             var context = new Interpreter(code).Run();
 
@@ -108,18 +118,19 @@ namespace OdeLangTest
         [Test]
         public void NestedConditionalTest()
         {
-            string code = "if(true)\n" +
-                          "  if(true)\n" +
-                          "    print(\"x\")\n" +
-                          "  if(false)\n" +
-                          "    print(\"y\")\n" +
-                          "  if(true)\n" +
-                          "    print(\"z\")\n" +
-                          "if(true)\n" +
-                          "  print(\"o\")\n" +
-                          "if(false)\n" +
-                          "  print(\"u\")\n" +
-                          "print(\"t\")";
+            string code = 
+@"if(true)
+  if(true)
+    print(""x"")
+  if(false)
+    print(""y"")
+  if(true)
+    print(""z"")
+if(true)
+  print(""o"")
+if(false)
+  print(""u"")
+print(""t"")";
 
             var context = new Interpreter(code).Run();
 

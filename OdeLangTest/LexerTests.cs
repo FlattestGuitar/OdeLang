@@ -87,8 +87,9 @@ namespace OdeLangTest
         [Test]
         public void ConditionalStatementTest()
         {
-            const string code = "if(true)\n" +
-                                "  print(\"nice\")";
+            const string code = 
+@"if(true)
+  print(""nice"")";
             var result = new Lexer(code).LexicalAnalysis();
 
             var expected = new ArrayList()

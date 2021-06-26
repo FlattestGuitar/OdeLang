@@ -54,10 +54,16 @@ namespace OdeLang
                 throw new ApplicationException("Can't run lexical analysis twice using the same Lexer object!");
             }
             finished = true;
-            
-            var splitCode = _code.Split('\n');
 
-            
+            string[] splitCode;
+            if (_code.Contains('\r'))
+            {
+                splitCode = _code.Split("\r\n");
+            }
+            else
+            {
+                splitCode = _code.Split("\n");
+            }
 
             foreach (var line in splitCode)
             {

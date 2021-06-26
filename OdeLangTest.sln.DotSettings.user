@@ -10,13 +10,7 @@
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b14c3603_002D9226_002D4030_002Db485_002Dc2ebe63cb21a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Or&gt;&#xD;
-    &lt;ProjectFile&gt;31C6F018-CABD-4146-B01E-90F247A7D9B4/f:LexerTests.cs&lt;/ProjectFile&gt;&#xD;
-    &lt;TestAncestor&gt;&#xD;
-      &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.InterpreterTest.BasicConditionalTest&lt;/TestId&gt;&#xD;
-      &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.InterpreterTest.NestedConditionalTest&lt;/TestId&gt;&#xD;
-    &lt;/TestAncestor&gt;&#xD;
-  &lt;/Or&gt;&#xD;
+  &lt;Project Location="C:\Users\miesz\OdeLang\OdeLangTest" Presentation="&amp;lt;OdeLangTest&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=cb768d7c_002Db249_002D4a75_002D83b0_002Db9f0f446096e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="BasicArithmetic" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
