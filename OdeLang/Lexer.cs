@@ -17,7 +17,7 @@ namespace OdeLang
         private static readonly Regex IdentifierAtStartOfStringRegex =
             new(@"[a-zA-Z_]+[a-zA-Z_0-9]*", RegexOptions.Compiled);
 
-        private static readonly Dictionary<string, Func<int, int, Token>> literals = new()
+        private static readonly Dictionary<string, Func<int, int, Token>> LiteralMatches = new()
         {
             {"+", Plus},
             {"-", Minus},
@@ -35,17 +35,13 @@ namespace OdeLang
             {"if", If},
             {"true", (ln, col) => Boolean(true, ln, col)},
             {"false", (ln, col) => Boolean(false, ln, col)},
-        
         };
-        
+
         private string _code;
 
-        int lineNum = 0;
-        int iterator = 0;
-
-        private bool finished = false;
-        
-        List<Token> result = new List<Token>();
+        private int lineNum;
+        private int columnNum;
+        List<Token> result;
         
         public Lexer(string code)
         {
@@ -55,21 +51,11 @@ namespace OdeLang
         //analyze code and return tokens
         public List<Token> LexicalAnalysis()
         {
-            if (finished)
-            {
-                throw new ApplicationException("Can't run lexical analysis twice using the same Lexer object!");
-            }
-            finished = true;
+            lineNum = 0;
+            columnNum = 0;
+            result = new();
 
-            string[] splitCode;
-            if (_code.Contains('\r'))
-            {
-                splitCode = _code.Split("\r\n");
-            }
-            else
-            {
-                splitCode = _code.Split("\n");
-            }
+            var splitCode = SplitCode();
 
             foreach (var line in splitCode)
             {
@@ -81,18 +67,33 @@ namespace OdeLang
             return new List<Token>(result);
         }
 
-        //this looks kind of ugly, but depending on the type of token read we need full control over the iteration
-        private IList<Token> ProcessLine(string line)
+        private string[] SplitCode()
         {
-            iterator = 0;
+            string[] splitCode;
+            if (_code.Contains('\r'))
+            {
+                splitCode = _code.Split("\r\n");
+            }
+            else
+            {
+                splitCode = _code.Split("\n");
+            }
+
+            return splitCode;
+        }
+
+        //this looks kind of ugly, but depending on the type of token read we need full control over the iteration
+        private void ProcessLine(string line)
+        {
+            columnNum = 0;
             int length = line.Length;
 
-            while (iterator < length && line[iterator] == ' ')
+            while (columnNum < length && line[columnNum] == ' ')
             {
-                if (line[iterator] == ' ' && line[iterator + 1] == ' ')
+                if (line[columnNum] == ' ' && line[columnNum + 1] == ' ')
                 {
-                    result.Add(Whitespace(lineNum, iterator));
-                    iterator += 2;
+                    result.Add(Whitespace(lineNum, columnNum));
+                    columnNum += 2;
                 }
                 else
                 {
@@ -101,76 +102,78 @@ namespace OdeLang
                 }
             }
 
-            while (iterator < length)
+            while (columnNum < length)
             {
-                bool foundLiteral = false;
-
-                foreach (var literal in literals)
-                {
-                    var found = TryEatLiteral(line, literal.Key, literal.Value);
-                    if (found)
-                    {
-                        foundLiteral = true;
-                        break;
-                    }
-                }
-
+                var foundLiteral = TryEatSimpleLiteral(line);
                 if (foundLiteral)
                 {
                     continue;
                 }
 
-                char character = line[iterator];
-                
+                char character = line[columnNum];
                 if (character == ' ')
                 {
-                    iterator++;
+                    columnNum++;
                 }
                 else if (character == '"')
                 {
                     bool ignoreNext = false;
                     string resultString = "";
 
-                    iterator++;
+                    columnNum++;
 
-                    while (line[iterator] != '"' || ignoreNext)
+                    while (line[columnNum] != '"' || ignoreNext)
                     {
-                        if (line[iterator] == '\\' && !ignoreNext)
+                        if (line[columnNum] == '\\' && !ignoreNext)
                         {
                             ignoreNext = true;
-                            iterator++;
+                            columnNum++;
                             continue;
                         }
 
-                        resultString += line[iterator];
+                        resultString += line[columnNum];
                         ignoreNext = false;
-                        iterator++;
+                        columnNum++;
                     }
 
-                    iterator++;
-                    result.Add(String(resultString, lineNum, iterator));
+                    columnNum++;
+                    result.Add(String(resultString, lineNum, columnNum));
                 }
                
                 else if (IsDigit(character))
                 {
-                    var numberString = NumberAtStartOfStringRegex.Match(line.Substring(iterator)).ToString();
-                    iterator += numberString.Length;
-                    result.Add(Number(float.Parse(numberString), lineNum, iterator));
+                    var numberString = NumberAtStartOfStringRegex.Match(line.Substring(columnNum)).ToString();
+                    columnNum += numberString.Length;
+                    result.Add(Number(float.Parse(numberString), lineNum, columnNum));
                 }
                 else if (IsLegalStartOfIdentifier((character)))
                 {
-                    var id = IdentifierAtStartOfStringRegex.Match(line.Substring(iterator)).ToString();
-                    iterator += id.Length;
-                    result.Add(Identifier(id, lineNum, iterator));
+                    var id = IdentifierAtStartOfStringRegex.Match(line.Substring(columnNum)).ToString();
+                    columnNum += id.Length;
+                    result.Add(Identifier(id, lineNum, columnNum));
                 }
                 else
                 {
-                    throw new ArgumentException($"Unexpected character {character}, at {lineNum}:{iterator}");
+                    throw new ArgumentException($"Unexpected character {character}, at {lineNum}:{columnNum}");
                 }
             }
 
-            result.Add(Newline(lineNum, iterator));
-            return result;
+            result.Add(Newline(lineNum, columnNum));
+        }
+
+        private bool TryEatSimpleLiteral(string line)
+        {
+            foreach (var literal in LiteralMatches)
+            {
+                if (line.Substring(columnNum).StartsWith(literal.Key))
+                {
+                    result.Add(literal.Value.Invoke(lineNum, columnNum));
+                    columnNum += literal.Key.Length;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private bool IsDigit(char character)
@@ -181,18 +184,6 @@ namespace OdeLang
         private bool IsLegalStartOfIdentifier(char character)
         {
             return LegalStartOfIdentifier.IsMatch(character.ToString());
-        }
-
-        private bool TryEatLiteral(string line, string literal, Func<int, int, Token> generator)
-        {
-            if (line.Substring(iterator).StartsWith(literal))
-            {
-                result.Add(generator.Invoke(lineNum, iterator));
-                iterator += literal.Length;
-                return true;
-            }
-
-            return false;
         }
     }
 }
