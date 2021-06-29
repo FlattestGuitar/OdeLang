@@ -40,11 +40,11 @@ namespace OdeLangTest
         [Test]
         public void NegationOperation()
         {
-            string code = "print(-5)";
+            string code = "print(-5, 5, 6)";
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual("-5", context.GetOutput());
+            Assert.AreEqual("-5 5 6", context.GetOutput());
         }
 
         [Test]

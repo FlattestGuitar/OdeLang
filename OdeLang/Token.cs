@@ -96,6 +96,11 @@
         {
             return new(TokenType.CloseParenthesis, ")", line, column);
         }
+        
+        public static Token Comma(int line, int column)
+        {
+            return new(TokenType.Comma, ",", line, column);
+        }
 
         public static Token Identifier(string id, int line, int column)
         {
@@ -195,6 +200,7 @@
         Whitespace,
         EndOfFile,
         If,
-        While
+        While,
+        Comma
     }
 }

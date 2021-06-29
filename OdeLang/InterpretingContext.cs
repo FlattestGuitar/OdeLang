@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
+using System.Linq;
 
 namespace OdeLang
 {
@@ -9,7 +10,7 @@ namespace OdeLang
         //todo add support for non-float types
         //todo add support for context-based variable resolution
         private Dictionary<string, Value> _variables = new();
-        private Dictionary<string, Func<Value, Value>> _functions = new();
+        private Dictionary<string, Func<List<Value>, Value>> _functions = new();
 
         private string _output = "";
 
@@ -17,12 +18,13 @@ namespace OdeLang
         {
             _functions["print"] = number =>
             {
-                Print(number.GetStringValue());
+                Print(number);
                 return Value.NullValue();
             };
             _functions["println"] = number =>
             {
-                Println(number.GetStringValue());
+                Print(number);
+                PrintNewline();
                 return Value.NullValue();
             };
         }
@@ -37,11 +39,11 @@ namespace OdeLang
             return _variables[name];
         }
 
-        public Value CallFunction(string name, Value argument)
+        public Value CallFunction(string name, List<Value> arguments)
         {
             try
             {
-                return _functions[name].Invoke(argument);
+                return _functions[name].Invoke(arguments);
             }
             catch (Exception e) //todo catch better exceptions
             {
@@ -49,16 +51,14 @@ namespace OdeLang
             }
         }
 
-        private float? Print(string output)
+        private void Print(List<Value> output)
         {
-            _output += output;
-            return null;
+            _output += String.Join(" ", output.Select(val => val.GetStringValue()));
         }
 
-        private float? Println(string output)
+        private void PrintNewline()
         {
-            _output += output + "\n";
-            return null;
+            _output += "\n";
         }
 
         public string GetOutput()

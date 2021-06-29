@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static OdeLang.Value;
 
 namespace OdeLang
@@ -66,18 +67,18 @@ namespace OdeLang
 
     public class FunctionCallStatement : Statement
     {
-        private readonly Statement _argument;
+        private readonly List<Statement> _arguments;
         private readonly string _functionName;
 
-        public FunctionCallStatement(Statement argument, string functionName)
+        public FunctionCallStatement(List<Statement> arguments, string functionName)
         {
-            _argument = argument;
+            _arguments = arguments;
             _functionName = functionName;
         }
 
         public override Value Eval(InterpretingContext context)
         {
-            return context.CallFunction(_functionName, _argument.Eval(context));
+            return context.CallFunction(_functionName, _arguments.Select(arg => arg.Eval(context)).ToList());
         }
     }
 

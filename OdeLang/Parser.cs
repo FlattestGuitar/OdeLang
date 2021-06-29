@@ -234,9 +234,18 @@ namespace OdeLang
             if (CurrentToken().TokenType == TokenType.OpenParenthesis)
             {
                 EatAndAdvance(TokenType.OpenParenthesis);
-                var expression = Expression();
+                List<Statement> arguments = new();
+                while (CurrentToken().TokenType != TokenType.CloseParenthesis)
+                {
+                    arguments.Add(Expression());
+                    if (CurrentToken().TokenType == TokenType.Comma)
+                    {
+                        EatAndAdvance(TokenType.Comma);
+                    } 
+                }
+                
                 EatAndAdvance(TokenType.CloseParenthesis);
-                var result = new FunctionCallStatement(expression, (string) identifier.Value);
+                var result = new FunctionCallStatement(arguments, (string) identifier.Value);
                 EatAndAdvance(TokenType.Newline);
                 return result;
             }
