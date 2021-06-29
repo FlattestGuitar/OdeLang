@@ -82,6 +82,26 @@ namespace OdeLang
         }
     }
 
+    public class FunctionDefinitionStatement : Statement
+    {
+        private readonly string _functionName;
+        private readonly List<string> _argumentNames;
+        private readonly Statement _body;
+
+        public FunctionDefinitionStatement(string functionName, List<string> argumentNames, Statement body)
+        {
+            _functionName = functionName;
+            _argumentNames = argumentNames;
+            _body = body;
+        }
+    
+        public override Value Eval(InterpretingContext context)
+        {
+            context.RegisterFunction(_functionName, _argumentNames, _body);
+            return NullValue();
+        }
+    }
+
     public class VariableAssignmentStatement : Statement
     {
         private readonly Statement _value;

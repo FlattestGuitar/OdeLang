@@ -208,6 +208,11 @@ namespace OdeLang
                 }
                 
             }
+
+            if (CurrentToken().TokenType == TokenType.Def)
+            {
+                return FunctionDefinition(nestingLevel);
+            }
             
             if (CurrentToken().TokenType == TokenType.If)
             {
@@ -260,6 +265,32 @@ namespace OdeLang
             }
 
             throw UnexpectedTokenException();
+        }
+
+        private Statement FunctionDefinition(int nestingLevel)
+        {
+            if (nestingLevel > 0)
+            {
+                throw new ArgumentException("Functions can only be defined at the base level");
+            }
+            
+            EatAndAdvance(TokenType.Def);
+            var functionName = (string) PopCurrentToken().Value;
+            EatAndAdvance(TokenType.OpenParenthesis);
+            List<string> argumentNames = new();
+            while (CurrentToken().TokenType != TokenType.CloseParenthesis)
+            {
+                argumentNames.Add((string)PopCurrentToken().Value);
+                if (CurrentToken().TokenType == TokenType.Comma)
+                {
+                    EatAndAdvance(TokenType.Comma);
+                }
+            }
+            EatAndAdvance(TokenType.CloseParenthesis);
+            EatAndAdvance(TokenType.Newline);
+            var body = CompoundStatement(nestingLevel + 1);
+
+            return new FunctionDefinitionStatement(functionName, argumentNames, body);
         }
 
         private Statement NoopStatement()

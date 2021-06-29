@@ -253,5 +253,40 @@ while(true)
 
             Assert.AreEqual("aa", context.GetOutput());
         }
+        
+        
+        [Test]
+        public void FunctionDefinitionTest()
+        {
+            string code =
+@"
+def test(qwe)
+  print(qwe + 2)
+
+test(5)";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual("7", context.GetOutput());
+        }
+
+        [Test]
+        public void ComplexFunctionDefinitionTest()
+        {
+            string code =
+@"
+def test(number_of_iterations, should_stop_on_even)
+  while(number_of_iterations)
+    number_of_iterations = number_of_iterations - 1
+    print(1)
+    if(should_stop_on_even and number_of_iterations % 2 == 0)
+      break
+
+test(5, false)";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual("11111", context.GetOutput());
+        }
     }
 }

@@ -86,7 +86,12 @@
         {
             return new(TokenType.Break, "break", line, column);
         }
-
+        
+        public static Token Def(int line, int column)
+        {
+            return new(TokenType.Def, "def", line, column);
+        }
+        
         public static Token Continue(int line, int column)
         {
             return new(TokenType.Continue, "continue", line, column);
@@ -201,6 +206,7 @@
         EndOfFile,
         If,
         While,
-        Comma
+        Comma,
+        Def
     }
 }

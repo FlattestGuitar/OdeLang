@@ -7,21 +7,24 @@ namespace OdeLang
 {
     public class InterpretingContext
     {
-        //todo add support for non-float types
-        //todo add support for context-based variable resolution
-        private Dictionary<string, Value> _variables = new();
-        private Dictionary<string, Func<List<Value>, Value>> _functions = new();
+        private Dictionary<string, Value> _globalVariables = new();
+
+        private Stack<Dictionary<string, Value>>
+            _functionContextVariables = new(); //only the latest entry is visible at all times
+
+        private Dictionary<string, Func<List<Value>, Value>> _builtInFunctions = new();
+        private Dictionary<string, Function> _userDefinedFunctions = new();
 
         private string _output = "";
 
         public InterpretingContext()
         {
-            _functions["print"] = number =>
+            _builtInFunctions["print"] = number =>
             {
                 Print(number);
                 return Value.NullValue();
             };
-            _functions["println"] = number =>
+            _builtInFunctions["println"] = number =>
             {
                 Print(number);
                 PrintNewline();
@@ -29,26 +32,96 @@ namespace OdeLang
             };
         }
 
+
         public void SetVariable(string name, Value value)
         {
-            _variables[name] = value;
+            if (CurrentlyInFunctionContext() && !_globalVariables.ContainsKey(name))
+            {
+                var contextVars = _functionContextVariables.Peek();
+                contextVars[name] = value;
+            }
+            else
+            {
+                _globalVariables[name] = value;    
+            }
         }
 
         public Value GetVariable(string name)
         {
-            return _variables[name];
+            if (CurrentlyInFunctionContext())
+            {
+                var variablesInContext = _functionContextVariables.Peek();
+                if (variablesInContext.ContainsKey(name))
+                {
+                    return variablesInContext[name];
+                }
+            }
+
+            if (_globalVariables.ContainsKey(name))
+            {
+                return _globalVariables[name];
+            }
+
+            throw new ArgumentException($"Variable undefined: {name}");
         }
 
         public Value CallFunction(string name, List<Value> arguments)
         {
-            try
+            if (_userDefinedFunctions.ContainsKey(name))
             {
-                return _functions[name].Invoke(arguments);
+                var definedFunc = _userDefinedFunctions[name];
+                SeedArguments(name, definedFunc, arguments);
+                var result = definedFunc.Statement.Eval(this);
+                ClearArguments();
+                return result;
             }
-            catch (Exception e) //todo catch better exceptions
+
+            if (_builtInFunctions.ContainsKey(name))
             {
-                throw new ArgumentException($"No such function {name}");
+                return _builtInFunctions[name].Invoke(arguments);
             }
+
+            throw new ArgumentException($"No such function {name}");
+        }
+
+        private void SeedArguments(string name, Function definedFunc, List<Value> arguments)
+        {
+            var requiredArgCount = definedFunc.Arguments.Count;
+
+            if (requiredArgCount < arguments.Count)
+            {
+                throw new ArgumentException($"Too many arguments. {name} needs exactly {requiredArgCount}!");
+            }
+
+            if (requiredArgCount > arguments.Count)
+            {
+                throw new ArgumentException(
+                    $"Too few arguments. {name} requires exactly {requiredArgCount}!");
+            }
+
+            Dictionary<string, Value> argumentsToAdd = new();
+
+            for (var i = 0; i < requiredArgCount; i++)
+            {
+                argumentsToAdd[definedFunc.Arguments[i]] = arguments[i];
+            }
+
+            _functionContextVariables.Push(argumentsToAdd);
+        }
+
+        private void ClearArguments()
+        {
+            _functionContextVariables.Pop();
+        }
+
+        public void RegisterFunction(string name, List<string> argumentNames, Statement statement)
+        {
+            if (_builtInFunctions.ContainsKey(name) || _userDefinedFunctions.ContainsKey(name))
+            {
+                throw new ArgumentException($"Function {name} is already defined!");
+            }
+
+            _userDefinedFunctions[name] = new Function(argumentNames, statement);
         }
 
         private void Print(List<Value> output)
@@ -64,6 +137,11 @@ namespace OdeLang
         public string GetOutput()
         {
             return _output;
+        }
+
+        private bool CurrentlyInFunctionContext()
+        {
+            return _functionContextVariables.Count > 0;
         }
     }
 }
