@@ -305,8 +305,17 @@ namespace OdeLang
         private Statement FunctionReturn()
         {
             EatAndAdvance(TokenType.Return);
-            var returnValue = Expression();
-            EatAndAdvance(TokenType.Newline);
+            Statement returnValue;
+            if (OnlyWhitespaceBeforeNextNewline())
+            {
+                returnValue = NoopStatement();
+            }
+            else
+            {
+                returnValue = Expression();
+                EatAndAdvance(TokenType.Newline);
+            }
+
             return new FunctionReturnStatement(returnValue);
         }
 

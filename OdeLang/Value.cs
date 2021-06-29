@@ -74,7 +74,7 @@ namespace OdeLang
                     : BooleanFalse;
             }
 
-            throw new ArgumentException("Not a string"); //todo better exceptions
+            return "null";
         }
 
         public bool GetBoolValue()

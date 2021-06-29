@@ -299,10 +299,24 @@ def test()
 
 print(test())
 ";
-
             var context = new Interpreter(code).Run();
 
             Assert.AreEqual("5", context.GetOutput());
+        }
+
+        [Test]
+        public void FunctionWithNoReturnValueTest()
+        {
+            string code =
+@"
+def test()
+  return
+
+print(test())
+";
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual("null", context.GetOutput());
         }
     }
 }
