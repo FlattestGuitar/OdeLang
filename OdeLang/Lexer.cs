@@ -26,6 +26,7 @@ namespace OdeLang
             {"%", Modulo},
             {"!=", NotEqual},
             {"==", Equal}, //the order matters
+            {"!", Not},
             {"=", Assignment},
             {"<", LessThan},
             {">", MoreThan},

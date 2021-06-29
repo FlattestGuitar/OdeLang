@@ -47,6 +47,23 @@ namespace OdeLang
         }
     }
 
+    public class UnaryStatement : Statement
+    {
+        private readonly Statement _value;
+        private readonly Func<Value, Value> _operation;
+
+        public UnaryStatement(Statement value, Func<Value, Value> operation)
+        {
+            _operation = operation;
+            _value = value;
+        }
+
+        public override Value Eval(InterpretingContext context)
+        {
+            return _operation.Invoke(_value.Eval(context));
+        }
+    }
+
     public class FunctionCallStatement : Statement
     {
         private readonly Statement _argument;

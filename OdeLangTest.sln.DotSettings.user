@@ -24,5 +24,7 @@
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.LexerTests.ConditionalStatementTest&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.InterpreterTest.ModuloArithmeticOperation&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.InterpreterTest.NegationOperation&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.InterpreterTest.NoOperation&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

@@ -37,6 +37,11 @@
             return new(TokenType.Equal, "==", line, column);
         }
         
+        public static Token Not(int line, int column)
+        {
+            return new(TokenType.Not, "!", line, column);
+        }
+
         public static Token Or(int line, int column)
         {
             return new(TokenType.Or, "or", line, column);
@@ -162,6 +167,7 @@
         Assignment,
         MoreThan,
         LessThan,
+        Not,
         NotEqual,
         Equal,
         Or,

@@ -146,7 +146,20 @@ namespace OdeLang
                 return Variable();
             }
 
+            if (CurrentToken().TokenType is TokenType.Minus or TokenType.Plus or TokenType.Not)
+            {
+                return UnaryOperatorFactor();
+            }
+
             throw UnexpectedTokenException();
+        }
+
+        private UnaryStatement UnaryOperatorFactor()
+        {
+            var token = PopCurrentToken();
+            var value = Factor();
+
+            return new UnaryStatement(value, ArithmeticTokenToUnaryOperation(token.TokenType));
         }
 
         private Statement Variable()

@@ -39,6 +39,26 @@ namespace OdeLangTest
         }
 
         [Test]
+        public void NegationOperation()
+        {
+            string code = "print(-5)";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual(context.GetOutput(), "-5");
+        }
+        
+        [Test]
+        public void LogicalNoOperation()
+        {
+            string code = "print(!false and true)";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual(context.GetOutput(), "true");
+        }
+
+        [Test]
         public void ComplexMultilineArithmeticOperation()
         {
             string code = 

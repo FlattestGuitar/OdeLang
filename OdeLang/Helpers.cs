@@ -4,6 +4,21 @@ namespace OdeLang
 {
     public class Helpers
     {
+
+        public static Func<Value, Value> ArithmeticTokenToUnaryOperation(TokenType type)
+        {
+            switch(type)
+            {
+                case TokenType.Plus:
+                    return value => value;
+                case TokenType.Minus:
+                    return value => Value.NumericalValue(-value.GetNumericalValue());
+                case TokenType.Not:
+                    return value => Value.BooleanValue(!value.GetBoolValue());
+                default:
+                    throw new ArgumentException($"Cannot apply {type} operator to type");
+            }
+        }
         public static Func<Value, Value, Value> ArithmeticTokenToOperation(TokenType type)
         {
             if (type == TokenType.Plus)
