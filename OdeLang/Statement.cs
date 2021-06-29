@@ -272,4 +272,20 @@ namespace OdeLang
             return NullValue();
         }
     }
+
+    public class FunctionReturnStatement : Statement
+    {
+        private readonly Statement returnValue;
+
+        public FunctionReturnStatement(Statement returnValue)
+        {
+            this.returnValue = returnValue;
+        }
+
+        public override Value Eval(InterpretingContext context)
+        {
+            context.ValidateCanReturn();
+            throw new FunctionReturnException(returnValue.Eval(context));
+        }
+    }
 }

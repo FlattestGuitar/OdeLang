@@ -143,6 +143,11 @@ namespace OdeLang
 
             if (CurrentToken().TokenType == TokenType.Identifier)
             {
+                if (PeekNextToken().TokenType == TokenType.OpenParenthesis)
+                {
+                    return FunctionCall();
+                }
+
                 return Variable();
             }
 
@@ -152,6 +157,18 @@ namespace OdeLang
             }
 
             throw UnexpectedTokenException();
+        }
+
+        private Token PeekNextToken()
+        {
+            try
+            {
+                return _tokens[_i + 1];
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                return null;
+            }
         }
 
         private UnaryStatement UnaryOperatorFactor()
@@ -209,6 +226,11 @@ namespace OdeLang
                 
             }
 
+            if (CurrentToken().TokenType == TokenType.Return)
+            {
+                return FunctionReturn();
+            }
+
             if (CurrentToken().TokenType == TokenType.Def)
             {
                 return FunctionDefinition(nestingLevel);
@@ -233,38 +255,59 @@ namespace OdeLang
             {
                 return WhileStatement(nestingLevel);
             }
-            
-            var identifier = PopCurrentToken();
 
-            if (CurrentToken().TokenType == TokenType.OpenParenthesis)
+            if (CurrentToken().TokenType == TokenType.Identifier)
             {
-                EatAndAdvance(TokenType.OpenParenthesis);
-                List<Statement> arguments = new();
-                while (CurrentToken().TokenType != TokenType.CloseParenthesis)
+                if (PeekNextToken().TokenType == TokenType.OpenParenthesis)
                 {
-                    arguments.Add(Expression());
-                    if (CurrentToken().TokenType == TokenType.Comma)
-                    {
-                        EatAndAdvance(TokenType.Comma);
-                    } 
+                    return FunctionCall();
                 }
-                
-                EatAndAdvance(TokenType.CloseParenthesis);
-                var result = new FunctionCallStatement(arguments, (string) identifier.Value);
-                EatAndAdvance(TokenType.Newline);
-                return result;
-            }
 
-            if (CurrentToken().TokenType == TokenType.Assignment)
-            {
-                EatAndAdvance(TokenType.Assignment);
-                var expression = Expression();
-                var result = new VariableAssignmentStatement(expression, (string) identifier.Value);
-                EatAndAdvance(TokenType.Newline);
-                return result;
+                return Assignment();
             }
 
             throw UnexpectedTokenException();
+        }
+
+        private Statement Assignment()
+        {
+            var identifier = PopCurrentToken();
+            EatAndAdvance(TokenType.Assignment);
+            var expression = Expression();
+            var result = new VariableAssignmentStatement(expression, (string) identifier.Value);
+            EatAndAdvance(TokenType.Newline);
+            return result;
+        }
+
+        private Statement FunctionCall()
+        {
+            var identifier = PopCurrentToken();
+            EatAndAdvance(TokenType.OpenParenthesis);
+            List<Statement> arguments = new();
+            while (CurrentToken().TokenType != TokenType.CloseParenthesis)
+            {
+                arguments.Add(Expression());
+                if (CurrentToken().TokenType == TokenType.Comma)
+                {
+                    EatAndAdvance(TokenType.Comma);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            EatAndAdvance(TokenType.CloseParenthesis);
+            var result = new FunctionCallStatement(arguments, (string) identifier.Value);
+            return result;
+        }
+
+        private Statement FunctionReturn()
+        {
+            EatAndAdvance(TokenType.Return);
+            var returnValue = Expression();
+            EatAndAdvance(TokenType.Newline);
+            return new FunctionReturnStatement(returnValue);
         }
 
         private Statement FunctionDefinition(int nestingLevel)

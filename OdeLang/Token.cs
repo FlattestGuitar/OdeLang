@@ -105,6 +105,11 @@
         public static Token Comma(int line, int column)
         {
             return new(TokenType.Comma, ",", line, column);
+        }   
+        
+        public static Token Return(int line, int column)
+        {
+            return new(TokenType.Return, "return", line, column);
         }
 
         public static Token Identifier(string id, int line, int column)
@@ -207,6 +212,7 @@
         If,
         While,
         Comma,
-        Def
+        Def,
+        Return
     }
 }

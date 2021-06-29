@@ -33,6 +33,7 @@ namespace OdeLang
             {"(", OpenParenthesis},
             {")", CloseParenthesis},
             {",", Comma},
+            {"return", Return},
             {"and", And},
             {"or", Or},
             {"if", If},

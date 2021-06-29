@@ -71,7 +71,18 @@ namespace OdeLang
             {
                 var definedFunc = _userDefinedFunctions[name];
                 SeedArguments(name, definedFunc, arguments);
-                var result = definedFunc.Statement.Eval(this);
+
+                Value result = Value.NullValue();
+
+                try
+                {
+                    definedFunc.Statement.Eval(this);
+                }
+                catch (FunctionReturnException e)
+                {
+                    result = e.ReturnValue;
+                }
+                
                 ClearArguments();
                 return result;
             }
@@ -142,6 +153,14 @@ namespace OdeLang
         private bool CurrentlyInFunctionContext()
         {
             return _functionContextVariables.Count > 0;
+        }
+
+        public void ValidateCanReturn()
+        {
+            if (!CurrentlyInFunctionContext())
+            {
+                throw new ArgumentException("Cannot return when not in a function!");
+            }
         }
     }
 }

@@ -288,5 +288,21 @@ test(5, false)";
 
             Assert.AreEqual("11111", context.GetOutput());
         }
+    
+        [Test]
+        public void FunctionWithReturnValueTest()
+        {
+            string code =
+@"
+def test()
+  return 5
+
+print(test())
+";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual("5", context.GetOutput());
+        }
     }
 }
