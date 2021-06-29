@@ -253,6 +253,32 @@ namespace OdeLang
             throw UnexpectedTokenException();
         }
 
+        private Statement NoopStatement()
+        {
+            while (CurrentToken().TokenType == TokenType.Whitespace)
+            {
+                EatAndAdvance(TokenType.Whitespace);
+            }
+            EatAndAdvance(TokenType.Newline);
+            return new NoopStatement();
+        }
+
+        private bool OnlyWhitespaceBeforeNextNewline()
+        {
+            int iterator = _i;
+            while (_tokens[iterator].TokenType == TokenType.Whitespace)
+            {
+                iterator++;
+            }
+
+            if (_tokens[iterator].TokenType == TokenType.Newline)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         private Statement LoopBreakStatement()
         {
             EatAndAdvance(TokenType.Break);
@@ -272,6 +298,14 @@ namespace OdeLang
             List<Statement> statements = new List<Statement>();
             while (CurrentToken().TokenType != TokenType.EndOfFile)
             {
+                
+                //whitespace doesn't matter if there's nothing in the line
+                if (OnlyWhitespaceBeforeNextNewline()) 
+                {
+                    statements.Add(NoopStatement());
+                    continue;
+                }
+
                 var nextWhitespace = WhitespaceTokensNextInQueue();
                 if (nextWhitespace < nestingLevel)
                 {

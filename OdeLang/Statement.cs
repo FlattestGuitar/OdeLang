@@ -243,4 +243,12 @@ namespace OdeLang
             throw new LoopContinueException();
         }
     }
+
+    public class NoopStatement : Statement
+    {
+        public override Value Eval(InterpretingContext context)
+        {
+            return NullValue();
+        }
+    }
 }
