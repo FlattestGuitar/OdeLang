@@ -103,7 +103,7 @@ namespace OdeLang
         private Statement Term()
         {
             var statement = Factor();
-            while (CurrentToken().TokenType is TokenType.Asterisk or TokenType.Slash or TokenType.LessThan or TokenType.MoreThan or TokenType.Equal or TokenType.NotEqual)
+            while (CurrentToken().TokenType is TokenType.Asterisk or TokenType.Slash or TokenType.Modulo or TokenType.LessThan or TokenType.MoreThan or TokenType.Equal or TokenType.NotEqual)
             {
                 var operation = PopCurrentToken();
 

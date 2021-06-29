@@ -23,6 +23,7 @@ namespace OdeLang
             {"-", Minus},
             {"*", Asterisk},
             {"/", Slash},
+            {"%", Modulo},
             {"!=", NotEqual},
             {"==", Equal}, //the order matters
             {"=", Assignment},

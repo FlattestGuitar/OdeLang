@@ -51,6 +51,11 @@
         {
             return new(TokenType.Slash, "/", line, column);
         }
+        
+        public static Token Modulo(int line, int column)
+        {
+            return new(TokenType.Modulo, "%", line, column);
+        }
 
         public static Token Number(float value, int line, int column)
         {
@@ -149,6 +154,7 @@
         Minus,
         Asterisk,
         Slash,
+        Modulo,
         Number,
         Identifier,
         String,

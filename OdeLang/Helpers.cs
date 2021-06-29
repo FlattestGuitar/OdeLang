@@ -40,6 +40,8 @@ namespace OdeLang
                     return (a, b) => Value.NumericalValue(a.GetNumericalValue() * b.GetNumericalValue());
                 case TokenType.Slash:
                     return (a, b) => Value.NumericalValue(a.GetNumericalValue() / b.GetNumericalValue());
+                case TokenType.Modulo:
+                    return (a, b) => Value.NumericalValue(a.GetNumericalValue() % b.GetNumericalValue());
                 case TokenType.MoreThan:
                     return (a, b) => Value.BooleanValue(a.GetNumericalValue() > b.GetNumericalValue());
                 case TokenType.LessThan:

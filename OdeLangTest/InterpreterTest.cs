@@ -27,6 +27,16 @@ namespace OdeLangTest
 
             Assert.AreEqual(context.GetOutput(), "17.147541");
         }
+        
+        [Test]
+        public void ModuloArithmeticOperation()
+        {
+            string code = "print(5 % 2 * 2)";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual(context.GetOutput(), "2");
+        }
 
         [Test]
         public void ComplexMultilineArithmeticOperation()
