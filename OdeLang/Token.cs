@@ -76,6 +76,11 @@
         {
             return new(TokenType.If, "if", line, column);
         }
+        
+        public static Token While(int line, int column)
+        {
+            return new(TokenType.While, "while", line, column);
+        }
 
         public static Token CloseParenthesis(int line, int column)
         {
@@ -177,6 +182,7 @@
         Newline,
         Whitespace,
         EndOfFile,
-        If
+        If,
+        While
     }
 }

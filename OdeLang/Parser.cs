@@ -179,6 +179,19 @@ namespace OdeLang
 
             return new ConditionalStatement(boolean, compound);
         }
+        
+        
+        private Statement WhileStatement(int nestingLevel)
+        {
+            EatAndAdvance(TokenType.While);
+
+            Statement condition = Expression();
+            
+            EatAndAdvance(TokenType.Newline);
+            var body = CompoundStatement(nestingLevel + 1);
+
+            return new LoopStatement(condition, body);
+        }
 
         private Statement Statement(int nestingLevel)
         {
@@ -199,6 +212,11 @@ namespace OdeLang
             if (CurrentToken().TokenType == TokenType.If)
             {
                 return ConditionalStatement(nestingLevel);
+            }
+
+            if (CurrentToken().TokenType == TokenType.While)
+            {
+                return WhileStatement(nestingLevel);
             }
             
             var identifier = PopCurrentToken();
@@ -224,6 +242,7 @@ namespace OdeLang
 
             throw UnexpectedTokenException();
         }
+
 
         private CompoundStatement CompoundStatement(int nestingLevel)
         {

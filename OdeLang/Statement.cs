@@ -180,4 +180,34 @@ namespace OdeLang
             return NullValue();
         }
     }
+
+    public class LoopStatement : Statement
+    {
+        private readonly Statement _condition;
+        private readonly CompoundStatement _body;
+
+        public LoopStatement(Statement condition, CompoundStatement body)
+        {
+            _condition = condition;
+            _body = body;
+        }
+
+
+        public override Value Eval(InterpretingContext context)
+        {
+            int runs = 0;
+            while (true)
+            {
+                if (_condition.Eval(context).GetBoolValue() == true)
+                {
+                    runs++;
+                    _body.Eval(context);
+                }
+                else
+                {
+                    return NullValue();
+                }
+            }
+        }
+    }
 }

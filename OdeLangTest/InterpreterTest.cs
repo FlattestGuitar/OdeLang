@@ -204,5 +204,19 @@ if(3 > 2 and true)
 
             Assert.AreEqual(context.GetOutput(), "y2");
         }
+        
+        [Test]
+        public void LoopTest()
+        {
+            string code = 
+@"i = 0
+while(i < 2)
+  print(""a"")
+  i = i + 1";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual(context.GetOutput(), "aa");
+        }
     }
 }
