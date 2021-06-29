@@ -36,6 +36,8 @@ namespace OdeLang
             {"or", Or},
             {"if", If},
             {"while", While},
+            {"break", Break},
+            {"continue", Continue},
             {"true", (ln, col) => Boolean(true, ln, col)},
             {"false", (ln, col) => Boolean(false, ln, col)},
         };

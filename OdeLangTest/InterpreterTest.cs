@@ -3,7 +3,6 @@ using OdeLang;
 
 namespace OdeLangTest
 {
-    
     //the string literals in this file are kinda weird,
     //but because indentation matters they need to be completely left-aligned
     public class InterpreterTest
@@ -15,7 +14,7 @@ namespace OdeLangTest
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "3");
+            Assert.AreEqual("3", context.GetOutput());
         }
 
         [Test]
@@ -25,9 +24,9 @@ namespace OdeLangTest
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "17.147541");
+            Assert.AreEqual("17.147541", context.GetOutput());
         }
-        
+
         [Test]
         public void ModuloArithmeticOperation()
         {
@@ -35,7 +34,7 @@ namespace OdeLangTest
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "2");
+            Assert.AreEqual("2", context.GetOutput());
         }
 
         [Test]
@@ -45,9 +44,9 @@ namespace OdeLangTest
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "-5");
+            Assert.AreEqual("-5", context.GetOutput());
         }
-        
+
         [Test]
         public void LogicalNoOperation()
         {
@@ -55,101 +54,101 @@ namespace OdeLangTest
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "true");
+            Assert.AreEqual("true", context.GetOutput());
         }
 
         [Test]
         public void ComplexMultilineArithmeticOperation()
         {
-            string code = 
-@"println((56+12)*(12/(72+1.2))+2+4)
+            string code =
+                @"println((56+12)*(12/(72+1.2))+2+4)
 println(12+5+82*6)";
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "17.147541\n509\n");
+            Assert.AreEqual("17.147541\n509\n", context.GetOutput());
         }
 
 
         [Test]
         public void AssignmentTest()
         {
-            string code = 
-@"x = 5
+            string code =
+                @"x = 5
 println(x)";
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "5\n");
+            Assert.AreEqual("5\n", context.GetOutput());
         }
 
         [Test]
         public void ComplexAssignmentTest()
         {
-            string code = 
-@"x = 5+13
+            string code =
+                @"x = 5+13
 y = 1/2
 println(x - y)";
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "17.5\n");
+            Assert.AreEqual("17.5\n", context.GetOutput());
         }
-        
+
         [Test]
         public void StringAssignmentTest()
         {
-            string code = 
-@"x = ""asd""
+            string code =
+                @"x = ""asd""
 print(x)";
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "asd");
+            Assert.AreEqual("asd", context.GetOutput());
         }
-        
+
         [Test]
         public void StringArithmeticTest()
         {
-            string code = 
-@"x = ""asd"" + ""qwe""
+            string code =
+                @"x = ""asd"" + ""qwe""
 print(x + 2)";
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "asdqwe2");
+            Assert.AreEqual("asdqwe2", context.GetOutput());
         }
-        
+
         [Test]
         public void BooleanAssignmentTest()
         {
-            string code = 
-@"x = true
+            string code =
+                @"x = true
 print(x)";
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "true");
+            Assert.AreEqual("true", context.GetOutput());
         }
 
         [Test]
         public void BasicConditionalTest()
         {
-            string code = 
-@"if(true)
+            string code =
+                @"if(true)
   print(""x"")";
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "x");
+            Assert.AreEqual("x", context.GetOutput());
         }
-        
-        
+
+
         [Test]
         public void NestedConditionalTest()
         {
-            string code = 
-@"if(true)
+            string code =
+                @"if(true)
   if(true)
     print(""x"")
   if(false)
@@ -164,14 +163,14 @@ print(""t"")";
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "xzot");
+            Assert.AreEqual("xzot", context.GetOutput());
         }
 
         [Test]
         public void LogicalArithmeticTest()
         {
-            string code = 
-@"x = 6 < 5
+            string code =
+                @"x = 6 < 5
 println(x)
 y = 7 > 1 == 5 < 1
 println(y)
@@ -182,14 +181,14 @@ println(a)";
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "false\ntrue\nfalse\ntrue\n");
+            Assert.AreEqual("false\ntrue\nfalse\ntrue\n", context.GetOutput());
         }
-        
+
         [Test]
         public void IfStatementAndLogicalArithmeticTest()
         {
-            string code = 
-@"if(6 < 5)
+            string code =
+                @"if(6 < 5)
   print(""6"")
 if(3 > 2 and true)
   if(3 > 1)
@@ -202,21 +201,56 @@ if(3 > 2 and true)
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "y2");
+            Assert.AreEqual("y2", context.GetOutput());
         }
-        
+
         [Test]
         public void LoopTest()
         {
-            string code = 
-@"i = 0
+            string code =
+                @"i = 0
 while(i < 2)
   print(""a"")
   i = i + 1";
 
             var context = new Interpreter(code).Run();
 
-            Assert.AreEqual(context.GetOutput(), "aa");
+            Assert.AreEqual("aa", context.GetOutput());
+        }
+
+        [Test]
+        public void LoopControlTest()
+        {
+            string code =
+                @"i = 0
+while(true)
+  print(""a"")
+  i = i + 1
+  if(i == 2)
+    break";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual("aa", context.GetOutput());
+        }
+
+        [Test]
+        public void ContinueLoopControlTest()
+        {
+            string code =
+                @"i = 5
+while(true)
+  i = i - 1
+  if(i > 3)
+    continue
+  if(i < 1)
+    print(""a"")
+  if i < 0
+    break";
+
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual("aa", context.GetOutput());
         }
     }
 }

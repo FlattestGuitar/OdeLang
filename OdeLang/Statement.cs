@@ -183,6 +183,8 @@ namespace OdeLang
 
     public class LoopStatement : Statement
     {
+        private static readonly int MaxLoopRuns = 10000;
+
         private readonly Statement _condition;
         private readonly CompoundStatement _body;
 
@@ -198,16 +200,47 @@ namespace OdeLang
             int runs = 0;
             while (true)
             {
-                if (_condition.Eval(context).GetBoolValue() == true)
+                if (runs > MaxLoopRuns)
+                {
+                    throw new ArgumentException(
+                        $"Possible infinite loop. Loop ran for over {MaxLoopRuns} runs. Aborting.");
+                }
+
+                if (!_condition.Eval(context).GetBoolValue())
+                {
+                    return NullValue();
+                }
+                
+                try
                 {
                     runs++;
                     _body.Eval(context);
                 }
-                else
+                catch (LoopBreakException e)
                 {
                     return NullValue();
                 }
+                catch (LoopContinueException e)
+                {
+                    //noop
+                }
             }
+        }
+    }
+
+    public class LoopBreakStatement : Statement
+    {
+        public override Value Eval(InterpretingContext context)
+        {
+            throw new LoopBreakException();
+        }
+    }
+    
+    public class LoopContinueStatement : Statement
+    {
+        public override Value Eval(InterpretingContext context)
+        {
+            throw new LoopContinueException();
         }
     }
 }

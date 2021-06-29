@@ -82,6 +82,16 @@
             return new(TokenType.While, "while", line, column);
         }
 
+        public static Token Break(int line, int column)
+        {
+            return new(TokenType.Break, "break", line, column);
+        }
+
+        public static Token Continue(int line, int column)
+        {
+            return new(TokenType.Continue, "continue", line, column);
+        }
+
         public static Token CloseParenthesis(int line, int column)
         {
             return new(TokenType.CloseParenthesis, ")", line, column);
@@ -177,6 +187,8 @@
         Equal,
         Or,
         And,
+        Break,
+        Continue,
         CloseParenthesis,
         OpenParenthesis,
         Newline,
