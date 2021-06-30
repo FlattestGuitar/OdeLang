@@ -13,18 +13,19 @@ namespace OdeLang
     /// </summary>
     public class OdeObject
     {
-        private readonly string _objectName;
+        public string Name { get; }
+
         private readonly Dictionary<string, FunctionDefinition> _functions;
 
         public OdeObject(string objectName, List<FunctionDefinition> functions, Func<string> toStringFunc)
         {
-            _objectName = objectName;
+            Name = objectName;
             _functions = functions.ToDictionary(def => def.Name);
             _functions[ToStringFunctionName] = new FunctionDefinition(ToStringFunctionName, 0,
                 _ => Value.StringValue(toStringFunc.Invoke()));
         }
 
-        public Value CallFunction(string name, List<Value> args)
+        internal Value CallFunction(string name, List<Value> args)
         {
             if (!_functions.ContainsKey(name))
             {
@@ -34,16 +35,16 @@ namespace OdeLang
             return _functions[name].Eval(args);
         }
 
-        public string CallToStringFunc()
+        internal string CallToStringFunc()
         {
             return CallFunction(ToStringFunctionName, new List<Value>()).GetStringValue();
         }
 
         public class FunctionDefinition
         {
-            public string Name { get; }
-            public int NumberOfArguments { get; } //-1 for unlimited, like print()
-            public Func<List<Value>, Value> Operation { get; }
+            internal string Name { get; }
+            internal int NumberOfArguments { get; } //-1 for unlimited, like print()
+            internal Func<List<Value>, Value> Operation { get; }
 
             public FunctionDefinition(string name, int numberOfArguments, Func<List<Value>, Value> operation)
             {
@@ -63,7 +64,7 @@ namespace OdeLang
                 };
             }
 
-            public Value Eval(List<Value> args)
+            internal Value Eval(List<Value> args)
             {
                 if (NumberOfArguments > -1 && args.Count != NumberOfArguments)
                 {

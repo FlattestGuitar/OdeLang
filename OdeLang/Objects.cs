@@ -4,10 +4,10 @@ using System.Linq;
 
 namespace OdeLang
 {
-    public static class Objects
+    internal static class Objects
     {
         
-        public static OdeObject Array(List<Value> values)
+        internal static OdeObject Array(List<Value> values)
         {
             //all lambdas refer to this object
             List<Value> objectValues = new(values);
@@ -28,7 +28,7 @@ namespace OdeLang
         }
 
         //todo keys are always saved as string values, is that bad?
-        public static OdeObject Dictionary(Dictionary<Value, Value> values)
+        internal static OdeObject Dictionary(Dictionary<Value, Value> values)
         {
             Dictionary<string, Value> objectValues = new(values.ToDictionary(pair => pair.Key.GetStringValue(), pair => pair.Value));
 

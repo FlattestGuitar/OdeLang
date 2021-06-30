@@ -7,12 +7,19 @@ namespace OdeLangTest
     //but because indentation matters they need to be completely left-aligned
     public class InterpreterTest
     {
+        private static InterpretingContext Run(string code)
+        {
+            var context = new InterpretingContext();
+            new Interpreter(code).Run(context);
+            return context;
+        }
+
         [Test]
         public void BasicArithmeticOperation()
         {
             string code = "print(1+2)";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("3", context.GetOutput());
         }
@@ -22,7 +29,7 @@ namespace OdeLangTest
         {
             string code = "print((56+12)*(12/(72+1.2))+2+4)";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("17.147541", context.GetOutput());
         }
@@ -32,7 +39,7 @@ namespace OdeLangTest
         {
             string code = "print(5 % 2 * 2)";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("2", context.GetOutput());
         }
@@ -42,7 +49,7 @@ namespace OdeLangTest
         {
             string code = "print(-5, 5, 6)";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("-5 5 6", context.GetOutput());
         }
@@ -52,7 +59,7 @@ namespace OdeLangTest
         {
             string code = "print(!false and true)";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("true", context.GetOutput());
         }
@@ -66,7 +73,7 @@ println((56+12)*(12/(72+1.2))+2+4)
 println(12+5+82*6)
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("17.147541\n509\n", context.GetOutput());
         }
@@ -81,7 +88,7 @@ x = 5
 println(x)
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("5\n", context.GetOutput());
         }
@@ -96,7 +103,7 @@ y = 1/2
 println(x - y)
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("17.5\n", context.GetOutput());
         }
@@ -110,7 +117,7 @@ x = ""asd""
 print(x)
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("asd", context.GetOutput());
         }
@@ -124,7 +131,7 @@ x = ""asd"" + ""qwe""
 print(x + 2)
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("asdqwe2", context.GetOutput());
         }
@@ -138,7 +145,7 @@ x = true
 print(x)
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("true", context.GetOutput());
         }
@@ -152,7 +159,7 @@ if(true)
   print(""x"")
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("x", context.GetOutput());
         }
@@ -177,7 +184,7 @@ if(false)
 print(""t"")
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("xzot", context.GetOutput());
         }
@@ -197,7 +204,7 @@ a = false or (6 > 2 and true)
 println(a)
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("false\ntrue\nfalse\ntrue\n", context.GetOutput());
         }
@@ -220,7 +227,7 @@ if(3 > 2 and true)
       print(""2"")
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("y2", context.GetOutput());
         }
@@ -236,7 +243,7 @@ while(i < 2)
   i = i + 1
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("aa", context.GetOutput());
         }
@@ -254,7 +261,7 @@ while(true)
     break
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("aa", context.GetOutput());
         }
@@ -275,7 +282,7 @@ while(true)
     break
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("aa", context.GetOutput());
         }
@@ -292,7 +299,7 @@ def test(qwe)
 test(5)
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("7", context.GetOutput());
         }
@@ -312,7 +319,7 @@ def test(number_of_iterations, should_stop_on_even)
 test(5, false)
 ";
 
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("11111", context.GetOutput());
         }
@@ -327,7 +334,7 @@ def test()
 
 print(test())
 ";
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("5", context.GetOutput());
         }
@@ -342,7 +349,7 @@ def test()
 
 print(test())
 ";
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("null", context.GetOutput());
         }
@@ -357,7 +364,7 @@ x = [1, 2, 3]
 x.append(4)
 print(x)
 ";
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("[1,2,3,4]", context.GetOutput());
         }
@@ -371,7 +378,7 @@ x = [1, [6, 3], 3]
 x.get(1).append(5)
 print(x)
 ";
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("[1,[6,3,5],3]", context.GetOutput());
         }
@@ -389,7 +396,7 @@ x = {
 print(x)
 print(x.get(""a""))
 ";
-            var context = new Interpreter(code).Run();
+            var context = Run(code);
 
             Assert.AreEqual("{a:1,b:2,c:[6,4,test]}1", context.GetOutput());
         }

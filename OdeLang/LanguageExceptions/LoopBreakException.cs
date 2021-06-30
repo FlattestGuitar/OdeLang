@@ -2,7 +2,7 @@
 
 namespace OdeLang
 {
-    public class LoopBreakException : Exception
+    internal class LoopBreakException : Exception
     {
     }
 }

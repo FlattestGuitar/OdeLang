@@ -11,15 +11,13 @@ namespace OdeLang
             _code = code;
         }
 
-        public InterpretingContext Run()
+        public void Run(InterpretingContext context)
         {
             var tokens = LexicalAnalysis();
 
             var rootStatement = Parsing(tokens);
 
-            var context = Interpretation(rootStatement);
-
-            return context;
+            Interpretation(rootStatement, context);
         }
 
         private List<Tokens.Token> LexicalAnalysis()
@@ -36,11 +34,9 @@ namespace OdeLang
             return rootStatement;
         }
 
-        private static InterpretingContext Interpretation(Statement rootStatement)
+        private static void Interpretation(Statement rootStatement, InterpretingContext context)
         {
-            var context = new InterpretingContext();
             rootStatement.Eval(context);
-            return context;
         }
     }
 }

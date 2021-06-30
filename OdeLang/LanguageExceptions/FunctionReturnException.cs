@@ -2,11 +2,11 @@
 
 namespace OdeLang
 {
-    public class FunctionReturnException : Exception
+    internal class FunctionReturnException : Exception
     {
-        public Value ReturnValue { get; }
+        internal Value ReturnValue { get; }
 
-        public FunctionReturnException(Value returnValue)
+        internal FunctionReturnException(Value returnValue)
         {
             ReturnValue = returnValue;
         }

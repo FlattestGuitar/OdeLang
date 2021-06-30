@@ -12,17 +12,17 @@ namespace OdeLang
     /// The entire program is one big compound statement, but these statements get broken down further
     /// to create a complete syntax tree.
     /// </summary>
-    public class Parser
+    internal class Parser
     {
         private List<Token> _tokens;
         private int _i;
 
-        public Parser(List<Token> tokens)
+        internal Parser(List<Token> tokens)
         {
             _tokens = tokens;
         }
 
-        public Statement Parse()
+        internal Statement Parse()
         {
             return CompoundStatement(0);
         }

@@ -2,9 +2,9 @@
 
 namespace OdeLang
 {
-    public class CustomFunction
+    internal class CustomFunction
     {
-        public CustomFunction(List<string> arguments, Statement statement)
+        internal CustomFunction(List<string> arguments, Statement statement)
         {
             this.arguments = arguments;
             this.statement = statement;
@@ -13,12 +13,12 @@ namespace OdeLang
         private List<string> arguments;
         private Statement statement;
 
-        public List<string> Arguments
+        internal List<string> Arguments
         {
             get => arguments;
         }
 
-        public Statement Statement
+        internal Statement Statement
         {
             get => statement;
         }

@@ -135,7 +135,7 @@ namespace OdeLang
         //false == 0
         //true != 2
         //"any string" != false | true | any #
-        public bool LangEquals(Value other)
+        internal bool LangEquals(Value other)
         {
             if (_stringy != null && other._stringy != null)
             {

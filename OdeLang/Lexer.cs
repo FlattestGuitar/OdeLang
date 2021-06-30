@@ -10,7 +10,7 @@ namespace OdeLang
     /// Tokens have their source code positions appended to them, so any substitution operations should not take place here
     /// or they will make it impossible to provide accurate error statements at later stages of execution.
     /// </summary>
-    public class Lexer
+    internal class Lexer
     {
         private static readonly Regex DigitRegex = new(@"\d", RegexOptions.Compiled);
 
@@ -62,13 +62,13 @@ namespace OdeLang
         private int columnNum;
         List<Token> result;
         
-        public Lexer(string code)
+        internal Lexer(string code)
         {
             _code = code;
         }
 
         //analyze code and return tokens
-        public List<Token> LexicalAnalysis()
+        internal List<Token> LexicalAnalysis()
         {
             lineNum = 0;
             columnNum = 0;

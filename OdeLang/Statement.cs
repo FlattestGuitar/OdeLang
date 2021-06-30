@@ -10,21 +10,21 @@ namespace OdeLang
     /// Statements are stateless building blocks for the syntax tree.
     /// The top level statement is always a compound statement, but anything can happen below that.
     /// </summary>
-    public abstract class Statement
+    internal abstract class Statement
     {
-        public abstract Value Eval(InterpretingContext context);
+        internal abstract Value Eval(InterpretingContext context);
     }
 
-    public class CompoundStatement : Statement
+    internal class CompoundStatement : Statement
     {
         private readonly List<Statement> _children;
 
-        public CompoundStatement(List<Statement> children)
+        internal CompoundStatement(List<Statement> children)
         {
             _children = children;
         }
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             _children.ForEach(child => child.Eval(context));
             return NullValue();
@@ -32,191 +32,191 @@ namespace OdeLang
     }
 
     //any arithmetic operation on two numbers
-    public class BinaryStatement : Statement
+    internal class BinaryStatement : Statement
     {
         private readonly Statement _left;
         private readonly Statement _right;
         private readonly Func<Value, Value, Value> _operation;
 
-        public BinaryStatement(Statement left, Statement right, Func<Value, Value, Value> operation)
+        internal BinaryStatement(Statement left, Statement right, Func<Value, Value, Value> operation)
         {
             _left = left;
             _right = right;
             _operation = operation;
         }
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             return _operation.Invoke(_left.Eval(context), _right.Eval(context));
         }
     }
 
-    public class UnaryStatement : Statement
+    internal class UnaryStatement : Statement
     {
         private readonly Statement _value;
         private readonly Func<Value, Value> _operation;
 
-        public UnaryStatement(Statement value, Func<Value, Value> operation)
+        internal UnaryStatement(Statement value, Func<Value, Value> operation)
         {
             _operation = operation;
             _value = value;
         }
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             return _operation.Invoke(_value.Eval(context));
         }
     }
 
-    public class ObjectFunctionCallStatement : Statement
+    internal class ObjectFunctionCallStatement : Statement
     {
         private readonly List<Statement> _arguments;
         private readonly Statement _obj;
         private readonly string _functionName;
 
-        public ObjectFunctionCallStatement(List<Statement> arguments, Statement obj, string functionName)
+        internal ObjectFunctionCallStatement(List<Statement> arguments, Statement obj, string functionName)
         {
             _arguments = arguments;
             _obj = obj;
             _functionName = functionName;
         }
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             return _obj.Eval(context).GetObjectValue().CallFunction(_functionName,
                 new List<Value>(_arguments.Select(arg => arg.Eval(context))));
         }
     }
 
-    public class GlobalFunctionCallStatement : Statement
+    internal class GlobalFunctionCallStatement : Statement
     {
         private readonly List<Statement> _arguments;
         private readonly string _functionName;
 
-        public GlobalFunctionCallStatement(List<Statement> arguments, string functionName)
+        internal GlobalFunctionCallStatement(List<Statement> arguments, string functionName)
         {
             _arguments = arguments;
             _functionName = functionName;
         }
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             return context.CallGlobalFunction(_functionName, _arguments.Select(arg => arg.Eval(context)).ToList());
         }
     }
 
-    public class FunctionDefinitionStatement : Statement
+    internal class FunctionDefinitionStatement : Statement
     {
         private readonly string _functionName;
         private readonly List<string> _argumentNames;
         private readonly Statement _body;
 
-        public FunctionDefinitionStatement(string functionName, List<string> argumentNames, Statement body)
+        internal FunctionDefinitionStatement(string functionName, List<string> argumentNames, Statement body)
         {
             _functionName = functionName;
             _argumentNames = argumentNames;
             _body = body;
         }
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             context.RegisterFunction(_functionName, _argumentNames, _body);
             return NullValue();
         }
     }
 
-    public class VariableAssignmentStatement : Statement
+    internal class VariableAssignmentStatement : Statement
     {
         private readonly Statement _value;
         private readonly string _variableName;
 
-        public VariableAssignmentStatement(Statement value, string variableName)
+        internal VariableAssignmentStatement(Statement value, string variableName)
         {
             _value = value;
             _variableName = variableName;
         }
 
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             context.SetVariable(_variableName, _value.Eval(context));
             return null;
         }
     }
 
-    public class VariableReadStatement : Statement
+    internal class VariableReadStatement : Statement
     {
         private readonly string _variableName;
 
-        public VariableReadStatement(string variableName)
+        internal VariableReadStatement(string variableName)
         {
             _variableName = variableName;
         }
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             return context.GetVariable(_variableName);
         }
     }
 
-    public class NumberStatement : Statement
+    internal class NumberStatement : Statement
     {
         private readonly float _number;
 
-        public NumberStatement(float number)
+        internal NumberStatement(float number)
         {
             _number = number;
         }
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             return NumericalValue(_number);
         }
     }
 
-    public class StringStatement : Statement
+    internal class StringStatement : Statement
     {
         private readonly string _string;
 
-        public StringStatement(string stringy)
+        internal StringStatement(string stringy)
         {
             _string = stringy;
         }
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             return StringValue(_string);
         }
     }
 
-    public class BooleanStatement : Statement
+    internal class BooleanStatement : Statement
     {
         private readonly bool _bool;
 
-        public BooleanStatement(bool booly)
+        internal BooleanStatement(bool booly)
         {
             _bool = booly;
         }
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             return BooleanValue(_bool);
         }
     }
 
-    public class ConditionalStatement : Statement
+    internal class ConditionalStatement : Statement
     {
         private readonly Statement _if;
         private readonly CompoundStatement _compoundStatement;
 
-        public ConditionalStatement(Statement @if, CompoundStatement compoundStatement)
+        internal ConditionalStatement(Statement @if, CompoundStatement compoundStatement)
         {
             _if = @if;
             _compoundStatement = compoundStatement;
         }
 
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             if (_if.Eval(context).GetBoolValue())
             {
@@ -227,21 +227,21 @@ namespace OdeLang
         }
     }
 
-    public class LoopStatement : Statement
+    internal class LoopStatement : Statement
     {
         private static readonly int MaxLoopRuns = 10000;
 
         private readonly Statement _condition;
         private readonly CompoundStatement _body;
 
-        public LoopStatement(Statement condition, CompoundStatement body)
+        internal LoopStatement(Statement condition, CompoundStatement body)
         {
             _condition = condition;
             _body = body;
         }
 
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             int runs = 0;
             while (true)
@@ -274,71 +274,71 @@ namespace OdeLang
         }
     }
 
-    public class LoopBreakStatement : Statement
+    internal class LoopBreakStatement : Statement
     {
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             throw new LoopBreakException();
         }
     }
 
-    public class LoopContinueStatement : Statement
+    internal class LoopContinueStatement : Statement
     {
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             throw new LoopContinueException();
         }
     }
 
-    public class NoopStatement : Statement
+    internal class NoopStatement : Statement
     {
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             return NullValue();
         }
     }
 
-    public class FunctionReturnStatement : Statement
+    internal class FunctionReturnStatement : Statement
     {
         private readonly Statement returnValue;
 
-        public FunctionReturnStatement(Statement returnValue)
+        internal FunctionReturnStatement(Statement returnValue)
         {
             this.returnValue = returnValue;
         }
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             context.ValidateCanReturn();
             throw new FunctionReturnException(returnValue.Eval(context));
         }
     }
 
-    public class ArrayStatement : Statement
+    internal class ArrayStatement : Statement
     {
         private readonly List<Statement> _values;
 
-        public ArrayStatement(List<Statement> values)
+        internal ArrayStatement(List<Statement> values)
         {
             _values = values;
         }
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             return ReferenceValue(Objects.Array(new List<Value>(_values.Select(statement => statement.Eval(context)))));
         }
     }
 
-    public class DictionaryStatement : Statement
+    internal class DictionaryStatement : Statement
     {
         private readonly Dictionary<Statement, Statement> _values;
 
-        public DictionaryStatement(Dictionary<Statement, Statement> values)
+        internal DictionaryStatement(Dictionary<Statement, Statement> values)
         {
             _values = values;
         }
 
-        public override Value Eval(InterpretingContext context)
+        internal override Value Eval(InterpretingContext context)
         {
             return ReferenceValue(Objects.Dictionary(_values.ToDictionary(
                 pair => pair.Key.Eval(context),

@@ -36,8 +36,12 @@ namespace OdeLang
             };
         }
 
+        public void InjectObject(OdeObject obj)
+        {
+            _globalVariables[obj.Name] = Value.ReferenceValue(obj);
+        }
 
-        public void SetVariable(string name, Value value)
+        internal void SetVariable(string name, Value value)
         {
             if (CurrentlyInFunctionContext() && !_globalVariables.ContainsKey(name))
             {
@@ -50,7 +54,7 @@ namespace OdeLang
             }
         }
 
-        public Value GetVariable(string name)
+        internal Value GetVariable(string name)
         {
             if (CurrentlyInFunctionContext())
             {
@@ -69,7 +73,7 @@ namespace OdeLang
             throw new ArgumentException($"Variable undefined: {name}");
         }
 
-        public Value CallGlobalFunction(string name, List<Value> arguments)
+        internal Value CallGlobalFunction(string name, List<Value> arguments)
         {
             if (_userDefinedFunctions.ContainsKey(name))
             {
@@ -129,7 +133,7 @@ namespace OdeLang
             _functionContextVariables.Pop();
         }
 
-        public void RegisterFunction(string name, List<string> argumentNames, Statement statement)
+        internal void RegisterFunction(string name, List<string> argumentNames, Statement statement)
         {
             if (_builtInFunctions.ContainsKey(name) || _userDefinedFunctions.ContainsKey(name))
             {
@@ -159,7 +163,7 @@ namespace OdeLang
             return _functionContextVariables.Count > 0;
         }
 
-        public void ValidateCanReturn()
+        internal void ValidateCanReturn()
         {
             if (!CurrentlyInFunctionContext())
             {

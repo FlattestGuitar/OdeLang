@@ -2,10 +2,10 @@
 
 namespace OdeLang
 {
-    public class Operators
+    internal class Operators
     {
 
-        public static Func<Value, Value> ArithmeticTokenToUnaryOperation(TokenType type)
+        internal static Func<Value, Value> ArithmeticTokenToUnaryOperation(TokenType type)
         {
             switch(type)
             {
@@ -19,7 +19,7 @@ namespace OdeLang
                     throw new ArgumentException($"Cannot apply {type} operator to type");
             }
         }
-        public static Func<Value, Value, Value> ArithmeticTokenToOperation(TokenType type)
+        internal static Func<Value, Value, Value> ArithmeticTokenToOperation(TokenType type)
         {
             if (type == TokenType.Plus)
             {

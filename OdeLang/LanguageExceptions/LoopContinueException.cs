@@ -2,7 +2,7 @@
 
 namespace OdeLang
 {
-    public class LoopContinueException : Exception
+    internal class LoopContinueException : Exception
     {
     }
 }
