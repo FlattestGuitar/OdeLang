@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using static OdeLang.Helpers;
+using static OdeLang.Operators;
 using static OdeLang.Tokens;
 using static OdeLang.TokenType;
 
 namespace OdeLang
 {
+    /// <summary>
+    /// This class is at the heart of parsing tokens in OdeLang.
+    /// Each method roughly corresponds to a grammar rule in the language.
+    /// The entire program is one big compound statement, but these statements get broken down further
+    /// to create a complete syntax tree.
+    /// </summary>
     public class Parser
     {
         private List<Token> _tokens;

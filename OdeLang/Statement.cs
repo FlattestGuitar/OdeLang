@@ -6,12 +6,15 @@ using static OdeLang.Value;
 
 namespace OdeLang
 {
+    /// <summary>
+    /// Statements are stateless building blocks for the syntax tree.
+    /// The top level statement is always a compound statement, but anything can happen below that.
+    /// </summary>
     public abstract class Statement
     {
         public abstract Value Eval(InterpretingContext context);
     }
 
-    //a compound statement is just a parent for a list of statements, it does not have a value
     public class CompoundStatement : Statement
     {
         private readonly List<Statement> _children;

@@ -1,5 +1,8 @@
 ﻿namespace OdeLang
 {
+    /// <summary>
+    /// These tokens are output by the lexer. They are used by the parser to interpret the code.
+    /// </summary>
     public static class Tokens
     {
         public static Token Plus(int line, int column)

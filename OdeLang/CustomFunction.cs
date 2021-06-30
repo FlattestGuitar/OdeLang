@@ -2,9 +2,9 @@
 
 namespace OdeLang
 {
-    public class Function
+    public class CustomFunction
     {
-        public Function(List<string> arguments, Statement statement)
+        public CustomFunction(List<string> arguments, Statement statement)
         {
             this.arguments = arguments;
             this.statement = statement;

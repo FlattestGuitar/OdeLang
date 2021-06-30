@@ -5,6 +5,10 @@ using System.Linq;
 
 namespace OdeLang
 {
+    /// <summary>
+    /// This class is mostly responsible for holding the current interpretation state.
+    /// All the variables and the current execution context are referenced here. 
+    /// </summary>
     public class InterpretingContext
     {
         private Dictionary<string, Value> _globalVariables = new();
@@ -13,7 +17,7 @@ namespace OdeLang
             _functionContextVariables = new(); //only the latest entry is visible at all times
 
         private Dictionary<string, Func<List<Value>, Value>> _builtInFunctions = new();
-        private Dictionary<string, Function> _userDefinedFunctions = new();
+        private Dictionary<string, CustomFunction> _userDefinedFunctions = new();
 
         private string _output = "";
 
@@ -95,7 +99,7 @@ namespace OdeLang
             throw new ArgumentException($"No such function {name}");
         }
 
-        private void SeedArguments(string name, Function definedFunc, List<Value> arguments)
+        private void SeedArguments(string name, CustomFunction definedFunc, List<Value> arguments)
         {
             var requiredArgCount = definedFunc.Arguments.Count;
 
@@ -132,7 +136,7 @@ namespace OdeLang
                 throw new ArgumentException($"Function {name} is already defined!");
             }
 
-            _userDefinedFunctions[name] = new Function(argumentNames, statement);
+            _userDefinedFunctions[name] = new CustomFunction(argumentNames, statement);
         }
 
         private void Print(List<Value> output)

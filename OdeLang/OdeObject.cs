@@ -5,6 +5,12 @@ using static OdeLang.Language;
 
 namespace OdeLang
 {
+    /// <summary>
+    /// OdeLang does not support the creation of custom objects. Objects can only be created by plugging them into
+    /// the interpreting context from outside.
+    ///
+    /// One exception are collections, which behave like objects for all intents and purposes.
+    /// </summary>
     public class OdeObject
     {
         private readonly string _objectName;

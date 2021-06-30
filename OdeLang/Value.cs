@@ -5,6 +5,11 @@ using static OdeLang.Language;
 #nullable enable
 namespace OdeLang
 {
+    /// <summary>
+    /// This class is responsible for holding values both in variables and just ones being passed around during interpretation
+    /// Each type of value can be interpreted as other, different types depending on the context
+    /// For example, a boolean will be treated as a string if being joined with another string using the + operator
+    /// </summary>
     public class Value
     {
         private readonly float? _number;

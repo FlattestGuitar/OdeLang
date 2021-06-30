@@ -2,7 +2,7 @@
 
 namespace OdeLang
 {
-    public class Helpers
+    public class Operators
     {
 
         public static Func<Value, Value> ArithmeticTokenToUnaryOperation(TokenType type)
