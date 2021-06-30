@@ -318,5 +318,34 @@ print(test())
 
             Assert.AreEqual("null", context.GetOutput());
         }
+        
+        
+        [Test]
+        public void ArrayTest()
+        {
+            string code =
+@"
+x = [1, 2, 3]
+x.append(4)
+print(x)
+";
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual("[1,2,3,4]", context.GetOutput());
+        }
+        
+        [Test]
+        public void ComplexArrayTest()
+        {
+            string code =
+@"
+x = [1, [6, 3], 3]
+x.get(1).append(5)
+print(x)
+";
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual("[1,[6,3,5],3]", context.GetOutput());
+        }
     }
 }

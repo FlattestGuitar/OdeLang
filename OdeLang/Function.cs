@@ -16,13 +16,11 @@ namespace OdeLang
         public List<string> Arguments
         {
             get => arguments;
-            set => arguments = value;
         }
 
         public Statement Statement
         {
             get => statement;
-            set => statement = value;
         }
     }
 }

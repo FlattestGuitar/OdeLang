@@ -65,7 +65,7 @@ namespace OdeLang
             throw new ArgumentException($"Variable undefined: {name}");
         }
 
-        public Value CallFunction(string name, List<Value> arguments)
+        public Value CallGlobalFunction(string name, List<Value> arguments)
         {
             if (_userDefinedFunctions.ContainsKey(name))
             {

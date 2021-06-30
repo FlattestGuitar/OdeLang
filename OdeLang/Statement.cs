@@ -65,12 +65,32 @@ namespace OdeLang
         }
     }
 
-    public class FunctionCallStatement : Statement
+    public class ObjectFunctionCallStatement : Statement
+    {
+        private readonly List<Statement> _arguments;
+        private readonly Statement _obj;
+        private readonly string _functionName;
+
+        public ObjectFunctionCallStatement(List<Statement> arguments, Statement obj, string functionName)
+        {
+            _arguments = arguments;
+            _obj = obj;
+            _functionName = functionName;
+        }
+
+        public override Value Eval(InterpretingContext context)
+        {
+            return _obj.Eval(context).GetObjectValue().CallFunction(_functionName,
+                new List<Value>(_arguments.Select(arg => arg.Eval(context))));
+        }
+    }
+    
+    public class GlobalFunctionCallStatement : Statement
     {
         private readonly List<Statement> _arguments;
         private readonly string _functionName;
 
-        public FunctionCallStatement(List<Statement> arguments, string functionName)
+        public GlobalFunctionCallStatement(List<Statement> arguments, string functionName)
         {
             _arguments = arguments;
             _functionName = functionName;
@@ -78,7 +98,7 @@ namespace OdeLang
 
         public override Value Eval(InterpretingContext context)
         {
-            return context.CallFunction(_functionName, _arguments.Select(arg => arg.Eval(context)).ToList());
+            return context.CallGlobalFunction(_functionName, _arguments.Select(arg => arg.Eval(context)).ToList());
         }
     }
 
@@ -286,6 +306,21 @@ namespace OdeLang
         {
             context.ValidateCanReturn();
             throw new FunctionReturnException(returnValue.Eval(context));
+        }
+    }
+
+    public class ArrayStatement : Statement
+    {
+        private readonly List<Statement> _values;
+
+        public ArrayStatement(List<Statement> values)
+        {
+            _values = values;
+        }
+
+        public override Value Eval(InterpretingContext context)
+        {
+            return ReferenceValue(Objects.Array(new List<Value>(_values.Select(statement => statement.Eval(context)))));
         }
     }
 }

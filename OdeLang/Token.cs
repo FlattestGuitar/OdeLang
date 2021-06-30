@@ -67,16 +67,11 @@
             return new(TokenType.Number, value, line, column);
         }
 
-        public static Token OpenParenthesis(int line, int column)
-        {
-            return new(TokenType.OpenParenthesis, "(", line, column);
-        }
-
         public static Token If(int line, int column)
         {
             return new(TokenType.If, "if", line, column);
         }
-        
+
         public static Token While(int line, int column)
         {
             return new(TokenType.While, "while", line, column);
@@ -86,15 +81,20 @@
         {
             return new(TokenType.Break, "break", line, column);
         }
-        
+
         public static Token Def(int line, int column)
         {
             return new(TokenType.Def, "def", line, column);
         }
-        
+
         public static Token Continue(int line, int column)
         {
             return new(TokenType.Continue, "continue", line, column);
+        }
+
+        public static Token OpenParenthesis(int line, int column)
+        {
+            return new(TokenType.OpenParenthesis, "(", line, column);
         }
 
         public static Token CloseParenthesis(int line, int column)
@@ -102,9 +102,24 @@
             return new(TokenType.CloseParenthesis, ")", line, column);
         }
         
+        public static Token OpenSquareBracket(int line, int column)
+        {
+            return new(TokenType.OpenSquareBracket, "[", line, column);
+        }
+
+        public static Token ClosedSquareBracket(int line, int column)
+        {
+            return new(TokenType.ClosedSquareBracket, "]", line, column);
+        }
+        
         public static Token Comma(int line, int column)
         {
             return new(TokenType.Comma, ",", line, column);
+        }   
+        
+        public static Token Period(int line, int column)
+        {
+            return new(TokenType.Period, ".", line, column);
         }   
         
         public static Token Return(int line, int column)
@@ -206,12 +221,15 @@
         Continue,
         CloseParenthesis,
         OpenParenthesis,
+        OpenSquareBracket,
+        ClosedSquareBracket,
         Newline,
         Whitespace,
         EndOfFile,
         If,
         While,
         Comma,
+        Period,
         Def,
         Return
     }

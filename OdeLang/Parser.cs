@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using static OdeLang.Helpers;
 using static OdeLang.Tokens;
+using static OdeLang.TokenType;
 
 namespace OdeLang
 {
@@ -103,7 +104,8 @@ namespace OdeLang
         private Statement Term()
         {
             var statement = Factor();
-            while (CurrentToken().TokenType is TokenType.Asterisk or TokenType.Slash or TokenType.Modulo or TokenType.LessThan or TokenType.MoreThan or TokenType.Equal or TokenType.NotEqual)
+            while (CurrentToken().TokenType is TokenType.Asterisk or TokenType.Slash or TokenType.Modulo or
+                TokenType.LessThan or TokenType.MoreThan or TokenType.Equal or TokenType.NotEqual)
             {
                 var operation = PopCurrentToken();
 
@@ -116,7 +118,7 @@ namespace OdeLang
             return statement;
         }
 
-        private Statement Factor()
+        private Statement Value()
         {
             if (CurrentToken().TokenType == TokenType.String)
             {
@@ -141,22 +143,40 @@ namespace OdeLang
                 return Number();
             }
 
-            if (CurrentToken().TokenType == TokenType.Identifier)
-            {
-                if (PeekNextToken().TokenType == TokenType.OpenParenthesis)
-                {
-                    return FunctionCall();
-                }
-
-                return Variable();
-            }
-
             if (CurrentToken().TokenType is TokenType.Minus or TokenType.Plus or TokenType.Not)
             {
                 return UnaryOperatorFactor();
             }
+            
+            if (CurrentToken().TokenType == TokenType.OpenSquareBracket)
+            {
+                return ArrayStatement();
+            }
 
+            if (CurrentToken().TokenType == TokenType.Identifier)
+            {
+                if (PeekNextToken().TokenType == TokenType.OpenParenthesis)
+                {
+                    return GlobalFunctionCall();
+                }
+
+                return Variable();
+            }
+            
             throw UnexpectedTokenException();
+        }
+
+        private Statement Factor()
+        {
+            var statement = Value();
+
+            while (CurrentToken().TokenType == TokenType.Period)
+            {
+                EatAndAdvance(TokenType.Period);
+                statement = ObjectFunctionCall(statement);
+            }
+
+            return statement;
         }
 
         private Token PeekNextToken()
@@ -188,26 +208,44 @@ namespace OdeLang
         private ConditionalStatement ConditionalStatement(int nestingLevel)
         {
             EatAndAdvance(TokenType.If);
-            
+
             Statement boolean = Expression();
-            
+
             EatAndAdvance(TokenType.Newline);
             var compound = CompoundStatement(nestingLevel + 1);
 
             return new ConditionalStatement(boolean, compound);
         }
-        
-        
+
+
         private Statement WhileStatement(int nestingLevel)
         {
             EatAndAdvance(TokenType.While);
 
             Statement condition = Expression();
-            
+
             EatAndAdvance(TokenType.Newline);
             var body = CompoundStatement(nestingLevel + 1);
 
             return new LoopStatement(condition, body);
+        }
+
+        private ArrayStatement ArrayStatement()
+        {
+            EatAndAdvance(TokenType.OpenSquareBracket);
+            List<Statement> values = new();
+            while (CurrentToken().TokenType != TokenType.ClosedSquareBracket)
+            {
+                values.Add(Expression());
+                //ignore all whitespace while we're eating an array
+                while (CurrentToken().TokenType is TokenType.Comma or TokenType.Whitespace or TokenType.Newline)
+                {
+                    PopCurrentToken();
+                }
+            }
+
+            EatAndAdvance(TokenType.ClosedSquareBracket);
+            return new ArrayStatement(values);
         }
 
         private Statement Statement(int nestingLevel)
@@ -219,11 +257,10 @@ namespace OdeLang
                     EatAndAdvance(TokenType.Whitespace);
                 }
                 catch (ArgumentException e)
-                { 
+                {
                     //todo better line+col number
                     throw new ArgumentException($"Incorrect indentation, expected {nestingLevel} levels.");
                 }
-                
             }
 
             if (CurrentToken().TokenType == TokenType.Return)
@@ -235,7 +272,7 @@ namespace OdeLang
             {
                 return FunctionDefinition(nestingLevel);
             }
-            
+
             if (CurrentToken().TokenType == TokenType.If)
             {
                 return ConditionalStatement(nestingLevel);
@@ -258,12 +295,12 @@ namespace OdeLang
 
             if (CurrentToken().TokenType == TokenType.Identifier)
             {
-                if (PeekNextToken().TokenType == TokenType.OpenParenthesis)
+                if (PeekNextToken().TokenType == TokenType.Assignment)
                 {
-                    return FunctionCall();
+                    return Assignment();
                 }
 
-                return Assignment();
+                return Expression();
             }
 
             throw UnexpectedTokenException();
@@ -279,9 +316,24 @@ namespace OdeLang
             return result;
         }
 
-        private Statement FunctionCall()
+        private Statement GlobalFunctionCall()
         {
             var identifier = PopCurrentToken();
+            var arguments = SlurpArguments();
+            var result = new GlobalFunctionCallStatement(arguments, (string) identifier.Value);
+            return result;
+        }
+
+        private Statement ObjectFunctionCall(Statement obj)
+        {
+            var nameToken = PopCurrentToken();
+            var arguments = SlurpArguments();
+            var result = new ObjectFunctionCallStatement(arguments, obj, (string) nameToken.Value);
+            return result;
+        }
+
+        private List<Statement> SlurpArguments()
+        {
             EatAndAdvance(TokenType.OpenParenthesis);
             List<Statement> arguments = new();
             while (CurrentToken().TokenType != TokenType.CloseParenthesis)
@@ -298,9 +350,9 @@ namespace OdeLang
             }
 
             EatAndAdvance(TokenType.CloseParenthesis);
-            var result = new FunctionCallStatement(arguments, (string) identifier.Value);
-            return result;
+            return arguments;
         }
+
 
         private Statement FunctionReturn()
         {
@@ -325,19 +377,20 @@ namespace OdeLang
             {
                 throw new ArgumentException("Functions can only be defined at the base level");
             }
-            
+
             EatAndAdvance(TokenType.Def);
             var functionName = (string) PopCurrentToken().Value;
             EatAndAdvance(TokenType.OpenParenthesis);
             List<string> argumentNames = new();
             while (CurrentToken().TokenType != TokenType.CloseParenthesis)
             {
-                argumentNames.Add((string)PopCurrentToken().Value);
+                argumentNames.Add((string) PopCurrentToken().Value);
                 if (CurrentToken().TokenType == TokenType.Comma)
                 {
                     EatAndAdvance(TokenType.Comma);
                 }
             }
+
             EatAndAdvance(TokenType.CloseParenthesis);
             EatAndAdvance(TokenType.Newline);
             var body = CompoundStatement(nestingLevel + 1);
@@ -351,6 +404,7 @@ namespace OdeLang
             {
                 EatAndAdvance(TokenType.Whitespace);
             }
+
             EatAndAdvance(TokenType.Newline);
             return new NoopStatement();
         }
@@ -388,11 +442,10 @@ namespace OdeLang
         private CompoundStatement CompoundStatement(int nestingLevel)
         {
             List<Statement> statements = new List<Statement>();
-            while (CurrentToken().TokenType != TokenType.EndOfFile)
+            while (CurrentToken().TokenType != EndOfFile)
             {
-                
                 //whitespace doesn't matter if there's nothing in the line
-                if (OnlyWhitespaceBeforeNextNewline()) 
+                if (OnlyWhitespaceBeforeNextNewline())
                 {
                     statements.Add(NoopStatement());
                     continue;
@@ -410,7 +463,6 @@ namespace OdeLang
                 }
 
                 statements.Add(Statement(nestingLevel));
-
             }
 
             return new CompoundStatement(statements);
@@ -423,7 +475,7 @@ namespace OdeLang
             {
                 iterator++;
             }
-            
+
             return iterator - _i;
         }
 
