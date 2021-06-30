@@ -85,9 +85,9 @@
             return new(TokenType.Break, "break", line, column);
         }
 
-        internal static Token Def(int line, int column)
+        internal static Token Fn(int line, int column)
         {
-            return new(TokenType.Def, "def", line, column);
+            return new(TokenType.Fn, "fn", line, column);
         }
 
         internal static Token Continue(int line, int column)
@@ -251,7 +251,7 @@
         Comma,
         Period,
         Colon,
-        Def,
+        Fn,
         Return
     }
 }

@@ -306,7 +306,7 @@ namespace OdeLang
                 return FunctionReturn();
             }
 
-            if (CurrentToken().TokenType == TokenType.Def)
+            if (CurrentToken().TokenType == TokenType.Fn)
             {
                 return FunctionDefinition(nestingLevel);
             }
@@ -416,7 +416,7 @@ namespace OdeLang
                 throw new ArgumentException("Functions can only be defined at the base level");
             }
 
-            EatAndAdvance(TokenType.Def);
+            EatAndAdvance(TokenType.Fn);
             var functionName = (string) PopCurrentToken().Value;
             EatAndAdvance(TokenType.OpenParenthesis);
             List<string> argumentNames = new();

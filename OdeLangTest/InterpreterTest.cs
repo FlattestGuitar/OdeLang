@@ -293,7 +293,7 @@ while(true)
         {
             string code =
 @"
-def test(qwe)
+fn test(qwe)
   print(qwe + 2)
 
 test(5)
@@ -309,7 +309,7 @@ test(5)
         {
             string code =
 @"
-def test(number_of_iterations, should_stop_on_even)
+fn test(number_of_iterations, should_stop_on_even)
   while(number_of_iterations)
     number_of_iterations = number_of_iterations - 1
     print(1)
@@ -329,7 +329,7 @@ test(5, false)
         {
             string code =
 @"
-def test()
+fn test()
   return 5
 
 print(test())
@@ -344,7 +344,7 @@ print(test())
         {
             string code =
 @"
-def test()
+fn test()
   return
 
 print(test())
