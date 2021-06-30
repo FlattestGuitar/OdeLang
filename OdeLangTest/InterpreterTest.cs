@@ -61,8 +61,10 @@ namespace OdeLangTest
         public void ComplexMultilineArithmeticOperation()
         {
             string code =
-                @"println((56+12)*(12/(72+1.2))+2+4)
-println(12+5+82*6)";
+@"
+println((56+12)*(12/(72+1.2))+2+4)
+println(12+5+82*6)
+";
 
             var context = new Interpreter(code).Run();
 
@@ -74,8 +76,10 @@ println(12+5+82*6)";
         public void AssignmentTest()
         {
             string code =
-                @"x = 5
-println(x)";
+@"
+x = 5
+println(x)
+";
 
             var context = new Interpreter(code).Run();
 
@@ -86,9 +90,11 @@ println(x)";
         public void ComplexAssignmentTest()
         {
             string code =
-                @"x = 5+13
+@"
+x = 5+13
 y = 1/2
-println(x - y)";
+println(x - y)
+";
 
             var context = new Interpreter(code).Run();
 
@@ -99,8 +105,10 @@ println(x - y)";
         public void StringAssignmentTest()
         {
             string code =
-                @"x = ""asd""
-print(x)";
+@"
+x = ""asd""
+print(x)
+";
 
             var context = new Interpreter(code).Run();
 
@@ -111,8 +119,10 @@ print(x)";
         public void StringArithmeticTest()
         {
             string code =
-                @"x = ""asd"" + ""qwe""
-print(x + 2)";
+@"
+x = ""asd"" + ""qwe""
+print(x + 2)
+";
 
             var context = new Interpreter(code).Run();
 
@@ -123,8 +133,10 @@ print(x + 2)";
         public void BooleanAssignmentTest()
         {
             string code =
-                @"x = true
-print(x)";
+@"
+x = true
+print(x)
+";
 
             var context = new Interpreter(code).Run();
 
@@ -135,8 +147,10 @@ print(x)";
         public void BasicConditionalTest()
         {
             string code =
-                @"if(true)
-  print(""x"")";
+@"
+if(true)
+  print(""x"")
+";
 
             var context = new Interpreter(code).Run();
 
@@ -148,7 +162,8 @@ print(x)";
         public void NestedConditionalTest()
         {
             string code =
-                @"if(true)
+@"
+if(true)
   if(true)
     print(""x"")
   if(false)
@@ -159,7 +174,8 @@ if(true)
   print(""o"")
 if(false)
   print(""u"")
-print(""t"")";
+print(""t"")
+";
 
             var context = new Interpreter(code).Run();
 
@@ -170,14 +186,16 @@ print(""t"")";
         public void LogicalArithmeticTest()
         {
             string code =
-                @"x = 6 < 5
+@"
+x = 6 < 5
 println(x)
 y = 7 > 1 == 5 < 1
 println(y)
 z = (7 > 1) == (5 < 1)
 println(z)
 a = false or (6 > 2 and true)
-println(a)";
+println(a)
+";
 
             var context = new Interpreter(code).Run();
 
@@ -188,7 +206,8 @@ println(a)";
         public void IfStatementAndLogicalArithmeticTest()
         {
             string code =
-                @"if(6 < 5)
+@"
+if(6 < 5)
   print(""6"")
 if(3 > 2 and true)
   if(3 > 1)
@@ -198,7 +217,8 @@ if(3 > 2 and true)
     if(false)
       print(""1"")
     if true == 1
-      print(""2"")";
+      print(""2"")
+";
 
             var context = new Interpreter(code).Run();
 
@@ -209,10 +229,12 @@ if(3 > 2 and true)
         public void LoopTest()
         {
             string code =
-                @"i = 0
+@"
+i = 0
 while(i < 2)
   print(""a"")
-  i = i + 1";
+  i = i + 1
+";
 
             var context = new Interpreter(code).Run();
 
@@ -223,12 +245,14 @@ while(i < 2)
         public void LoopControlTest()
         {
             string code =
-                @"i = 0
+@"
+i = 0
 while(true)
   print(""a"")
   i = i + 1
   if(i == 2)
-    break";
+    break
+";
 
             var context = new Interpreter(code).Run();
 
@@ -239,7 +263,8 @@ while(true)
         public void ContinueLoopControlTest()
         {
             string code =
-                @"i = 5
+@"
+i = 5
 while(true)
   i = i - 1
   if(i > 3)
@@ -247,7 +272,8 @@ while(true)
   if(i < 1)
     print(""a"")
   if i < 0
-    break";
+    break
+";
 
             var context = new Interpreter(code).Run();
 
@@ -263,7 +289,8 @@ while(true)
 def test(qwe)
   print(qwe + 2)
 
-test(5)";
+test(5)
+";
 
             var context = new Interpreter(code).Run();
 
@@ -282,7 +309,8 @@ def test(number_of_iterations, should_stop_on_even)
     if(should_stop_on_even and number_of_iterations % 2 == 0)
       break
 
-test(5, false)";
+test(5, false)
+";
 
             var context = new Interpreter(code).Run();
 
