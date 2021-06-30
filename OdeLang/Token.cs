@@ -114,6 +114,16 @@
         {
             return new(TokenType.ClosedSquareBracket, "]", line, column);
         }
+
+        public static Token OpenCurlyBracket(int line, int column)
+        {
+            return new(TokenType.OpenCurlyBracket, "{", line, column);
+        }
+
+        public static Token ClosedCurlyBracket(int line, int column)
+        {
+            return new(TokenType.ClosedCurlyBracket, "}", line, column);
+        }
         
         public static Token Comma(int line, int column)
         {
@@ -123,6 +133,11 @@
         public static Token Period(int line, int column)
         {
             return new(TokenType.Period, ".", line, column);
+        }   
+        
+        public static Token Colon(int line, int column)
+        {
+            return new(TokenType.Colon, ":", line, column);
         }   
         
         public static Token Return(int line, int column)
@@ -226,6 +241,8 @@
         OpenParenthesis,
         OpenSquareBracket,
         ClosedSquareBracket,
+        OpenCurlyBracket,
+        ClosedCurlyBracket,
         Newline,
         Whitespace,
         EndOfFile,
@@ -233,6 +250,7 @@
         While,
         Comma,
         Period,
+        Colon,
         Def,
         Return
     }

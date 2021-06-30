@@ -159,6 +159,11 @@ namespace OdeLang
                 return ArrayStatement();
             }
 
+            if (CurrentToken().TokenType == TokenType.OpenCurlyBracket)
+            {
+                return DictionaryStatement();
+            }
+
             if (CurrentToken().TokenType == TokenType.Identifier)
             {
                 if (PeekNextToken().TokenType == TokenType.OpenParenthesis)
@@ -239,19 +244,46 @@ namespace OdeLang
         private ArrayStatement ArrayStatement()
         {
             EatAndAdvance(TokenType.OpenSquareBracket);
+            EatCollectionDeadspace();
+
             List<Statement> values = new();
             while (CurrentToken().TokenType != TokenType.ClosedSquareBracket)
             {
                 values.Add(Expression());
-                //ignore all whitespace while we're eating an array
-                while (CurrentToken().TokenType is TokenType.Comma or TokenType.Whitespace or TokenType.Newline)
-                {
-                    PopCurrentToken();
-                }
+
+                EatCollectionDeadspace();
             }
 
             EatAndAdvance(TokenType.ClosedSquareBracket);
             return new ArrayStatement(values);
+        } 
+        
+        private DictionaryStatement DictionaryStatement()
+        {
+            EatAndAdvance(TokenType.OpenCurlyBracket);
+            EatCollectionDeadspace();
+
+            Dictionary<Statement, Statement> values = new();
+            while (CurrentToken().TokenType != TokenType.ClosedCurlyBracket)
+            {
+                var key = Expression();
+                EatAndAdvance(TokenType.Colon);
+                var value = Expression();
+                values.Add(key, value);
+                
+                EatCollectionDeadspace();
+            }
+
+            EatAndAdvance(TokenType.ClosedCurlyBracket);
+            return new DictionaryStatement(values);
+        }
+
+        private void EatCollectionDeadspace()
+        {
+            while (CurrentToken().TokenType is TokenType.Comma or TokenType.Whitespace or TokenType.Newline)
+            {
+                PopCurrentToken();
+            }
         }
 
         private Statement Statement(int nestingLevel)

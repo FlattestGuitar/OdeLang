@@ -87,7 +87,7 @@ namespace OdeLang
                 new List<Value>(_arguments.Select(arg => arg.Eval(context))));
         }
     }
-    
+
     public class GlobalFunctionCallStatement : Statement
     {
         private readonly List<Statement> _arguments;
@@ -117,7 +117,7 @@ namespace OdeLang
             _argumentNames = argumentNames;
             _body = body;
         }
-    
+
         public override Value Eval(InterpretingContext context)
         {
             context.RegisterFunction(_functionName, _argumentNames, _body);
@@ -173,6 +173,7 @@ namespace OdeLang
             return NumericalValue(_number);
         }
     }
+
     public class StringStatement : Statement
     {
         private readonly string _string;
@@ -187,6 +188,7 @@ namespace OdeLang
             return StringValue(_string);
         }
     }
+
     public class BooleanStatement : Statement
     {
         private readonly bool _bool;
@@ -254,7 +256,7 @@ namespace OdeLang
                 {
                     return NullValue();
                 }
-                
+
                 try
                 {
                     runs++;
@@ -279,7 +281,7 @@ namespace OdeLang
             throw new LoopBreakException();
         }
     }
-    
+
     public class LoopContinueStatement : Statement
     {
         public override Value Eval(InterpretingContext context)
@@ -324,6 +326,23 @@ namespace OdeLang
         public override Value Eval(InterpretingContext context)
         {
             return ReferenceValue(Objects.Array(new List<Value>(_values.Select(statement => statement.Eval(context)))));
+        }
+    }
+
+    public class DictionaryStatement : Statement
+    {
+        private readonly Dictionary<Statement, Statement> _values;
+
+        public DictionaryStatement(Dictionary<Statement, Statement> values)
+        {
+            _values = values;
+        }
+
+        public override Value Eval(InterpretingContext context)
+        {
+            return ReferenceValue(Objects.Dictionary(_values.ToDictionary(
+                pair => pair.Key.Eval(context),
+                pair => pair.Value.Eval(context))));
         }
     }
 }

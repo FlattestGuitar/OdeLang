@@ -375,5 +375,23 @@ print(x)
 
             Assert.AreEqual("[1,[6,3,5],3]", context.GetOutput());
         }
+        
+        [Test]
+        public void DictionaryTest()
+        {
+            string code =
+@"
+x = {
+""a"": 1,
+""b"": 2,
+""c"": [6, 4, ""test""]
+}
+print(x)
+print(x.get(""a""))
+";
+            var context = new Interpreter(code).Run();
+
+            Assert.AreEqual("{a:1,b:2,c:[6,4,test]}1", context.GetOutput());
+        }
     }
 }

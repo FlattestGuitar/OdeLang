@@ -26,5 +26,24 @@ namespace OdeLang
                 () => "[" + String.Join(",", objectValues.Select(val => val.GetStringValue())) + "]"
             );
         }
+
+        //todo keys are always saved as string values, is that bad?
+        public static OdeObject Dictionary(Dictionary<Value, Value> values)
+        {
+            Dictionary<string, Value> objectValues = new(values.ToDictionary(pair => pair.Key.GetStringValue(), pair => pair.Value));
+
+            return new OdeObject(
+                "dictionary",
+                new List<OdeObject.FunctionDefinition>
+                {
+                    new("put", 2, args => objectValues.Add(args[0].GetStringValue(), args[1])),
+                    new("get", 1, args => objectValues.GetValueOrDefault(args[0].GetStringValue(), Value.NullValue())),
+                    new("length", 0, _ => Value.NumericalValue(objectValues.Count)),
+                    new("clear", 0, _ => objectValues.Clear()),
+                },
+                () => "{" + String.Join(",",
+                    objectValues.Select(pair => pair.Key + ":" + pair.Value.GetStringValue())) + "}"
+            );
+        }
     }
 }
