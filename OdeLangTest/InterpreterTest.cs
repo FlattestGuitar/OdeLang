@@ -367,6 +367,19 @@ print(x)
             var context = Run(code);
 
             Assert.AreEqual("[1,2,3,4]", context.GetOutput());
+        }  
+        
+        [Test]
+        public void EmptyArrayTest()
+        {
+            string code =
+@"
+x = []
+print(x.length())
+";
+            var context = Run(code);
+
+            Assert.AreEqual("0", context.GetOutput());
         }
         
         [Test]
