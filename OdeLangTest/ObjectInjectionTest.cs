@@ -53,11 +53,11 @@ println(robot.get_number_of_legs())
                 "robot",
                 new List<FunctionDefinition>
                 {
-                    new("get_name", 0, _ => Value.StringValue(name)),
-                    new("get_number_of_legs", 0, _ => Value.NumericalValue(legCount)),
-                    new("is_pretty", 0, _ => Value.BooleanValue(true)),
-                    new("set_name", 1, args => name = args[0].GetStringValue()),
-                    new("set_number_of_legs", 1, args => legCount = (int) args[0].GetNumericalValue())
+                    new FunctionDefinition("get_name", 0, _ => Value.StringValue(name)),
+                    new FunctionDefinition("get_number_of_legs", 0, _ => Value.NumericalValue(legCount)),
+                    new FunctionDefinition("is_pretty", 0, _ => Value.BooleanValue(true)),
+                    new FunctionDefinition("set_name", 1, args => name = args[0].GetStringValue()),
+                    new FunctionDefinition("set_number_of_legs", 1, args => legCount = (int) args[0].GetNumericalValue())
                 },
                 () => "This is a NECESSARY to_string implementation. You can't make an object without one. Don't even try."
             );

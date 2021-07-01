@@ -95,7 +95,10 @@ namespace OdeLang
         private Statement Expression()
         {
             var statement = Term();
-            while (CurrentToken().TokenType is TokenType.Plus or TokenType.Minus or TokenType.Or or TokenType.And)
+            while (CurrentToken().TokenType == TokenType.Plus || 
+                   CurrentToken().TokenType == TokenType.Minus ||
+                   CurrentToken().TokenType == TokenType.Or ||
+                   CurrentToken().TokenType == TokenType.And)
             {
                 var operation = PopCurrentToken();
                 var right = Term();
@@ -110,8 +113,13 @@ namespace OdeLang
         private Statement Term()
         {
             var statement = Factor();
-            while (CurrentToken().TokenType is TokenType.Asterisk or TokenType.Slash or TokenType.Modulo or
-                TokenType.LessThan or TokenType.MoreThan or TokenType.Equal or TokenType.NotEqual)
+            while (CurrentToken().TokenType == TokenType.Asterisk ||
+                   CurrentToken().TokenType == TokenType.Slash ||
+                   CurrentToken().TokenType == TokenType.Modulo ||
+                   CurrentToken().TokenType == TokenType.LessThan ||
+                   CurrentToken().TokenType == TokenType.MoreThan ||
+                   CurrentToken().TokenType == TokenType.Equal ||
+                   CurrentToken().TokenType == TokenType.NotEqual)
             {
                 var operation = PopCurrentToken();
 
@@ -149,7 +157,9 @@ namespace OdeLang
                 return Number();
             }
 
-            if (CurrentToken().TokenType is TokenType.Minus or TokenType.Plus or TokenType.Not)
+            if (CurrentToken().TokenType == TokenType.Minus ||
+                CurrentToken().TokenType == TokenType.Plus ||
+                CurrentToken().TokenType == TokenType.Not)
             {
                 return UnaryOperatorFactor();
             }
@@ -246,7 +256,7 @@ namespace OdeLang
             EatAndAdvance(TokenType.OpenSquareBracket);
             EatCollectionDeadspace();
 
-            List<Statement> values = new();
+            List<Statement> values = new List<Statement>();
             while (CurrentToken().TokenType != TokenType.ClosedSquareBracket)
             {
                 values.Add(Expression());
@@ -263,7 +273,7 @@ namespace OdeLang
             EatAndAdvance(TokenType.OpenCurlyBracket);
             EatCollectionDeadspace();
 
-            Dictionary<Statement, Statement> values = new();
+            Dictionary<Statement, Statement> values = new Dictionary<Statement, Statement>();
             while (CurrentToken().TokenType != TokenType.ClosedCurlyBracket)
             {
                 var key = Expression();
@@ -280,7 +290,9 @@ namespace OdeLang
 
         private void EatCollectionDeadspace()
         {
-            while (CurrentToken().TokenType is TokenType.Comma or TokenType.Whitespace or TokenType.Newline)
+            while (CurrentToken().TokenType == TokenType.Comma ||
+                   CurrentToken().TokenType == TokenType.Whitespace ||
+                   CurrentToken().TokenType == TokenType.Newline)
             {
                 PopCurrentToken();
             }
@@ -373,7 +385,7 @@ namespace OdeLang
         private List<Statement> SlurpArguments()
         {
             EatAndAdvance(TokenType.OpenParenthesis);
-            List<Statement> arguments = new();
+            List<Statement> arguments = new List<Statement>();
             while (CurrentToken().TokenType != TokenType.CloseParenthesis)
             {
                 arguments.Add(Expression());
@@ -419,7 +431,7 @@ namespace OdeLang
             EatAndAdvance(TokenType.Fn);
             var functionName = (string) PopCurrentToken().Value;
             EatAndAdvance(TokenType.OpenParenthesis);
-            List<string> argumentNames = new();
+            List<string> argumentNames = new List<string>();
             while (CurrentToken().TokenType != TokenType.CloseParenthesis)
             {
                 argumentNames.Add((string) PopCurrentToken().Value);

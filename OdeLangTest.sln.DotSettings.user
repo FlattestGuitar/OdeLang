@@ -1,4 +1,7 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
+  &lt;Assembly Path="C:\Users\miesz\OdeLang\OdeLang\bin\Debug\net5.0\OdeLang.dll" /&gt;&#xD;
+&lt;/AssemblyExplorer&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6c1bb9c6_002D2658_002D466f_002Db977_002De7584ccfae4f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="InterpreterTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.InterpreterTest&lt;/TestId&gt;&#xD;
@@ -24,12 +27,5 @@
   &lt;Project Location="C:\Users\miesz\OdeLang\OdeLangTest" Presentation="&amp;lt;OdeLangTest&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ed6006e7_002Dbd9e_002D4191_002Da44d_002D3186a990eb22/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from &amp;lt;OdeLangTest&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.LexerTests.ConditionalStatementTest&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.InterpreterTest.ModuloArithmeticOperation&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.InterpreterTest.NegationOperation&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.InterpreterTest.NoOperation&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.InterpreterTest.LoopTest&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.InterpreterTest.LoopControlTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Project Location="C:\Users\miesz\OdeLang\OdeLangTest" Presentation="&amp;lt;OdeLangTest&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

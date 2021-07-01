@@ -11,13 +11,13 @@ namespace OdeLang
     /// </summary>
     public class InterpretingContext
     {
-        private Dictionary<string, Value> _globalVariables = new();
+        private Dictionary<string, Value> _globalVariables = new Dictionary<string, Value>();
 
         private Stack<Dictionary<string, Value>>
-            _functionContextVariables = new(); //only the latest entry is visible at all times
+            _functionContextVariables = new Stack<Dictionary<string, Value>>(); //only the latest entry is visible at all times
 
-        private Dictionary<string, Func<List<Value>, Value>> _builtInFunctions = new();
-        private Dictionary<string, CustomFunction> _userDefinedFunctions = new();
+        private Dictionary<string, Func<List<Value>, Value>> _builtInFunctions = new Dictionary<string, Func<List<Value>, Value>>();
+        private Dictionary<string, CustomFunction> _userDefinedFunctions = new Dictionary<string, CustomFunction>();
 
         private string _output = "";
 
@@ -118,7 +118,7 @@ namespace OdeLang
                     $"Too few arguments. {name} requires exactly {requiredArgCount}!");
             }
 
-            Dictionary<string, Value> argumentsToAdd = new();
+            Dictionary<string, Value> argumentsToAdd = new Dictionary<string, Value>();
 
             for (var i = 0; i < requiredArgCount; i++)
             {

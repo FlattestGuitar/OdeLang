@@ -12,17 +12,17 @@ namespace OdeLang
     /// </summary>
     internal class Lexer
     {
-        private static readonly Regex DigitRegex = new(@"\d", RegexOptions.Compiled);
+        private static readonly Regex DigitRegex = new Regex(@"\d", RegexOptions.Compiled);
 
         //digits, optional (period and optional digits), anything
-        private static readonly Regex NumberAtStartOfStringRegex = new(@"^\d+(\.\d*)?", RegexOptions.Compiled);
+        private static readonly Regex NumberAtStartOfStringRegex = new Regex(@"^\d+(\.\d*)?", RegexOptions.Compiled);
 
-        private static readonly Regex LegalStartOfIdentifier = new(@"[a-zA-Z_]", RegexOptions.Compiled);
+        private static readonly Regex LegalStartOfIdentifier = new Regex(@"[a-zA-Z_]", RegexOptions.Compiled);
 
         private static readonly Regex IdentifierAtStartOfStringRegex =
-            new(@"[a-zA-Z_]+[a-zA-Z_0-9]*", RegexOptions.Compiled);
+            new Regex(@"[a-zA-Z_]+[a-zA-Z_0-9]*", RegexOptions.Compiled);
 
-        private static readonly Dictionary<string, Func<int, int, Token>> LiteralMatches = new()
+        private static readonly Dictionary<string, Func<int, int, Token>> LiteralMatches = new Dictionary<string, Func<int, int, Token>>
         {
             {"+", Plus},
             {"-", Minus},
@@ -72,7 +72,7 @@ namespace OdeLang
         {
             lineNum = 0;
             columnNum = 0;
-            result = new();
+            result = new List<Token>();
 
             var splitCode = SplitCode();
 
@@ -89,13 +89,13 @@ namespace OdeLang
         private string[] SplitCode()
         {
             string[] splitCode;
-            if (_code.Contains('\r'))
+            if (_code.Contains("\r"))
             {
-                splitCode = _code.Split("\r\n");
+                splitCode = _code.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             }
             else
             {
-                splitCode = _code.Split("\n");
+                splitCode = _code.Split('\n');
             }
 
             return splitCode;

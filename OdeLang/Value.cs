@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using static OdeLang.Language;
 
-#nullable enable
 namespace OdeLang
 {
     /// <summary>
@@ -13,12 +12,12 @@ namespace OdeLang
     public class Value
     {
         private readonly float? _number;
-        private readonly string? _stringy;
+        private readonly string _stringy;
         private readonly bool? _boolean;
-        private readonly OdeObject? _odeObject;
+        private readonly OdeObject _odeObject;
 
 
-        private Value(float? number, string? stringy, bool? boolean, OdeObject? odeObject)
+        private Value(float? number, string stringy, bool? boolean, OdeObject odeObject)
         {
             _number = number;
             _stringy = stringy;
@@ -28,27 +27,27 @@ namespace OdeLang
 
         public static Value NumericalValue(float val)
         {
-            return new(val, null, null, null);
+            return new Value(val, null, null, null);
         }
 
         public static Value StringValue(string val)
         {
-            return new(null, val, null, null);
+            return new Value(null, val, null, null);
         }
 
         public static Value BooleanValue(bool val)
         {
-            return new(null, null, val, null);
+            return new Value(null, null, val, null);
         }
 
         public static Value ReferenceValue(OdeObject val)
         {
-            return new(null, null, null, val);
+            return new Value(null, null, null, val);
         }
 
         public static Value NullValue()
         {
-            return new(null, null, null, null);
+            return new Value(null, null, null, null);
         }
 
         public OdeObject GetObjectValue()
