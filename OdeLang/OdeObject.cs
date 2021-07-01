@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using static OdeLang.Language;
+using static OdeLang.Value;
 
 namespace OdeLang
 {
@@ -22,7 +23,7 @@ namespace OdeLang
             Name = objectName;
             _functions = functions.ToDictionary(def => def.Name);
             _functions[ToStringFunctionName] = new FunctionDefinition(ToStringFunctionName, 0,
-                _ => Value.StringValue(toStringFunc.Invoke()));
+                _ => StringValue(toStringFunc.Invoke()));
         }
 
         internal Value CallFunction(string name, List<Value> args)
@@ -42,11 +43,22 @@ namespace OdeLang
 
         public class FunctionDefinition
         {
+            private static readonly Dictionary<Type, Func<object, Value>> Types = new Dictionary<Type, Func<object, Value>>()
+            {
+                {typeof(Value), obj => (Value) obj},
+                {typeof(bool), obj => BooleanValue((bool) obj)},
+                {typeof(int), obj => NumericalValue((int) obj)},
+                {typeof(float), obj => NumericalValue((float) obj)},
+                {typeof(double), obj => NumericalValue(Convert.ToSingle(obj))},
+                {typeof(string), obj => StringValue((string) obj)},
+                {typeof(OdeObject), obj => ReferenceValue((OdeObject) obj)}
+            };
+
             internal string Name { get; }
             internal int NumberOfArguments { get; } //-1 for unlimited, like print()
-            internal Func<List<Value>, Value> Operation { get; }
+            internal Func<List<Value>, object> Operation { get; }
 
-            public FunctionDefinition(string name, int numberOfArguments, Func<List<Value>, Value> operation)
+            public FunctionDefinition(string name, int numberOfArguments, Func<List<Value>, object> operation)
             {
                 Name = name;
                 NumberOfArguments = numberOfArguments;
@@ -60,7 +72,7 @@ namespace OdeLang
                 Operation = args =>
                 {
                     operation.Invoke(args);
-                    return Value.NullValue();
+                    return null;
                 };
             }
 
@@ -72,7 +84,21 @@ namespace OdeLang
                         $"Wrong number of arguments. {Name} needs exactly {NumberOfArguments} arguments and received {args.Count}!");
                 }
 
-                return Operation.Invoke(args);
+                var result = Operation.Invoke(args);
+
+                return FindOdeType(result);
+            }
+
+            private Value FindOdeType(object result)
+            {
+                try
+                {
+                    return Types[result.GetType()].Invoke(result);
+                }
+                catch
+                {
+                    return NullValue();
+                }
             }
         }
 

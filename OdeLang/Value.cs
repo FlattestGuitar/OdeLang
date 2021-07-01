@@ -12,15 +12,14 @@ namespace OdeLang
     public class Value
     {
         private readonly float? _number;
-        private readonly string _stringy;
+        private readonly string _string;
         private readonly bool? _boolean;
         private readonly OdeObject _odeObject;
-
 
         private Value(float? number, string stringy, bool? boolean, OdeObject odeObject)
         {
             _number = number;
-            _stringy = stringy;
+            _string = stringy;
             _boolean = boolean;
             _odeObject = odeObject;
         }
@@ -73,15 +72,15 @@ namespace OdeLang
                     ? 1
                     : 0;
             }
-            
-            throw new ArgumentException("Not a numerical value");
+
+            throw new ArgumentException("Not a numerical value!");
         }
 
         public string GetStringValue()
         {
-            if (_stringy != null)
+            if (_string != null)
             {
-                return _stringy;
+                return _string;
             }
 
             if (_number != null)
@@ -116,13 +115,15 @@ namespace OdeLang
                 return _number != 0;
             }
 
-            if (_stringy != null)
+            if (_string != null)
             {
-                return _stringy.Length > 0;
+                return _string.Length > 0;
             }
 
             if (_odeObject != null)
+            {
                 return true;
+            }
 
             return false;
         }
@@ -136,9 +137,9 @@ namespace OdeLang
         //"any string" != false | true | any #
         internal bool LangEquals(Value other)
         {
-            if (_stringy != null && other._stringy != null)
+            if (_string != null && other._string != null)
             {
-                return _stringy == other._stringy;
+                return _string == other._string;
             }
 
             if (_number != null && other._number != null)

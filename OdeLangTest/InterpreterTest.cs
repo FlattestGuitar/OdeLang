@@ -78,7 +78,6 @@ println(12+5+82*6)
             Assert.AreEqual("17.147541\n509\n", context.GetOutput());
         }
 
-
         [Test]
         public void AssignmentTest()
         {

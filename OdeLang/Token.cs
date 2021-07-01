@@ -206,12 +206,12 @@
                 }
 
                 Token token = (Token) obj;
-                return (TokenType.Equals(token.TokenType)) && (Value.Equals(token.Value));
+                return TokenType.Equals(token.TokenType) && Value.Equals(token.Value);
             }
 
             public override int GetHashCode()
             {
-                return (TokenType: TokenType, Value: Value).GetHashCode();
+                return (TokenType, Value).GetHashCode();
             }
         }
     }
