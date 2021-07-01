@@ -40,6 +40,7 @@ namespace OdeLang
         {
             _globalVariables[obj.Name] = Value.ReferenceValue(obj);
         }
+        
 
         internal void SetVariable(string name, Value value)
         {
@@ -73,7 +74,7 @@ namespace OdeLang
             throw new ArgumentException($"Variable undefined: {name}");
         }
 
-        internal Value CallGlobalFunction(string name, List<Value> arguments)
+        public Value CallGlobalFunction(string name, List<Value> arguments)
         {
             if (_userDefinedFunctions.ContainsKey(name))
             {
