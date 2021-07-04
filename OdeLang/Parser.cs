@@ -23,7 +23,7 @@ namespace OdeLang
             TokenType.SlashAssignment,
             TokenType.ModuloAssignment,
         };
-        
+
         private List<Token> _tokens;
         private int _i;
 
@@ -105,7 +105,7 @@ namespace OdeLang
         private Statement Expression()
         {
             var statement = Term();
-            while (CurrentToken().TokenType == TokenType.Plus || 
+            while (CurrentToken().TokenType == TokenType.Plus ||
                    CurrentToken().TokenType == TokenType.Minus ||
                    CurrentToken().TokenType == TokenType.Or ||
                    CurrentToken().TokenType == TokenType.And)
@@ -173,7 +173,7 @@ namespace OdeLang
             {
                 return UnaryOperatorFactor();
             }
-            
+
             if (CurrentToken().TokenType == TokenType.OpenSquareBracket)
             {
                 return ArrayStatement();
@@ -184,7 +184,8 @@ namespace OdeLang
                 return DictionaryStatement();
             }
 
-            if (CurrentToken().TokenType == TokenType.Identifier)
+            if (CurrentToken().TokenType == TokenType.Identifier || CurrentToken().TokenType == TokenType.Increment ||
+                CurrentToken().TokenType == TokenType.Decrement)
             {
                 if (PeekNextToken().TokenType == TokenType.OpenParenthesis)
                 {
@@ -193,7 +194,7 @@ namespace OdeLang
 
                 return Variable();
             }
-            
+
             throw UnexpectedTokenException();
         }
 
@@ -221,7 +222,7 @@ namespace OdeLang
                 return null;
             }
         }
-        
+
         private Token PeekNextToken()
         {
             return PeekNextToken(0);
@@ -237,8 +238,34 @@ namespace OdeLang
 
         private Statement Variable()
         {
-            var identifier = PopCurrentToken();
-            return new VariableReadStatement((string) identifier.Value);
+            if (CurrentToken().TokenType == TokenType.Increment)
+            {
+                EatAndAdvance(TokenType.Increment);
+                var identifier = PopCurrentToken();
+                return new ManipulateBeforeReturnStatement((string) identifier.Value, true);
+            }
+
+            if (CurrentToken().TokenType == TokenType.Decrement)
+            {
+                EatAndAdvance(TokenType.Decrement);
+                var identifier = PopCurrentToken();
+                return new ManipulateBeforeReturnStatement((string) identifier.Value, false);
+            }
+
+            var id = PopCurrentToken();
+            if (CurrentToken().TokenType == TokenType.Increment)
+            {
+                EatAndAdvance(TokenType.Increment);
+                return new ManipulateAfterReturnStatement((string) id.Value, true);
+            }
+
+            if (CurrentToken().TokenType == TokenType.Decrement)
+            {
+                EatAndAdvance(TokenType.Decrement);
+                return new ManipulateAfterReturnStatement((string) id.Value, false);
+            }
+
+            return new VariableReadStatement((string) id.Value);
         }
 
         private ConditionalStatement ConditionalStatement(int nestingLevel)
@@ -281,8 +308,8 @@ namespace OdeLang
 
             EatAndAdvance(TokenType.ClosedSquareBracket);
             return new ArrayStatement(values);
-        } 
-        
+        }
+
         private DictionaryStatement DictionaryStatement()
         {
             EatAndAdvance(TokenType.OpenCurlyBracket);
@@ -295,7 +322,7 @@ namespace OdeLang
                 EatAndAdvance(TokenType.Colon);
                 var value = Expression();
                 values.Add(key, value);
-                
+
                 EatCollectionDeadspace();
             }
 
@@ -380,33 +407,40 @@ namespace OdeLang
                 var expression = Expression();
                 return new VariableAssignmentStatement(expression, identifier);
             }
-            
+
             if (assignmentType == TokenType.PlusAssignment)
             {
                 var expr = Expression();
                 return new VariableAssignmentStatement(
                     new BinaryStatement(new VariableReadStatement(identifier), expr,
                         ArithmeticTokenToOperation(TokenType.Plus)), identifier);
-            } 
+            }
+
             if (assignmentType == TokenType.MinusAssignment)
             {
                 var expr = Expression();
                 return new VariableAssignmentStatement(
                     new BinaryStatement(new VariableReadStatement(identifier), expr,
                         ArithmeticTokenToOperation(TokenType.Minus)), identifier);
-            } if (assignmentType == TokenType.AsteriskAssignment)
+            }
+
+            if (assignmentType == TokenType.AsteriskAssignment)
             {
                 var expr = Expression();
                 return new VariableAssignmentStatement(
                     new BinaryStatement(new VariableReadStatement(identifier), expr,
                         ArithmeticTokenToOperation(TokenType.Asterisk)), identifier);
-            } if (assignmentType == TokenType.SlashAssignment)
+            }
+
+            if (assignmentType == TokenType.SlashAssignment)
             {
                 var expr = Expression();
                 return new VariableAssignmentStatement(
                     new BinaryStatement(new VariableReadStatement(identifier), expr,
                         ArithmeticTokenToOperation(TokenType.Slash)), identifier);
-            } if (assignmentType == TokenType.ModuloAssignment)
+            }
+
+            if (assignmentType == TokenType.ModuloAssignment)
             {
                 var expr = Expression();
                 return new VariableAssignmentStatement(

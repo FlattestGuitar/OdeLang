@@ -426,5 +426,22 @@ print(x)
 
             Assert.AreEqual("6", context.GetOutput());
         }
+        
+        [Test]
+        public void ShorthandIncrementTest()
+        {
+            string code =
+@"
+x = 5
+x++
+print(x)
+print(++x)
+print(x++)
+print(x)
+";
+            var context = Run(code);
+
+            Assert.AreEqual("6778", context.GetOutput());
+        }
     }
 }

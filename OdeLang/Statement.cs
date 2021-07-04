@@ -344,4 +344,49 @@ namespace OdeLang
                 pair => pair.Value.Eval(context))));
         }
     }
+
+    internal class ManipulateBeforeReturnStatement : Statement
+    {
+        private readonly bool _increment;
+        private readonly string _identifier;
+
+        public ManipulateBeforeReturnStatement(string identifier, bool increment)
+        {
+            _identifier = identifier;
+            _increment = increment;
+        }
+
+        internal override Value Eval(InterpretingContext context)
+        {
+            var value = context.GetVariable(_identifier);
+            context.SetVariable(_identifier,
+                _increment
+                    ? NumericalValue(value.GetNumericalValue() + 1)
+                    : NumericalValue(value.GetNumericalValue() - 1));
+
+            return context.GetVariable(_identifier);
+        }
+    }
+    internal class ManipulateAfterReturnStatement : Statement
+    {
+        private readonly bool _increment;
+        private readonly string _identifier;
+
+        public ManipulateAfterReturnStatement(string identifier, bool increment)
+        {
+            _identifier = identifier;
+            _increment = increment;
+        }
+
+        internal override Value Eval(InterpretingContext context)
+        {
+            var value = context.GetVariable(_identifier);
+            context.SetVariable(_identifier,
+                _increment
+                    ? NumericalValue(value.GetNumericalValue() + 1)
+                    : NumericalValue(value.GetNumericalValue() - 1));
+
+            return value;
+        }
+    }
 }
