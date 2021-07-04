@@ -6,7 +6,7 @@ It has three main components:
 - an interpreting context, which is a state holder for the execution of the syntax tree
 
 
-This project is only a part of the entire thesis project, which is a team effort. The use case involved feeding various objects into the language's context, so the API is kind of weird. Don't mind that.
+This project is only a part of the entire thesis project, which is a team effort. The use case involves feeding various objects into the language's context, so the API is kind of weird. Don't mind that.
 
 
 Still WIP.
