@@ -443,5 +443,54 @@ print(x)
 
             Assert.AreEqual("6778", context.GetOutput());
         }
+
+        [Test]
+        public void ForLoopTest()
+        {
+            string code =
+@"
+for i in [1, 2, ""hello there"", 4]
+  print(i)
+";
+            var context = Run(code);
+
+            Assert.AreEqual("12hello there4", context.GetOutput());
+        }
+        
+        [Test]
+        public void AssignmentAndManipulationForLoop()
+        {
+            string code =
+@"
+x = [1, 2, 3]
+x.append(3)
+for i in x
+  print(i)
+";
+            var context = Run(code);
+
+            Assert.AreEqual("1233", context.GetOutput());
+        }
+        
+        [Test]
+        public void DictionaryForLoop()
+        {
+            string code =
+@"
+x = {
+""jim"": 1,
+""agnes"": 2,
+""charlie"": 51
+}
+
+for i in x
+  println(i, ""has "", x.get(i))
+";
+            var context = Run(code);
+
+            Assert.AreEqual("jim has  1\nagnes has  2\ncharlie has  51\n", context.GetOutput());
+        }
+        
+        
     }
 }

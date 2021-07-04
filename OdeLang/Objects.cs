@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -13,7 +15,7 @@ namespace OdeLang
             //all lambdas refer to this object
             List<Value> objectValues = new List<Value>(values);
 
-            return new OdeObject(
+            return new OdeArray(
                 "array",
                 new List<OdeObject.FunctionDefinition>
                 {
@@ -24,16 +26,18 @@ namespace OdeLang
                     new OdeObject.FunctionDefinition("clear", 0, _ => objectValues.Clear()),
                     new OdeObject.FunctionDefinition("length", 0, _ => Value.NumericalValue(objectValues.Count))
                 },
-                () => "[" + String.Join(",", objectValues.Select(val => val.GetStringValue())) + "]"
+                () => "[" + String.Join(",", objectValues.Select(val => val.GetStringValue())) + "]",
+                objectValues
             );
         }
 
         //todo keys are always saved as string values, is that bad?
-        internal static OdeObject Dictionary(Dictionary<Value, Value> values)
+        internal static OdeObject Dictionary(List<Tuple<Value, Value>> values)
         {
-            Dictionary<string, Value> objectValues = new Dictionary<string, Value>(values.ToDictionary(pair => pair.Key.GetStringValue(), pair => pair.Value));
+            OrderedDictionary objectValues = new OrderedDictionary();
+            values.ForEach(tuple => objectValues.Add(tuple.Item1.GetStringValue(), tuple.Item2));
 
-            return new OdeObject(
+            return new OdeDictionary(
                 "dictionary",
                 new List<OdeObject.FunctionDefinition>
                 {
@@ -52,8 +56,8 @@ namespace OdeLang
                     new OdeObject.FunctionDefinition("length", 0, _ => Value.NumericalValue(objectValues.Count)),
                     new OdeObject.FunctionDefinition("clear", 0, _ => objectValues.Clear()),
                 },
-                () => "{" + String.Join(",",
-                    objectValues.Select(pair => pair.Key + ":" + pair.Value.GetStringValue())) + "}"
+                () => "{" + String.Join(",", objectValues.Keys.Cast<string>().Select(key => key + ":" + ((Value)objectValues[key]).GetStringValue())) + "}",
+                objectValues
             );
         }
     }

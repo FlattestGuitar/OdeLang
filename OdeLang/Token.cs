@@ -108,6 +108,16 @@
         {
             return new Token(TokenType.While, "while", line, column);
         }
+        
+        internal static Token For(int line, int column)
+        {
+            return new Token(TokenType.For, "for", line, column);
+        }
+        
+        internal static Token In(int line, int column)
+        {
+            return new Token(TokenType.In, "in", line, column);
+        }
 
         internal static Token Break(int line, int column)
         {
@@ -284,6 +294,8 @@
         EndOfFile,
         If,
         While,
+        For,
+        In,
         Comma,
         Period,
         Colon,

@@ -26,7 +26,7 @@ namespace OdeLang
                 _ => StringValue(toStringFunc.Invoke()));
         }
 
-        internal Value CallFunction(string name, List<Value> args)
+        public Value CallFunction(string name, List<Value> args)
         {
             if (!_functions.ContainsKey(name))
             {
@@ -36,9 +36,22 @@ namespace OdeLang
             return _functions[name].Eval(args);
         }
 
-        internal string CallToStringFunc()
+        public string CallToStringFunc()
         {
             return CallFunction(ToStringFunctionName, new List<Value>()).GetStringValue();
+        }
+
+        public bool HasFunction(string funcName, int argCount)
+        {
+            try
+            {
+                var func = _functions[funcName];
+                return func.NumberOfArguments == argCount;
+            }
+            catch (KeyNotFoundException e)
+            {
+                return false;
+            }
         }
 
         public class FunctionDefinition

@@ -226,14 +226,14 @@ namespace OdeLang
         }
     }
 
-    internal class LoopStatement : Statement
+    internal class WhileLoopStatement : Statement
     {
         private static readonly int MaxLoopRuns = 10000;
 
         private readonly Statement _condition;
         private readonly CompoundStatement _body;
 
-        internal LoopStatement(Statement condition, CompoundStatement body)
+        internal WhileLoopStatement(Statement condition, CompoundStatement body)
         {
             _condition = condition;
             _body = body;
@@ -272,6 +272,54 @@ namespace OdeLang
             }
         }
     }
+    
+    internal class ForLoopStatement : Statement
+    {
+
+        private readonly string _iteratorName;
+        private readonly Statement _iterable;
+        private readonly CompoundStatement _body;
+
+        internal ForLoopStatement(string iteratorName, Statement iterable, CompoundStatement body)
+        {
+            _iteratorName = iteratorName;
+            _iterable = iterable;
+            _body = body;
+        }
+
+        internal override Value Eval(InterpretingContext context)
+        {
+            var evaluatedIterable = _iterable.Eval(context).GetObjectValue();
+
+            if (!(evaluatedIterable is OdeCollection))
+            {
+                throw new ArgumentException("Object is not a collection. Cannot be used as for loop iterable.");
+            }
+
+            var evaluatedCollection = (OdeCollection) evaluatedIterable;
+            var size = evaluatedCollection.Length();
+
+            for (int i = 0; i < size; i++)
+            {
+                try
+                {
+                    context.ForLoopIteration(i, evaluatedCollection, _body, _iteratorName);
+                }
+                catch (LoopBreakException)
+                {
+                    break;
+                }
+                catch (LoopContinueException)
+                {
+                    continue;
+                }
+            }
+
+            return NullValue();
+        }
+    }
+    
+    
 
     internal class LoopBreakStatement : Statement
     {
@@ -330,18 +378,23 @@ namespace OdeLang
 
     internal class DictionaryStatement : Statement
     {
-        private readonly Dictionary<Statement, Statement> _values;
+        private readonly List<Tuple<Statement, Statement>> _values;
 
-        internal DictionaryStatement(Dictionary<Statement, Statement> values)
+        internal DictionaryStatement(List<Tuple<Statement, Statement>> values)
         {
             _values = values;
         }
 
         internal override Value Eval(InterpretingContext context)
         {
-            return ReferenceValue(Objects.Dictionary(_values.ToDictionary(
-                pair => pair.Key.Eval(context),
-                pair => pair.Value.Eval(context))));
+            return ReferenceValue(Objects.Dictionary(
+                _values.Select(tuple =>  
+                    new Tuple<Value, Value>(
+                        tuple.Item1.Eval(context),
+                        tuple.Item2.Eval(context)
+                        )
+                    ).ToList()
+                ));
         }
     }
 

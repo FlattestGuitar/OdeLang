@@ -290,7 +290,23 @@ namespace OdeLang
             EatAndAdvance(TokenType.Newline);
             var body = CompoundStatement(nestingLevel + 1);
 
-            return new LoopStatement(condition, body);
+            return new WhileLoopStatement(condition, body);
+        }
+        
+        private Statement ForStatement(int nestingLevel)
+        {
+            EatAndAdvance(TokenType.For);
+
+            var iterationId = (string) PopCurrentToken().Value;
+            
+            EatAndAdvance(TokenType.In);
+
+            var iterable = Value();
+            
+            EatAndAdvance(TokenType.Newline);
+            var body = CompoundStatement(nestingLevel + 1);
+
+            return new ForLoopStatement(iterationId, iterable, body);
         }
 
         private ArrayStatement ArrayStatement()
@@ -315,13 +331,13 @@ namespace OdeLang
             EatAndAdvance(TokenType.OpenCurlyBracket);
             EatCollectionDeadspace();
 
-            Dictionary<Statement, Statement> values = new Dictionary<Statement, Statement>();
+            var values = new List<Tuple<Statement, Statement>>();
             while (CurrentToken().TokenType != TokenType.ClosedCurlyBracket)
             {
                 var key = Expression();
                 EatAndAdvance(TokenType.Colon);
                 var value = Expression();
-                values.Add(key, value);
+                values.Add(new Tuple<Statement, Statement>(key, value));
 
                 EatCollectionDeadspace();
             }
@@ -383,6 +399,11 @@ namespace OdeLang
             if (CurrentToken().TokenType == TokenType.While)
             {
                 return WhileStatement(nestingLevel);
+            }
+
+            if (CurrentToken().TokenType == TokenType.For)
+            {
+                return ForStatement(nestingLevel);
             }
 
             if (CurrentToken().TokenType == TokenType.Identifier)

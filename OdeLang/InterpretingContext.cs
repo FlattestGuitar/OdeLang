@@ -18,6 +18,7 @@ namespace OdeLang
 
         private Dictionary<string, Func<List<Value>, Value>> _builtInFunctions = new Dictionary<string, Func<List<Value>, Value>>();
         private Dictionary<string, CustomFunction> _userDefinedFunctions = new Dictionary<string, CustomFunction>();
+        private List<Dictionary<string, Value>> _loopIterators = new List<Dictionary<string, Value>>();
 
         private string _output = "";
 
@@ -57,6 +58,14 @@ namespace OdeLang
 
         internal Value GetVariable(string name)
         {
+            for (var i = _loopIterators.Count; i > 0; i--)
+            {
+                if (_loopIterators[i-1].ContainsKey(name))
+                {
+                    return _loopIterators[i-1][name];
+                }
+            }
+            
             if (CurrentlyInFunctionContext())
             {
                 var variablesInContext = _functionContextVariables.Peek();
@@ -79,7 +88,7 @@ namespace OdeLang
             if (_userDefinedFunctions.ContainsKey(name))
             {
                 var definedFunc = _userDefinedFunctions[name];
-                SeedArguments(name, definedFunc, arguments);
+                SeedFunctionArguments(name, definedFunc, arguments);
 
                 Value result = Value.NullValue();
 
@@ -92,7 +101,7 @@ namespace OdeLang
                     result = e.ReturnValue;
                 }
                 
-                ClearArguments();
+                ClearFunctionArguments();
                 return result;
             }
 
@@ -103,8 +112,15 @@ namespace OdeLang
 
             throw new ArgumentException($"No such function {name}");
         }
+        
+        internal void ForLoopIteration(int iterationNumber, OdeCollection collection, CompoundStatement body, string iteratorName)
+        {
+            SeedLoopArguments(new Dictionary<string, Value>() {{iteratorName, collection.GetAtIndex(iterationNumber)}});
+            body.Eval(this);
+            ClearLoopArguments();
+        }
 
-        private void SeedArguments(string name, CustomFunction definedFunc, List<Value> arguments)
+        private void SeedFunctionArguments(string name, CustomFunction definedFunc, List<Value> arguments)
         {
             var requiredArgCount = definedFunc.Arguments.Count;
 
@@ -129,7 +145,17 @@ namespace OdeLang
             _functionContextVariables.Push(argumentsToAdd);
         }
 
-        private void ClearArguments()
+        private void ClearFunctionArguments()
+        {
+            _functionContextVariables.Pop();
+        }
+
+        private void SeedLoopArguments(Dictionary<string, Value> args) 
+        {
+            _functionContextVariables.Push(args);
+        }
+
+        private void ClearLoopArguments()
         {
             _functionContextVariables.Pop();
         }
