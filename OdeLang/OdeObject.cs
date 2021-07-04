@@ -14,44 +14,35 @@ namespace OdeLang
     /// </summary>
     public class OdeObject
     {
-        public string Name { get; }
+        public string Name { get; set; }
 
-        private readonly Dictionary<string, FunctionDefinition> _functions;
+        protected Dictionary<string, FunctionDefinition> Functions;
 
         public OdeObject(string objectName, List<FunctionDefinition> functions, Func<string> toStringFunc)
         {
             Name = objectName;
-            _functions = functions.ToDictionary(def => def.Name);
-            _functions[ToStringFunctionName] = new FunctionDefinition(ToStringFunctionName, 0,
+            Functions = functions.ToDictionary(def => def.Name);
+            Functions[ToStringFunctionName] = new FunctionDefinition(ToStringFunctionName, 0,
                 _ => StringValue(toStringFunc.Invoke()));
+        }
+
+        internal OdeObject()
+        {
         }
 
         public Value CallFunction(string name, List<Value> args)
         {
-            if (!_functions.ContainsKey(name))
+            if (!Functions.ContainsKey(name))
             {
                 throw new ArgumentException($"Object does not contain function {name}!");
             }
 
-            return _functions[name].Eval(args);
+            return Functions[name].Eval(args);
         }
 
         public string CallToStringFunc()
         {
             return CallFunction(ToStringFunctionName, new List<Value>()).GetStringValue();
-        }
-
-        public bool HasFunction(string funcName, int argCount)
-        {
-            try
-            {
-                var func = _functions[funcName];
-                return func.NumberOfArguments == argCount;
-            }
-            catch (KeyNotFoundException e)
-            {
-                return false;
-            }
         }
 
         public class FunctionDefinition
@@ -99,10 +90,10 @@ namespace OdeLang
 
                 var result = Operation.Invoke(args);
 
-                return FindOdeType(result);
+                return AutoMapToOdeType(result);
             }
 
-            private Value FindOdeType(object result)
+            private Value AutoMapToOdeType(object result)
             {
                 try
                 {
