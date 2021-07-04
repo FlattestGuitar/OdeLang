@@ -412,5 +412,19 @@ print(x.get(""a""))
 
             Assert.AreEqual("{a:1,b:2,c:[6,4,test]}1", context.GetOutput());
         }
+        
+        [Test]
+        public void ShorthandAssignmentTest()
+        {
+            string code =
+@"
+x = 5
+x += 1
+print(x)
+";
+            var context = Run(code);
+
+            Assert.AreEqual("6", context.GetOutput());
+        }
     }
 }

@@ -64,6 +64,35 @@
         {
             return new Token(TokenType.Modulo, "%", line, column);
         }
+        
+        internal static Token PlusAssignment(int line, int column)
+        {
+            return new Token(TokenType.PlusAssignment, "+=", line, column);
+        }
+        internal static Token MinusAssignment(int line, int column)
+        {
+            return new Token(TokenType.MinusAssignment, "-=", line, column);
+        }
+        internal static Token AsteriskAssignment(int line, int column)
+        {
+            return new Token(TokenType.AsteriskAssignment, "*=", line, column);
+        }
+        internal static Token SlashAssignment(int line, int column)
+        {
+            return new Token(TokenType.SlashAssignment, "/=", line, column);
+        }
+        internal static Token ModuloAssignment(int line, int column)
+        {
+            return new Token(TokenType.ModuloAssignment, "%=", line, column);
+        }
+        internal static Token Increment(int line, int column)
+        {
+            return new Token(TokenType.Increment, "++", line, column);
+        }
+        internal static Token Decrement(int line, int column)
+        {
+            return new Token(TokenType.Decrement, "--", line, column);
+        }
 
         internal static Token Number(float value, int line, int column)
         {
@@ -228,6 +257,13 @@
         String,
         Boolean,
         Assignment,
+        PlusAssignment,
+        MinusAssignment,
+        AsteriskAssignment,
+        SlashAssignment,
+        ModuloAssignment,
+        Increment,
+        Decrement,
         MoreThan,
         LessThan,
         Not,

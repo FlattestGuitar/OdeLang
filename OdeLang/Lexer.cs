@@ -24,6 +24,13 @@ namespace OdeLang
 
         private static readonly Dictionary<string, Func<int, int, Token>> LiteralMatches = new Dictionary<string, Func<int, int, Token>>
         {
+            {"+=", PlusAssignment},
+            {"-=", MinusAssignment},
+            {"*=", AsteriskAssignment},
+            {"/=", SlashAssignment},
+            {"%=", ModuloAssignment},
+            {"++", Increment},
+            {"--", Decrement},
             {"+", Plus},
             {"-", Minus},
             {"*", Asterisk},

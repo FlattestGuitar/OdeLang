@@ -14,6 +14,16 @@ namespace OdeLang
     /// </summary>
     internal class Parser
     {
+        private static readonly List<TokenType> AssignmentTypes = new List<TokenType>()
+        {
+            TokenType.Assignment,
+            TokenType.PlusAssignment,
+            TokenType.MinusAssignment,
+            TokenType.AsteriskAssignment,
+            TokenType.SlashAssignment,
+            TokenType.ModuloAssignment,
+        };
+        
         private List<Token> _tokens;
         private int _i;
 
@@ -200,16 +210,21 @@ namespace OdeLang
             return statement;
         }
 
-        private Token PeekNextToken()
+        private Token PeekNextToken(int offset)
         {
             try
             {
-                return _tokens[_i + 1];
+                return _tokens[_i + offset + 1];
             }
             catch (ArgumentOutOfRangeException e)
             {
                 return null;
             }
+        }
+        
+        private Token PeekNextToken()
+        {
+            return PeekNextToken(0);
         }
 
         private UnaryStatement UnaryOperatorFactor()
@@ -345,7 +360,7 @@ namespace OdeLang
 
             if (CurrentToken().TokenType == TokenType.Identifier)
             {
-                if (PeekNextToken().TokenType == TokenType.Assignment)
+                if (AssignmentTypes.Contains(PeekNextToken().TokenType))
                 {
                     return Assignment();
                 }
@@ -358,12 +373,49 @@ namespace OdeLang
 
         private Statement Assignment()
         {
-            var identifier = PopCurrentToken();
-            EatAndAdvance(TokenType.Assignment);
-            var expression = Expression();
-            var result = new VariableAssignmentStatement(expression, (string) identifier.Value);
-            EatAndAdvance(TokenType.Newline);
-            return result;
+            var identifier = (string) PopCurrentToken().Value;
+            var assignmentType = PopCurrentToken().TokenType;
+            if (assignmentType == TokenType.Assignment)
+            {
+                var expression = Expression();
+                return new VariableAssignmentStatement(expression, identifier);
+            }
+            
+            if (assignmentType == TokenType.PlusAssignment)
+            {
+                var expr = Expression();
+                return new VariableAssignmentStatement(
+                    new BinaryStatement(new VariableReadStatement(identifier), expr,
+                        ArithmeticTokenToOperation(TokenType.Plus)), identifier);
+            } 
+            if (assignmentType == TokenType.MinusAssignment)
+            {
+                var expr = Expression();
+                return new VariableAssignmentStatement(
+                    new BinaryStatement(new VariableReadStatement(identifier), expr,
+                        ArithmeticTokenToOperation(TokenType.Minus)), identifier);
+            } if (assignmentType == TokenType.AsteriskAssignment)
+            {
+                var expr = Expression();
+                return new VariableAssignmentStatement(
+                    new BinaryStatement(new VariableReadStatement(identifier), expr,
+                        ArithmeticTokenToOperation(TokenType.Asterisk)), identifier);
+            } if (assignmentType == TokenType.SlashAssignment)
+            {
+                var expr = Expression();
+                return new VariableAssignmentStatement(
+                    new BinaryStatement(new VariableReadStatement(identifier), expr,
+                        ArithmeticTokenToOperation(TokenType.Slash)), identifier);
+            } if (assignmentType == TokenType.ModuloAssignment)
+            {
+                var expr = Expression();
+                return new VariableAssignmentStatement(
+                    new BinaryStatement(new VariableReadStatement(identifier), expr,
+                        ArithmeticTokenToOperation(TokenType.ModuloAssignment)), identifier);
+            }
+
+            //todo this will never be reached, bad structure
+            throw new ArgumentException("Incorrect assignment type");
         }
 
         private Statement GlobalFunctionCall()
