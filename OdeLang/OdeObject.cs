@@ -22,7 +22,9 @@ namespace OdeLang
         {
             Name = objectName;
             Functions = functions.ToDictionary(def => def.Name);
-            Functions[ToStringFunctionName] = new FunctionDefinition(ToStringFunctionName, 0,
+            Functions[ToStringFunctionName] = new FunctionDefinition(
+                ToStringFunctionName, 
+                new List<FunctionDefinition.ArgumentType>(),
                 _ => StringValue(toStringFunc.Invoke()));
         }
 
@@ -43,42 +45,6 @@ namespace OdeLang
         public string CallToStringFunc()
         {
             return CallFunction(ToStringFunctionName, new List<Value>()).GetStringValue();
-        }
-
-        public class FunctionDefinition
-        {
-            internal string Name { get; }
-            internal int NumberOfArguments { get; } //-1 for unlimited, like print()
-            internal Func<List<Value>, Value> Operation { get; }
-
-            public FunctionDefinition(string name, int numberOfArguments, Func<List<Value>, object> operation)
-            {
-                Name = name;
-                NumberOfArguments = numberOfArguments;
-                Operation = WrapFunctionWithTypeMapping(operation);
-            }
-
-            public FunctionDefinition(string name, int numberOfArguments, Action<List<Value>> operation)
-            {
-                Name = name;
-                NumberOfArguments = numberOfArguments;
-                Operation = args =>
-                {
-                    operation.Invoke(args);
-                    return null;
-                };
-            }
-
-            internal Value Eval(List<Value> args)
-            {
-                if (NumberOfArguments > -1 && args.Count != NumberOfArguments)
-                {
-                    throw new ArgumentException(
-                        $"Wrong number of arguments. {Name} needs exactly {NumberOfArguments} arguments and received {args.Count}!");
-                }
-
-                return Operation.Invoke(args);
-            }
         }
 
     }

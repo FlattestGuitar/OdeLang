@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using static OdeLang.FunctionDefinition;
 using static OdeLang.Language;
 using static OdeLang.OdeObject;
 
@@ -23,23 +25,18 @@ namespace OdeLang
         private List<Dictionary<string, Value>> _loopIterators = new List<Dictionary<string, Value>>();
 
         private string _output = "";
+        private Action<string> _outputHandler;
+
+        public InterpretingContext(Action<string> outputHandler)
+        {
+            seedDefaultMethods();
+            _outputHandler = outputHandler;
+        }
 
         public InterpretingContext()
         {
-
-            InjectGlobalFunction(new FunctionDefinition(
-                "print",
-                -1,
-                args => Print(args)));
-            
-            InjectGlobalFunction(new FunctionDefinition(
-                "println",
-                -1,
-                args =>
-                {
-                    Print(args);
-                    PrintNewline();
-                }));
+            seedDefaultMethods();
+            _outputHandler = _ => {};
         }
 
         public void InjectObject(OdeObject obj)
@@ -50,6 +47,11 @@ namespace OdeLang
         public void InjectGlobalFunction(FunctionDefinition functionDefinition)
         {
             _builtInFunctions[functionDefinition.Name] = functionDefinition;
+        }
+        
+        public string GetOutput()
+        {
+            return _output;
         }
 
         internal void SetVariable(string name, Value value)
@@ -121,7 +123,7 @@ namespace OdeLang
 
             throw new ArgumentException($"No such function {name}");
         }
-        
+
         internal void ForLoopIteration(int iterationNumber, OdeCollection collection, CompoundStatement body, string iteratorName)
         {
             SeedLoopArguments(new Dictionary<string, Value>() {{iteratorName, collection.GetAtIndex(iterationNumber)}});
@@ -179,26 +181,6 @@ namespace OdeLang
             _userDefinedFunctions[name] = new CustomFunction(argumentNames, statement);
         }
 
-        private void Print(List<Value> output)
-        {
-            _output += String.Join(" ", output.Select(val => val.GetStringValue()));
-        }
-
-        private void PrintNewline()
-        {
-            _output += "\n";
-        }
-
-        public string GetOutput()
-        {
-            return _output;
-        }
-
-        private bool CurrentlyInFunctionContext()
-        {
-            return _functionContextVariables.Count > 0;
-        }
-
         internal void ValidateCanReturn()
         {
             if (!CurrentlyInFunctionContext())
@@ -206,5 +188,34 @@ namespace OdeLang
                 throw new ArgumentException("Cannot return when not in a function!");
             }
         }
+
+        private void seedDefaultMethods()
+        {
+            InjectGlobalFunction(new FunctionDefinition(
+                "print",
+                new List<ArgumentType> {StringArgument()},
+                args => Print(args[0].GetStringValue())));
+            
+            InjectGlobalFunction(new FunctionDefinition(
+                "println",
+                new List<ArgumentType> {StringArgument()},
+                args =>
+                {
+                    Print(args[0].GetStringValue());
+                    Print("\n");
+                }));
+        }
+
+        private void Print(string output)
+        {
+            _output += output;
+            _outputHandler(output);
+        }
+
+        private bool CurrentlyInFunctionContext()
+        {
+            return _functionContextVariables.Count > 0;
+        }
+
     }
 }

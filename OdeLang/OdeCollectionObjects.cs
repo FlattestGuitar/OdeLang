@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using static OdeLang.FunctionDefinition;
+using static OdeLang.Language;
 
 namespace OdeLang
 {
@@ -34,21 +36,21 @@ namespace OdeLang
 
             Functions = new Dictionary<string, FunctionDefinition>
             {
-                {"append", new FunctionDefinition("append", -1, args => internalList.AddRange(args))},
-                {"get", new FunctionDefinition("get", 1, args => internalList[(int) args[0].GetNumericalValue()])},
+                {"append", new FunctionDefinition("append", new List<ArgumentType>{AnyArgument()}, args => internalList.Add(args[0]))},
+                {"get", new FunctionDefinition("get", new List<ArgumentType>{NumericalArgument()}, args => internalList[(int) args[0].GetNumericalValue()])},
                 {
                     "remove_at",
-                    new FunctionDefinition("remove_at", 1,
+                    new FunctionDefinition("remove_at", new List<ArgumentType>{NumericalArgument()},
                         args => internalList.RemoveAt((int) args[0].GetNumericalValue()))
                 },
                 {
                     "insert",
-                    new FunctionDefinition("insert", 2,
+                    new FunctionDefinition("insert", new List<ArgumentType>{NumericalArgument(), AnyArgument()},
                         args => internalList.Insert((int) args[0].GetNumericalValue(), args[1]))
                 },
-                {"clear", new FunctionDefinition("clear", 0, _ => internalList.Clear())},
-                {"length", new FunctionDefinition("length", 0, _ => Value.NumericalValue(internalList.Count))},
-                {"to_string", new FunctionDefinition("to_string", 0, toString)}
+                {"clear", new FunctionDefinition("clear", new List<ArgumentType>(), _ => internalList.Clear())},
+                {"length", new FunctionDefinition("length", new List<ArgumentType>(), _ => Value.NumericalValue(internalList.Count))},
+                {ToStringFunctionName, new FunctionDefinition("to_string", new List<ArgumentType>(), toString)}
             };
         }
 
@@ -79,11 +81,11 @@ namespace OdeLang
             {
                 {
                     "put",
-                    new FunctionDefinition("put", 2, args => internalDictionary.Add(args[0].GetStringValue(), args[1]))
+                    new FunctionDefinition("put", new List<ArgumentType> {StringArgument(), AnyArgument()}, args => internalDictionary.Add(args[0].GetStringValue(), args[1]))
                 },
                 {
                     "get", 
-                    new FunctionDefinition("get", 1, args =>
+                    new FunctionDefinition("get", new List<ArgumentType> {StringArgument()}, args =>
                     {
                         try
                         {
@@ -97,15 +99,15 @@ namespace OdeLang
                 },
                 {
                     "length", 
-                    new FunctionDefinition("length", 0, _ => Value.NumericalValue(internalDictionary.Count))
+                    new FunctionDefinition("length", new List<ArgumentType>(), _ => Value.NumericalValue(internalDictionary.Count))
                 },
                 {
                     "clear", 
-                    new FunctionDefinition("clear", 0, _ => internalDictionary.Clear())
+                    new FunctionDefinition("clear", new List<ArgumentType>(), _ => internalDictionary.Clear())
                 },
                 {
                     "to_string", 
-                    new FunctionDefinition("to_string", 0, toString)
+                    new FunctionDefinition(ToStringFunctionName, new List<ArgumentType>(), toString)
                 },
             };
         }

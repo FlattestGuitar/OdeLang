@@ -47,11 +47,11 @@ namespace OdeLangTest
         [Test]
         public void NegationOperation()
         {
-            string code = "print(-5, 5, 6)";
+            string code = "print(-5)";
 
             var context = Run(code);
 
-            Assert.AreEqual("-5 5 6", context.GetOutput());
+            Assert.AreEqual("-5", context.GetOutput());
         }
 
         [Test]
@@ -484,11 +484,13 @@ x = {
 }
 
 for i in x
-  println(i, ""has "", x.get(i))
+  print(i)
+  print("" has "")
+  println(x.get(i))
 ";
             var context = Run(code);
 
-            Assert.AreEqual("jim has  1\nagnes has  2\ncharlie has  51\n", context.GetOutput());
+            Assert.AreEqual("jim has 1\nagnes has 2\ncharlie has 51\n", context.GetOutput());
         }
         
         

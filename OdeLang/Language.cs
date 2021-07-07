@@ -10,7 +10,11 @@ namespace OdeLang
         internal static readonly string BooleanFalse = "false";
         internal static readonly string ToStringFunctionName = "to_string";
         internal static string CommentStart = "//";
-        
+        internal static string StringType = "string";
+        internal static string NumberType = "number";
+        internal static string BoolType = "bool";
+        internal static string NullType = "null";
+
         private static readonly Dictionary<Type, Func<object, Value>> Types = new Dictionary<Type, Func<object, Value>>
         {
             {typeof(Value), obj => (Value) obj},
