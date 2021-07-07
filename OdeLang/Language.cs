@@ -22,14 +22,18 @@ namespace OdeLang
             {typeof(int), obj => NumericalValue((int) obj)},
             {typeof(float), obj => NumericalValue((float) obj)},
             {typeof(double), obj => NumericalValue(Convert.ToSingle(obj))},
-            {typeof(string), obj => StringValue((string) obj)},
-            {typeof(OdeObject), obj => ObjectValue((OdeObject) obj)}
+            {typeof(string), obj => StringValue((string) obj)}
         };
         
         internal static Value AutoMapToOdeType(object result)
         {
             try
             {
+                if (result is OdeObject)
+                {
+                    return ObjectValue((OdeObject) result);
+                }
+
                 return Types[result.GetType()].Invoke(result);
             }
             catch

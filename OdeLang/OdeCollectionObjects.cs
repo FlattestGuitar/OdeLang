@@ -54,6 +54,11 @@ namespace OdeLang
             };
         }
 
+        public List<Value> GetValues()
+        {
+            return _internalList;
+        }
+
         internal override Value GetAtIndex(int index)
         {
             return _internalList[index];
@@ -110,6 +115,11 @@ namespace OdeLang
                     new FunctionDefinition(ToStringFunctionName, new List<ArgumentType>(), toString)
                 },
             };
+        }
+
+        public OrderedDictionary GetValues()
+        {
+            return _internalDictionary;
         }
 
         internal override Value GetAtIndex(int index)
