@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using static OdeLang.Tokens;
 
@@ -172,7 +173,7 @@ namespace OdeLang
                 {
                     var numberString = NumberAtStartOfStringRegex.Match(line.Substring(columnNum)).ToString();
                     columnNum += numberString.Length;
-                    result.Add(Number(float.Parse(numberString), lineNum, columnNum));
+                    result.Add(Number(float.Parse(numberString, CultureInfo.InvariantCulture), lineNum, columnNum));
                 }
                 else if (IsLegalStartOfIdentifier((character)))
                 {
