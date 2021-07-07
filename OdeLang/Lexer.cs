@@ -133,6 +133,11 @@ namespace OdeLang
 
             while (columnNum < length)
             {
+                if (line.Substring(columnNum).StartsWith(Language.CommentStart))
+                {
+                    break;
+                }
+
                 var foundLiteral = TryEatSimpleLiteral(line);
                 if (foundLiteral)
                 {

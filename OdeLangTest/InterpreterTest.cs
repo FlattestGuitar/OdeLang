@@ -402,8 +402,8 @@ print(x)
 @"
 x = {
 ""a"": 1,
-""b"": 2,
-""c"": [6, 4, ""test""]
+""b"": 2,//this is a comment
+""c"": [6, 4, ""test""] //this is another comment
 }
 print(x)
 print(x.get(""a""))

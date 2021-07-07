@@ -2,8 +2,9 @@
 {
     internal static class Language
     {
-        internal static string BooleanTrue = "true";
-        internal static string BooleanFalse = "false";
-        internal static string ToStringFunctionName = "to_string";
+        internal static readonly string BooleanTrue = "true";
+        internal static readonly string BooleanFalse = "false";
+        internal static readonly string ToStringFunctionName = "to_string";
+        internal static string CommentStart = "//";
     }
 }
