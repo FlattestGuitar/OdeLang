@@ -47,26 +47,15 @@ namespace OdeLang
 
         public class FunctionDefinition
         {
-            private static readonly Dictionary<Type, Func<object, Value>> Types = new Dictionary<Type, Func<object, Value>>()
-            {
-                {typeof(Value), obj => (Value) obj},
-                {typeof(bool), obj => BooleanValue((bool) obj)},
-                {typeof(int), obj => NumericalValue((int) obj)},
-                {typeof(float), obj => NumericalValue((float) obj)},
-                {typeof(double), obj => NumericalValue(Convert.ToSingle(obj))},
-                {typeof(string), obj => StringValue((string) obj)},
-                {typeof(OdeObject), obj => ReferenceValue((OdeObject) obj)}
-            };
-
             internal string Name { get; }
             internal int NumberOfArguments { get; } //-1 for unlimited, like print()
-            internal Func<List<Value>, object> Operation { get; }
+            internal Func<List<Value>, Value> Operation { get; }
 
             public FunctionDefinition(string name, int numberOfArguments, Func<List<Value>, object> operation)
             {
                 Name = name;
                 NumberOfArguments = numberOfArguments;
-                Operation = operation;
+                Operation = WrapFunctionWithTypeMapping(operation);
             }
 
             public FunctionDefinition(string name, int numberOfArguments, Action<List<Value>> operation)
@@ -88,21 +77,7 @@ namespace OdeLang
                         $"Wrong number of arguments. {Name} needs exactly {NumberOfArguments} arguments and received {args.Count}!");
                 }
 
-                var result = Operation.Invoke(args);
-
-                return AutoMapToOdeType(result);
-            }
-
-            private Value AutoMapToOdeType(object result)
-            {
-                try
-                {
-                    return Types[result.GetType()].Invoke(result);
-                }
-                catch
-                {
-                    return NullValue();
-                }
+                return Operation.Invoke(args);
             }
         }
 

@@ -14,7 +14,7 @@ namespace OdeLang
                 case TokenType.Minus:
                     return value => Value.NumericalValue(-value.GetNumericalValue());
                 case TokenType.Not:
-                    return value => Value.BooleanValue(!value.GetBoolValue());
+                    return value => Value.BoolValue(!value.GetBoolValue());
                 default:
                     throw new ArgumentException($"Cannot apply {type} operator to type");
             }
@@ -58,17 +58,17 @@ namespace OdeLang
                 case TokenType.Modulo:
                     return (a, b) => Value.NumericalValue(a.GetNumericalValue() % b.GetNumericalValue());
                 case TokenType.MoreThan:
-                    return (a, b) => Value.BooleanValue(a.GetNumericalValue() > b.GetNumericalValue());
+                    return (a, b) => Value.BoolValue(a.GetNumericalValue() > b.GetNumericalValue());
                 case TokenType.LessThan:
-                    return (a, b) => Value.BooleanValue(a.GetNumericalValue() < b.GetNumericalValue());
+                    return (a, b) => Value.BoolValue(a.GetNumericalValue() < b.GetNumericalValue());
                 case TokenType.Equal:
-                    return (a, b) => Value.BooleanValue(a.LangEquals(b));
+                    return (a, b) => Value.BoolValue(a.LangEquals(b));
                 case TokenType.NotEqual:
-                    return (a, b) => Value.BooleanValue(!a.LangEquals(b));
+                    return (a, b) => Value.BoolValue(!a.LangEquals(b));
                 case TokenType.And:
-                    return (a, b) => Value.BooleanValue(a.GetBoolValue() && b.GetBoolValue());
+                    return (a, b) => Value.BoolValue(a.GetBoolValue() && b.GetBoolValue());
                 case TokenType.Or:
-                    return (a, b) => Value.BooleanValue(a.GetBoolValue() || b.GetBoolValue());
+                    return (a, b) => Value.BoolValue(a.GetBoolValue() || b.GetBoolValue());
                 default:
                     throw new ArgumentException("Can't fetch operation type for non-arithmetic token");
             }

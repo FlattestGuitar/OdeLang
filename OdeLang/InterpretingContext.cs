@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
+using static OdeLang.Language;
+using static OdeLang.OdeObject;
 
 namespace OdeLang
 {
@@ -16,7 +18,7 @@ namespace OdeLang
         private Stack<Dictionary<string, Value>>
             _functionContextVariables = new Stack<Dictionary<string, Value>>(); //only the latest entry is visible at all times
 
-        private Dictionary<string, Func<List<Value>, Value>> _builtInFunctions = new Dictionary<string, Func<List<Value>, Value>>();
+        private Dictionary<string, FunctionDefinition> _builtInFunctions = new Dictionary<string, FunctionDefinition>();
         private Dictionary<string, CustomFunction> _userDefinedFunctions = new Dictionary<string, CustomFunction>();
         private List<Dictionary<string, Value>> _loopIterators = new List<Dictionary<string, Value>>();
 
@@ -24,24 +26,31 @@ namespace OdeLang
 
         public InterpretingContext()
         {
-            _builtInFunctions["print"] = number =>
-            {
-                Print(number);
-                return Value.NullValue();
-            };
-            _builtInFunctions["println"] = number =>
-            {
-                Print(number);
-                PrintNewline();
-                return Value.NullValue();
-            };
+
+            InjectGlobalFunction(new FunctionDefinition(
+                "print",
+                -1,
+                args => Print(args)));
+            
+            InjectGlobalFunction(new FunctionDefinition(
+                "println",
+                -1,
+                args =>
+                {
+                    Print(args);
+                    PrintNewline();
+                }));
         }
 
         public void InjectObject(OdeObject obj)
         {
-            _globalVariables[obj.Name] = Value.ReferenceValue(obj);
+            _globalVariables[obj.Name] = Value.ObjectValue(obj);
         }
-        
+
+        public void InjectGlobalFunction(FunctionDefinition functionDefinition)
+        {
+            _builtInFunctions[functionDefinition.Name] = functionDefinition;
+        }
 
         internal void SetVariable(string name, Value value)
         {
@@ -107,7 +116,7 @@ namespace OdeLang
 
             if (_builtInFunctions.ContainsKey(name))
             {
-                return _builtInFunctions[name].Invoke(arguments);
+                return _builtInFunctions[name].Eval(arguments);
             }
 
             throw new ArgumentException($"No such function {name}");

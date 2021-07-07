@@ -199,7 +199,7 @@ namespace OdeLang
 
         internal override Value Eval(InterpretingContext context)
         {
-            return BooleanValue(_bool);
+            return BoolValue(_bool);
         }
     }
 
@@ -372,7 +372,7 @@ namespace OdeLang
 
         internal override Value Eval(InterpretingContext context)
         {
-            return ReferenceValue(Objects.Array(new List<Value>(_values.Select(statement => statement.Eval(context)))));
+            return ObjectValue(Objects.Array(new List<Value>(_values.Select(statement => statement.Eval(context)))));
         }
     }
 
@@ -387,7 +387,7 @@ namespace OdeLang
 
         internal override Value Eval(InterpretingContext context)
         {
-            return ReferenceValue(Objects.Dictionary(
+            return ObjectValue(Objects.Dictionary(
                 _values.Select(tuple =>  
                     new Tuple<Value, Value>(
                         tuple.Item1.Eval(context),

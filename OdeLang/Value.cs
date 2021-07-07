@@ -34,12 +34,12 @@ namespace OdeLang
             return new Value(null, val, null, null);
         }
 
-        public static Value BooleanValue(bool val)
+        public static Value BoolValue(bool val)
         {
             return new Value(null, null, val, null);
         }
 
-        public static Value ReferenceValue(OdeObject val)
+        public static Value ObjectValue(OdeObject val)
         {
             return new Value(null, null, null, val);
         }
