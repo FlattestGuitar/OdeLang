@@ -154,13 +154,38 @@ print(x)
         {
             string code =
 @"
-if(true)
+if(false)
   print(""x"")
+else
+  print(""y"")
 ";
 
             var context = Run(code);
 
-            Assert.AreEqual("x", context.GetOutput());
+            Assert.AreEqual("y", context.GetOutput());
+        }
+
+        [Test]
+        public void CompoundConditionalTest()
+        {
+            string code =
+@"
+fn printtest(x)
+  if(x < 2)
+    print(""<2"")
+  elif(x == 2)
+    print(""=2"")
+  elif(x > 2)
+    print("">2"")
+
+printtest(1)
+printtest(2)
+printtest(3)
+";
+
+            var context = Run(code);
+
+            Assert.AreEqual("<2=2>2", context.GetOutput());
         }
 
 
@@ -284,6 +309,25 @@ while(true)
             var context = Run(code);
 
             Assert.AreEqual("aa", context.GetOutput());
+        }
+        
+        
+        [Test]
+        public void ChainedIfTest()
+        {
+            string code =
+@"
+while(true)
+  if(true)
+    print(""x"")
+  if(true)
+    print(""y"")
+  break
+";
+
+            var context = Run(code);
+
+            Assert.AreEqual("xy", context.GetOutput());
         }
         
         

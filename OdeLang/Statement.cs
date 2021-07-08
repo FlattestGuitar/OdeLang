@@ -205,24 +205,33 @@ namespace OdeLang
 
     internal class ConditionalStatement : Statement
     {
-        private readonly Statement _if;
-        private readonly CompoundStatement _compoundStatement;
+        private readonly List<Statement> _conditionals; //if, elif conditionals
+        private readonly List<CompoundStatement> _bodies; //if, elif, else bodies. Can be one more than above.
 
-        internal ConditionalStatement(Statement @if, CompoundStatement compoundStatement)
+        internal ConditionalStatement(List<Statement> conditionals, List<CompoundStatement> bodies)
         {
-            _if = @if;
-            _compoundStatement = compoundStatement;
+            _conditionals = conditionals;
+            _bodies = bodies;
         }
-
 
         internal override Value Eval(InterpretingContext context)
         {
-            if (_if.Eval(context).GetBoolValue())
+            for (int i = 0; i < _conditionals.Count; i++)
             {
-                return _compoundStatement.Eval(context);
+                if (_conditionals[i].Eval(context).GetBoolValue())
+                {
+                    return _bodies[i].Eval(context);
+                }
             }
 
-            return NullValue();
+            if (_bodies.Count > _conditionals.Count)
+            {
+                return _bodies[_bodies.Count - 1].Eval(context);
+            }
+            else
+            {
+                return NullValue();
+            }
         }
     }
 

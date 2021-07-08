@@ -55,6 +55,22 @@ namespace OdeLang
             }
         }
 
+        private TokenType NextTokenTypeAfterWhitespace()
+        {
+            int i = _i;
+            while (i < _tokens.Count)
+            {
+                if (_tokens[i].TokenType != TokenType.Whitespace)
+                {
+                    return _tokens[i].TokenType;
+                }
+
+                i++;
+            }
+            
+            return EndOfFile;
+        }
+
         private void EatAndAdvance(TokenType type)
         {
             var token = PopCurrentToken();
@@ -270,14 +286,39 @@ namespace OdeLang
 
         private ConditionalStatement ConditionalStatement(int nestingLevel)
         {
+            List<Statement> conditionals = new List<Statement>();
+            List<CompoundStatement> bodies = new List<CompoundStatement>();
+
             EatAndAdvance(TokenType.If);
 
-            Statement boolean = Expression();
-
+            conditionals.Add(Expression());
             EatAndAdvance(TokenType.Newline);
-            var compound = CompoundStatement(nestingLevel + 1);
+            bodies.Add(CompoundStatement(nestingLevel + 1));
 
-            return new ConditionalStatement(boolean, compound);
+            while (WhitespaceTokensNextInQueue() == nestingLevel)
+            {
+                
+                if (NextTokenTypeAfterWhitespace() == TokenType.Elif)
+                {
+                    EatWhitespace(nestingLevel);
+                    EatAndAdvance(TokenType.Elif);
+                    conditionals.Add(Expression());
+                    EatAndAdvance(TokenType.Newline);
+                    bodies.Add(CompoundStatement(nestingLevel + 1));        
+                } else if (NextTokenTypeAfterWhitespace() == TokenType.Else)
+                {
+                    EatWhitespace(nestingLevel);
+                    EatAndAdvance(TokenType.Else);
+                    EatAndAdvance(TokenType.Newline);
+                    bodies.Add(CompoundStatement(nestingLevel + 1));
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return new ConditionalStatement(conditionals, bodies);
         }
 
 
@@ -358,18 +399,8 @@ namespace OdeLang
 
         private Statement Statement(int nestingLevel)
         {
-            for (int i = 0; i < nestingLevel; i++)
-            {
-                try
-                {
-                    EatAndAdvance(TokenType.Whitespace);
-                }
-                catch (ArgumentException e)
-                {
-                    //todo better line+col number
-                    throw new ArgumentException($"Incorrect indentation, expected {nestingLevel} levels.");
-                }
-            }
+
+            EatWhitespace(nestingLevel);
 
             if (CurrentToken().TokenType == TokenType.Return)
             {
@@ -417,6 +448,31 @@ namespace OdeLang
             }
 
             throw UnexpectedTokenException();
+        }
+
+        private void EatWhitespace(int nestingLevel)
+        {
+            var whitespaceNextInQueue = WhitespaceTokensNextInQueue();
+            if (whitespaceNextInQueue < nestingLevel)
+            {
+                throw new ArgumentException("Something ain't right!");
+            } else if (whitespaceNextInQueue > nestingLevel)
+            {
+                throw new ArgumentException("Inconsistent indentation: too much whitespace!");
+            }
+            
+            
+            for (int i = 0; i < nestingLevel; i++)
+            {
+                try
+                {
+                    EatAndAdvance(TokenType.Whitespace);
+                }
+                catch (ArgumentException e)
+                {
+                    throw new ArgumentException($"Incorrect indentation, expected {nestingLevel} levels.");
+                }
+            }
         }
 
         private Statement Assignment()
@@ -517,7 +573,8 @@ namespace OdeLang
             Statement returnValue;
             if (OnlyWhitespaceBeforeNextNewline())
             {
-                returnValue = NoopStatement();
+                returnValue = new NoopStatement();
+                EatWhitespaceAndNewline();
             }
             else
             {
@@ -555,7 +612,7 @@ namespace OdeLang
             return new FunctionDefinitionStatement(functionName, argumentNames, body);
         }
 
-        private Statement NoopStatement()
+        private void EatWhitespaceAndNewline()
         {
             while (CurrentToken().TokenType == TokenType.Whitespace)
             {
@@ -563,7 +620,6 @@ namespace OdeLang
             }
 
             EatAndAdvance(TokenType.Newline);
-            return new NoopStatement();
         }
 
         private bool OnlyWhitespaceBeforeNextNewline()
@@ -604,20 +660,14 @@ namespace OdeLang
                 //whitespace doesn't matter if there's nothing in the line
                 if (OnlyWhitespaceBeforeNextNewline())
                 {
-                    statements.Add(NoopStatement());
+                    EatWhitespaceAndNewline();
                     continue;
                 }
 
-                var nextWhitespace = WhitespaceTokensNextInQueue();
-                if (nextWhitespace < nestingLevel)
+                if (WhitespaceTokensNextInQueue() < nestingLevel)
                 {
-                    break;
-                }
-
-                if (nextWhitespace > nestingLevel)
-                {
-                    throw new ArgumentException("Inconsistent indentation!"); //todo better exception
-                }
+                    break; //end of the compound statement
+                } 
 
                 statements.Add(Statement(nestingLevel));
             }

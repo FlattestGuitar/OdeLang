@@ -56,6 +56,8 @@ namespace OdeLang
             {"and", And},
             {"or", Or},
             {"if", If},
+            {"else", Else},
+            {"elif", Elif},
             {"while", While},
             {"for", For},
             {"in", In},

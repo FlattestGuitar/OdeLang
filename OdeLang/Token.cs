@@ -98,10 +98,19 @@
         {
             return new Token(TokenType.Number, value, line, column);
         }
-
         internal static Token If(int line, int column)
         {
             return new Token(TokenType.If, "if", line, column);
+        }
+        
+        internal static Token Elif(int line, int column)
+        {
+            return new Token(TokenType.Elif, "elif", line, column);
+        }
+        
+        internal static Token Else(int line, int column)
+        {
+            return new Token(TokenType.Else, "else", line, column);
         }
 
         internal static Token While(int line, int column)
@@ -293,6 +302,8 @@
         Whitespace,
         EndOfFile,
         If,
+        Elif,
+        Else,
         While,
         For,
         In,
