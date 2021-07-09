@@ -2,6 +2,11 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\miesz\OdeLang\OdeLang\bin\Debug\net5.0\OdeLang.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=884dcc2a_002D5302_002D4c84_002D98ad_002Dd00062737860/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="BasicStuff" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::31C6F018-CABD-4146-B01E-90F247A7D9B4::net5.0::OdeLangTest.FunctionCastingTests.BasicStuff&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a24c337b_002D9610_002D4b89_002Daff2_002D0ada67af60b3/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from &amp;lt;OdeLangTest&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\Users\miesz\OdeLang\OdeLangTest" Presentation="&amp;lt;OdeLangTest&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>

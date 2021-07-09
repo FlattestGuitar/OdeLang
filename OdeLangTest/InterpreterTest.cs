@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using OdeLang;
 
 namespace OdeLangTest
@@ -536,7 +537,5 @@ for i in x
 
             Assert.AreEqual("jim has 1\nagnes has 2\ncharlie has 51\n", context.GetOutput());
         }
-        
-        
     }
 }

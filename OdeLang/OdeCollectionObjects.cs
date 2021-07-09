@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using static OdeLang.FunctionDefinition;
 using static OdeLang.Language;
 
 namespace OdeLang
 {
     public abstract class OdeCollection : OdeObject
     {
-        protected OdeCollection(string objectName, List<FunctionDefinition> functions, Func<string> toStringFunc) :
+        protected OdeCollection(string objectName, List<OdeFunction> functions, Func<string> toStringFunc) :
             base(objectName, functions, toStringFunc)
         {
         }
@@ -31,26 +30,24 @@ namespace OdeLang
         {
             _internalList = internalList;
             Name = "array";
-            Func<List<Value>, string> toString = _ =>
+            Func<string> toString = () =>
                 "[" + String.Join(",", internalList.Select(val => val.GetStringValue())) + "]";
 
-            Functions = new Dictionary<string, FunctionDefinition>
+            Functions = new Dictionary<string, OdeFunction>
             {
-                {"append", new FunctionDefinition("append", new List<ArgumentType>{AnyArgument()}, args => internalList.Add(args[0]))},
-                {"get", new FunctionDefinition("get", new List<ArgumentType>{NumericalArgument()}, args => internalList[(int) args[0].GetNumericalValue()])},
+                {"append", new OdeFunction("append", new Action<Value>(internalList.Add))},
+                {"get", new OdeFunction("get", new Func<int, Value>(i => internalList[i]))},
                 {
                     "remove_at",
-                    new FunctionDefinition("remove_at", new List<ArgumentType>{NumericalArgument()},
-                        args => internalList.RemoveAt((int) args[0].GetNumericalValue()))
+                    new OdeFunction("remove_at", new Action<int>(internalList.RemoveAt))
                 },
                 {
                     "insert",
-                    new FunctionDefinition("insert", new List<ArgumentType>{NumericalArgument(), AnyArgument()},
-                        args => internalList.Insert((int) args[0].GetNumericalValue(), args[1]))
+                    new OdeFunction("insert", new Action<int, Value>(internalList.Insert))
                 },
-                {"clear", new FunctionDefinition("clear", new List<ArgumentType>(), _ => internalList.Clear())},
-                {"length", new FunctionDefinition("length", new List<ArgumentType>(), _ => Value.NumericalValue(internalList.Count))},
-                {ToStringFunctionName, new FunctionDefinition("to_string", new List<ArgumentType>(), toString)}
+                {"clear", new OdeFunction("clear", new Action(internalList.Clear))},
+                {"length", new OdeFunction("length", new Func<int>(() => internalList.Count))},
+                {ToStringFunctionName, new OdeFunction("to_string", new Func<string>(toString))}
             };
         }
 
@@ -72,64 +69,75 @@ namespace OdeLang
 
     public class OdeDictionary : OdeCollection
     {
-        private readonly OrderedDictionary _internalDictionary;
+        private readonly List<Tuple<string, Value>> _internalList;
 
-        public OdeDictionary(OrderedDictionary internalDictionary)
+        public OdeDictionary(List<Tuple<string, Value>> internalList)
         {
-            _internalDictionary = internalDictionary;
+            _internalList = internalList;
             Name = "array";
-            Func<List<Value>, string> toString = _ => "{" + String.Join(",",
-                _internalDictionary.Keys.Cast<string>()
-                    .Select(key => key + ":" + ((Value) _internalDictionary[key]).GetStringValue())) + "}";
+            Func<string> toString = () => "{" + String.Join(",",
+                _internalList
+                    .Select(entry => entry.Item1 + ":" + entry.Item2.GetStringValue())) + "}";
 
-            Functions = new Dictionary<string, FunctionDefinition>
+            Functions = new Dictionary<string, OdeFunction>
             {
                 {
                     "put",
-                    new FunctionDefinition("put", new List<ArgumentType> {StringArgument(), AnyArgument()}, args => internalDictionary.Add(args[0].GetStringValue(), args[1]))
+                    new OdeFunction("put",
+                        new Action<Value, Value>((key, val) =>
+                        {
+                            var existing = internalList.Find(tuple => tuple.Item1 == val.GetStringValue());
+
+                            if (existing != null)
+                            {
+                                internalList.Remove(existing);
+                            }
+                            
+                            internalList.Add(new Tuple<string, Value>(key.GetStringValue(), val));
+                        }))
                 },
                 {
-                    "get", 
-                    new FunctionDefinition("get", new List<ArgumentType> {StringArgument()}, args =>
+                    "get",
+                    new OdeFunction("get", new Func<Value, Value>(val =>
                     {
-                        try
-                        {
-                            return internalDictionary[args[0].GetStringValue()];
-                        }
-                        catch (KeyNotFoundException)
+                        var res = internalList.Find(tuple => tuple.Item1 == val.GetStringValue()).Item2;
+
+                        if (res == null)
                         {
                             return Value.NullValue();
                         }
-                    })
+
+                        return res;
+                    }))
                 },
                 {
-                    "length", 
-                    new FunctionDefinition("length", new List<ArgumentType>(), _ => Value.NumericalValue(internalDictionary.Count))
+                    "length",
+                    new OdeFunction("length", new Func<int>(() => internalList.Count))
                 },
                 {
-                    "clear", 
-                    new FunctionDefinition("clear", new List<ArgumentType>(), _ => internalDictionary.Clear())
+                    "clear",
+                    new OdeFunction("clear", new Action(() => internalList.Clear()))
                 },
                 {
-                    "to_string", 
-                    new FunctionDefinition(ToStringFunctionName, new List<ArgumentType>(), toString)
+                    ToStringFunctionName,
+                    new OdeFunction(ToStringFunctionName, new Func<string>(toString))
                 },
             };
         }
 
-        public OrderedDictionary GetValues()
+        public List<Tuple<string, Value>> GetValues()
         {
-            return _internalDictionary;
+            return _internalList;
         }
 
         internal override Value GetAtIndex(int index)
         {
-            return Value.StringValue(_internalDictionary.Keys.Cast<string>().ElementAt(index));
+            return Value.StringValue(_internalList[index].Item1);
         }
 
         internal override int Length()
         {
-            return _internalDictionary.Count;
+            return _internalList.Count;
         }
     }
 }

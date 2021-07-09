@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using OdeLang;
-using static OdeLang.FunctionDefinition;
-using static OdeLang.Value;
 
 namespace OdeLangTest
 {
@@ -46,21 +45,19 @@ print(x)
             Assert.AreEqual("-3", context.GetOutput());
         }
 
-        private FunctionDefinition GetNumbersFunction()
+        private OdeFunction GetNumbersFunction()
         {
             return new(
                 "numbers",
-                new List<ArgumentType>(),
-                _ => new OdeArray(new List<Value>{NumericalValue(1), NumericalValue(2)})
+                new Func<List<int>>(() => new List<int>(){1, 2})
             );
         }
 
-        private FunctionDefinition GetNegativeLengthFunction()
+        private OdeFunction GetNegativeLengthFunction()
         {
             return new(
                 "negative_length",
-                new List<ArgumentType> {ObjectArgument(typeof(OdeArray))},
-                args => -((OdeArray) args[0].GetObjectValue()).GetValues().Count
+                new Func<List<Value>, int>(list => -list.Count)
             );
         }
     }

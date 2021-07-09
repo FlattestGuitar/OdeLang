@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 
 namespace OdeLang
 {
@@ -17,10 +18,7 @@ namespace OdeLang
 
         internal static OdeObject Dictionary(List<Tuple<Value, Value>> values)
         {
-            OrderedDictionary objectValues = new OrderedDictionary();
-            values.ForEach(tuple => objectValues.Add(tuple.Item1.GetStringValue(), tuple.Item2));
-
-            return new OdeDictionary(objectValues);
+            return new OdeDictionary(values.Select(tuple => new Tuple<string, Value>(tuple.Item1.GetStringValue(), tuple.Item2)).ToList());
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using NUnit.Framework;
 using OdeLang;
-using static OdeLang.FunctionDefinition;
 
 namespace OdeLangTest
 {
@@ -28,21 +27,11 @@ print(range)
             Assert.AreEqual("3", context.GetOutput());
         }
 
-        private FunctionDefinition GetRangeFunction()
+        private OdeFunction GetRangeFunction()
         {
             return new(
                 "range",
-                new List<ArgumentType>
-                {
-                    ObjectArgument(typeof(Robot)), 
-                    ObjectArgument(typeof(Robot))
-                },
-                args =>
-                {
-                    var a = (Robot) args[0].GetObjectValue();
-                    var b = (Robot) args[1].GetObjectValue();
-                    return Math.Abs(a.Location - b.Location);
-                }
+                new Func<Robot, Robot, int>((robot1, robot2) => Math.Abs(robot1.Location - robot2.Location))
             );
         }
 
@@ -51,7 +40,7 @@ print(range)
         {
             internal int Location { get; }
 
-            public Robot(int location, string objectName, List<FunctionDefinition> functions, Func<string> toStringFunc)
+            public Robot(int location, string objectName, List<OdeFunction> functions, Func<string> toStringFunc)
                 : base(objectName, functions, toStringFunc)
             {
                 Location = location;
@@ -63,7 +52,7 @@ print(range)
             return new Robot(
                 location,
                 name,
-                new List<FunctionDefinition>(),
+                new List<OdeFunction>(),
                 () => "General Kenobi!"
             );
         }

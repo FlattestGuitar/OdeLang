@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using static OdeLang.Language;
 using static OdeLang.Value;
 
@@ -16,16 +17,15 @@ namespace OdeLang
     {
         public string Name { get; set; }
 
-        protected Dictionary<string, FunctionDefinition> Functions;
+        protected Dictionary<string, OdeFunction> Functions;
 
-        public OdeObject(string objectName, List<FunctionDefinition> functions, Func<string> toStringFunc)
+        public OdeObject(string objectName, List<OdeFunction> functions, Func<string> toStringFunc)
         {
             Name = objectName;
             Functions = functions.ToDictionary(def => def.Name);
-            Functions[ToStringFunctionName] = new FunctionDefinition(
-                ToStringFunctionName, 
-                new List<FunctionDefinition.ArgumentType>(),
-                _ => StringValue(toStringFunc.Invoke()));
+            Functions[ToStringFunctionName] = new OdeFunction(
+                ToStringFunctionName,
+                new Func<string>(() => toStringFunc.Invoke()));
         }
 
         internal OdeObject()

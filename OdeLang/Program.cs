@@ -1,4 +1,7 @@
-﻿namespace OdeLang
+﻿using System;
+using System.Diagnostics;
+
+namespace OdeLang
 {
     class Program
     {

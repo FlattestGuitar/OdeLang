@@ -23,6 +23,8 @@ namespace OdeLang
         private static readonly Regex IdentifierAtStartOfStringRegex =
             new Regex(@"[a-zA-Z_]+[a-zA-Z_0-9]*", RegexOptions.Compiled);
 
+        private static readonly Regex NewlineRegex = new Regex(@"\r?\n", RegexOptions.Compiled);
+
         private static readonly Dictionary<string, Func<int, int, Token>> LiteralMatches = new Dictionary<string, Func<int, int, Token>>
         {
             {"+=", PlusAssignment},
@@ -100,17 +102,7 @@ namespace OdeLang
 
         private string[] SplitCode()
         {
-            string[] splitCode;
-            if (_code.Contains("\r"))
-            {
-                splitCode = _code.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-            }
-            else
-            {
-                splitCode = _code.Split('\n');
-            }
-
-            return splitCode;
+            return NewlineRegex.Split(_code);
         }
 
         //this looks kind of ugly, but depending on the type of token read we need full control over the iteration
