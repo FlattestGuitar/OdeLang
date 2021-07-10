@@ -75,8 +75,7 @@ namespace OdeLang
                 return ObjectValue(new OdeArray(res));
             }
 
-            throw new ArgumentException($"Wrong object return type: {result.GetType()}");
-
+            throw new ArgumentException($"Wrong object return type: {result.GetType()}"); //ok
         }
 
 
@@ -105,7 +104,7 @@ namespace OdeLang
                         return val.GetObjectValue();
                     }
 
-                    throw new ArgumentException();
+                    throw new ArgumentException(); //ok
                 }
                 catch (ArgumentException)
                 {
@@ -135,7 +134,7 @@ namespace OdeLang
 
         private static ArgumentException WrongTypeException(Value val, Type type)
         {
-            return new ArgumentException($"Could not use {val.GetStringValue()} as type {type}");
+            return new ArgumentException($"Could not use {val.GetStringValue()} as type {type}. This is Krzysiek's fault.");
         }
 
         internal static Func<List<Value>, Value> WrapFunctionWithTypeMapping(Func<List<Value>, object> function)

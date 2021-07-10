@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OdeLang.ErrorExceptions;
 using static OdeLang.Language;
 
 namespace OdeLang
@@ -56,7 +57,7 @@ namespace OdeLang
                 return _odeObject;
             }
 
-            throw new ArgumentException("Not an object!");
+            throw new ValueTypeException("object", GetType());
         }
 
         public float GetNumericalValue()
@@ -73,7 +74,7 @@ namespace OdeLang
                     : 0;
             }
 
-            throw new ArgumentException("Not a numerical value!");
+            throw new ValueTypeException("number", GetType());
         }
 
         public string GetStringValue()
@@ -126,6 +127,31 @@ namespace OdeLang
             }
 
             return false;
+        }
+
+        private string GetType()
+        {
+            if (_boolean != null)
+            {
+                return "bool";
+            }
+
+            if (_number != null)
+            {
+                return "number";
+            }
+
+            if (_string != null)
+            {
+                return "string";
+            }
+
+            if (_odeObject != null)
+            {
+                return "object";
+            }
+
+            return null;
         }
 
         //how we check equality - this has some consequences

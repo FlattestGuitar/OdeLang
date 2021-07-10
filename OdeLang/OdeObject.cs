@@ -36,7 +36,7 @@ namespace OdeLang
         {
             if (!Functions.ContainsKey(name))
             {
-                throw new ArgumentException($"Object does not contain function {name}!");
+                throw new ArgumentException($"Object does not contain function {name}!"); //ok
             }
 
             return Functions[name].Eval(args);

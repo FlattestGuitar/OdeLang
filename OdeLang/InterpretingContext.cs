@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OdeLang.ErrorExceptions;
 
 namespace OdeLang
 {
@@ -62,7 +63,7 @@ namespace OdeLang
             }
         }
 
-        internal Value GetVariable(string name)
+        internal Value GetVariable(string name, int line, int column)
         {
             for (var i = _loopIterators.Count; i > 0; i--)
             {
@@ -86,9 +87,10 @@ namespace OdeLang
                 return _globalVariables[name];
             }
 
-            throw new ArgumentException($"Variable undefined: {name}");
+            throw new OdeException($"Variable undefined: {name}", line, column);
         }
-
+        
+        
         public Value CallGlobalFunction(string name, List<Value> arguments)
         {
             if (_userDefinedFunctions.ContainsKey(name))
@@ -116,7 +118,7 @@ namespace OdeLang
                 return _builtInFunctions[name].Eval(arguments);
             }
 
-            throw new ArgumentException($"No such function {name}");
+            throw new ArgumentException($"No such function {name}"); //ok
         }
 
         internal void ForLoopIteration(int iterationNumber, OdeCollection collection, CompoundStatement body,
@@ -131,15 +133,9 @@ namespace OdeLang
         {
             var requiredArgCount = definedFunc.Arguments.Count;
 
-            if (requiredArgCount < arguments.Count)
+            if (requiredArgCount != arguments.Count)
             {
-                throw new ArgumentException($"Too many arguments. {name} needs exactly {requiredArgCount}!");
-            }
-
-            if (requiredArgCount > arguments.Count)
-            {
-                throw new ArgumentException(
-                    $"Too few arguments. {name} requires exactly {requiredArgCount}!");
+                throw new ArgumentCountException(requiredArgCount, arguments.Count);
             }
 
             Dictionary<string, Value> argumentsToAdd = new Dictionary<string, Value>();
@@ -171,7 +167,7 @@ namespace OdeLang
         {
             if (_builtInFunctions.ContainsKey(name) || _userDefinedFunctions.ContainsKey(name))
             {
-                throw new ArgumentException($"Function {name} is already defined!");
+                throw new OdeException($"Function {name} is already defined!", statement);
             }
 
             _userDefinedFunctions[name] = new CustomFunction(argumentNames, statement);
@@ -181,7 +177,7 @@ namespace OdeLang
         {
             if (!CurrentlyInFunctionContext())
             {
-                throw new ArgumentException("Cannot return when not in a function!");
+                throw new ArgumentException("Cannot return when not in a function!"); //ok
             }
         }
 

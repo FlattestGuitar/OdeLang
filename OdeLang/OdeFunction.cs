@@ -23,7 +23,7 @@ namespace OdeLang
             var requiredArgCount = Function.GetMethodInfo().GetParameters().Length;
             if (args.Count != requiredArgCount)
             {
-                throw new ArgumentException($"Function {Name} called with the wrong number of arguments. Required: {requiredArgCount}, received: {args.Count}");
+                throw new ArgumentCountException(requiredArgCount, args.Count);
             }
 
             return AutoMapToOdeType(Function.DynamicInvoke(ForgeArguments(args)));
@@ -37,7 +37,7 @@ namespace OdeLang
 
             if (parameters.Length != args.Count)
             {
-                throw new ArgumentException("Parameter count not equal");
+                throw new ArgumentCountException(parameters.Length, args.Count);
             }
 
             for (int i = 0; i < parameters.Length; i++)

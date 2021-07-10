@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using OdeLang.ErrorExceptions;
+using static OdeLang.Tokens;
 using static OdeLang.Value;
 
 namespace OdeLang
@@ -11,6 +14,15 @@ namespace OdeLang
     /// </summary>
     internal abstract class Statement
     {
+        internal Statement(Token firstToken)
+        {
+            Line = firstToken.Line;
+            Column = firstToken.Column;
+        }
+
+        internal int Line { get; }
+        internal int Column { get; }
+
         internal abstract Value Eval(InterpretingContext context);
     }
 
@@ -18,7 +30,7 @@ namespace OdeLang
     {
         private readonly List<Statement> _children;
 
-        internal CompoundStatement(List<Statement> children)
+        internal CompoundStatement(List<Statement> children, Token firstToken) : base(firstToken)
         {
             _children = children;
         }
@@ -37,7 +49,8 @@ namespace OdeLang
         private readonly Statement _right;
         private readonly Func<Value, Value, Value> _operation;
 
-        internal BinaryStatement(Statement left, Statement right, Func<Value, Value, Value> operation)
+        internal BinaryStatement(Statement left, Statement right, Func<Value, Value, Value> operation, Token firstToken)
+            : base(firstToken)
         {
             _left = left;
             _right = right;
@@ -55,7 +68,7 @@ namespace OdeLang
         private readonly Statement _value;
         private readonly Func<Value, Value> _operation;
 
-        internal UnaryStatement(Statement value, Func<Value, Value> operation)
+        internal UnaryStatement(Statement value, Func<Value, Value> operation, Token firstToken) : base(firstToken)
         {
             _operation = operation;
             _value = value;
@@ -73,7 +86,8 @@ namespace OdeLang
         private readonly Statement _obj;
         private readonly string _functionName;
 
-        internal ObjectFunctionCallStatement(List<Statement> arguments, Statement obj, string functionName)
+        internal ObjectFunctionCallStatement(List<Statement> arguments, Statement obj, string functionName,
+            Token firstToken) : base(firstToken)
         {
             _arguments = arguments;
             _obj = obj;
@@ -82,8 +96,21 @@ namespace OdeLang
 
         internal override Value Eval(InterpretingContext context)
         {
-            return _obj.Eval(context).GetObjectValue().CallFunction(_functionName,
-                new List<Value>(_arguments.Select(arg => arg.Eval(context))));
+            try
+            {
+                return _obj.Eval(context).GetObjectValue().CallFunction(_functionName,
+                    new List<Value>(_arguments.Select(arg => arg.Eval(context))));
+            }
+            catch (ArgumentException)
+            {
+                throw new OdeException($"Object does not contain function {_functionName}", this);
+            }
+            catch (ArgumentCountException e)
+            {
+                throw new OdeException(
+                    $"Function {{name}} called with wrong argument count. Required: {e.Required}, Actual: {e.Actual}",
+                    this);
+            }
         }
     }
 
@@ -92,7 +119,8 @@ namespace OdeLang
         private readonly List<Statement> _arguments;
         private readonly string _functionName;
 
-        internal GlobalFunctionCallStatement(List<Statement> arguments, string functionName)
+        internal GlobalFunctionCallStatement(List<Statement> arguments, string functionName, Token firstToken) :
+            base(firstToken)
         {
             _arguments = arguments;
             _functionName = functionName;
@@ -100,7 +128,20 @@ namespace OdeLang
 
         internal override Value Eval(InterpretingContext context)
         {
-            return context.CallGlobalFunction(_functionName, _arguments.Select(arg => arg.Eval(context)).ToList());
+            try
+            {
+                return context.CallGlobalFunction(_functionName, _arguments.Select(arg => arg.Eval(context)).ToList());
+            }
+            catch (ArgumentException)
+            {
+                throw new OdeException($"No such function {_functionName}", this);
+            }
+            catch (ArgumentCountException e)
+            {
+                throw new OdeException(
+                    $"Function {{name}} called with wrong argument count. Required: {e.Required}, Actual: {e.Actual}",
+                    this);
+            }
         }
     }
 
@@ -110,7 +151,8 @@ namespace OdeLang
         private readonly List<string> _argumentNames;
         private readonly Statement _body;
 
-        internal FunctionDefinitionStatement(string functionName, List<string> argumentNames, Statement body)
+        internal FunctionDefinitionStatement(string functionName, List<string> argumentNames, Statement body,
+            Token firstToken) : base(firstToken)
         {
             _functionName = functionName;
             _argumentNames = argumentNames;
@@ -129,7 +171,7 @@ namespace OdeLang
         private readonly Statement _value;
         private readonly string _variableName;
 
-        internal VariableAssignmentStatement(Statement value, string variableName)
+        internal VariableAssignmentStatement(Statement value, string variableName, Token firstToken) : base(firstToken)
         {
             _value = value;
             _variableName = variableName;
@@ -147,14 +189,14 @@ namespace OdeLang
     {
         private readonly string _variableName;
 
-        internal VariableReadStatement(string variableName)
+        internal VariableReadStatement(string variableName, Token firstToken) : base(firstToken)
         {
             _variableName = variableName;
         }
 
         internal override Value Eval(InterpretingContext context)
         {
-            return context.GetVariable(_variableName);
+            return context.GetVariable(_variableName, Column, Line);
         }
     }
 
@@ -162,7 +204,7 @@ namespace OdeLang
     {
         private readonly float _number;
 
-        internal NumberStatement(float number)
+        internal NumberStatement(float number, Token firstToken) : base(firstToken)
         {
             _number = number;
         }
@@ -177,7 +219,7 @@ namespace OdeLang
     {
         private readonly string _string;
 
-        internal StringStatement(string stringy)
+        internal StringStatement(string stringy, Token firstToken) : base(firstToken)
         {
             _string = stringy;
         }
@@ -192,7 +234,7 @@ namespace OdeLang
     {
         private readonly bool _bool;
 
-        internal BooleanStatement(bool booly)
+        internal BooleanStatement(bool booly, Token firstToken) : base(firstToken)
         {
             _bool = booly;
         }
@@ -208,7 +250,8 @@ namespace OdeLang
         private readonly List<Statement> _conditionals; //if, elif conditionals
         private readonly List<CompoundStatement> _bodies; //if, elif, else bodies. Can be one more than above.
 
-        internal ConditionalStatement(List<Statement> conditionals, List<CompoundStatement> bodies)
+        internal ConditionalStatement(List<Statement> conditionals, List<CompoundStatement> bodies, Token firstToken) :
+            base(firstToken)
         {
             _conditionals = conditionals;
             _bodies = bodies;
@@ -242,7 +285,7 @@ namespace OdeLang
         private readonly Statement _condition;
         private readonly CompoundStatement _body;
 
-        internal WhileLoopStatement(Statement condition, CompoundStatement body)
+        internal WhileLoopStatement(Statement condition, CompoundStatement body, Token firstToken) : base(firstToken)
         {
             _condition = condition;
             _body = body;
@@ -256,8 +299,7 @@ namespace OdeLang
             {
                 if (runs > MaxLoopRuns)
                 {
-                    throw new ArgumentException(
-                        $"Possible infinite loop. Loop ran for over {MaxLoopRuns} runs. Aborting.");
+                    throw new OdeException($"Possible infinite loop. Ran for over {MaxLoopRuns} runs.", this);
                 }
 
                 if (!_condition.Eval(context).GetBoolValue())
@@ -281,15 +323,15 @@ namespace OdeLang
             }
         }
     }
-    
+
     internal class ForLoopStatement : Statement
     {
-
         private readonly string _iteratorName;
         private readonly Statement _iterable;
         private readonly CompoundStatement _body;
 
-        internal ForLoopStatement(string iteratorName, Statement iterable, CompoundStatement body)
+        internal ForLoopStatement(string iteratorName, Statement iterable, CompoundStatement body, Token firstToken) :
+            base(firstToken)
         {
             _iteratorName = iteratorName;
             _iterable = iterable;
@@ -302,7 +344,7 @@ namespace OdeLang
 
             if (!(evaluatedIterable is OdeCollection))
             {
-                throw new ArgumentException("Object is not a collection. Cannot be used as for loop iterable.");
+                throw new OdeException("Only a list or dictionary can be used as an iterable in a for loop.", this);
             }
 
             var evaluatedCollection = (OdeCollection) evaluatedIterable;
@@ -327,11 +369,14 @@ namespace OdeLang
             return NullValue();
         }
     }
-    
-    
+
 
     internal class LoopBreakStatement : Statement
     {
+        public LoopBreakStatement(Token firstToken) : base(firstToken)
+        {
+        }
+
         internal override Value Eval(InterpretingContext context)
         {
             throw new LoopBreakException();
@@ -340,6 +385,10 @@ namespace OdeLang
 
     internal class LoopContinueStatement : Statement
     {
+        public LoopContinueStatement(Token firstToken) : base(firstToken)
+        {
+        }
+
         internal override Value Eval(InterpretingContext context)
         {
             throw new LoopContinueException();
@@ -348,6 +397,10 @@ namespace OdeLang
 
     internal class NoopStatement : Statement
     {
+        public NoopStatement(Token firstToken) : base(firstToken)
+        {
+        }
+
         internal override Value Eval(InterpretingContext context)
         {
             return NullValue();
@@ -358,14 +411,22 @@ namespace OdeLang
     {
         private readonly Statement returnValue;
 
-        internal FunctionReturnStatement(Statement returnValue)
+        internal FunctionReturnStatement(Statement returnValue, Token firstToken) : base(firstToken)
         {
             this.returnValue = returnValue;
         }
 
         internal override Value Eval(InterpretingContext context)
         {
-            context.ValidateCanReturn();
+            try
+            {
+                context.ValidateCanReturn();
+            }
+            catch (ArgumentException)
+            {
+                throw new OdeException("Cannot use return statement when not inside of a function!", this);
+            }
+            
             throw new FunctionReturnException(returnValue.Eval(context));
         }
     }
@@ -374,7 +435,7 @@ namespace OdeLang
     {
         private readonly List<Statement> _values;
 
-        internal ArrayStatement(List<Statement> values)
+        internal ArrayStatement(List<Statement> values, Token firstToken) : base(firstToken)
         {
             _values = values;
         }
@@ -389,7 +450,7 @@ namespace OdeLang
     {
         private readonly List<Tuple<Statement, Statement>> _values;
 
-        internal DictionaryStatement(List<Tuple<Statement, Statement>> values)
+        internal DictionaryStatement(List<Tuple<Statement, Statement>> values, Token firstToken) : base(firstToken)
         {
             _values = values;
         }
@@ -397,13 +458,13 @@ namespace OdeLang
         internal override Value Eval(InterpretingContext context)
         {
             return ObjectValue(Objects.Dictionary(
-                _values.Select(tuple =>  
+                _values.Select(tuple =>
                     new Tuple<Value, Value>(
                         tuple.Item1.Eval(context),
                         tuple.Item2.Eval(context)
-                        )
-                    ).ToList()
-                ));
+                    )
+                ).ToList()
+            ));
         }
     }
 
@@ -412,7 +473,7 @@ namespace OdeLang
         private readonly bool _increment;
         private readonly string _identifier;
 
-        public ManipulateBeforeReturnStatement(string identifier, bool increment)
+        public ManipulateBeforeReturnStatement(string identifier, bool increment, Token firstToken) : base(firstToken)
         {
             _identifier = identifier;
             _increment = increment;
@@ -420,21 +481,22 @@ namespace OdeLang
 
         internal override Value Eval(InterpretingContext context)
         {
-            var value = context.GetVariable(_identifier);
+            var value = context.GetVariable(_identifier, Column, Line);
             context.SetVariable(_identifier,
                 _increment
                     ? NumericalValue(value.GetNumericalValue() + 1)
                     : NumericalValue(value.GetNumericalValue() - 1));
 
-            return context.GetVariable(_identifier);
+            return context.GetVariable(_identifier, Column, Line);
         }
     }
+
     internal class ManipulateAfterReturnStatement : Statement
     {
         private readonly bool _increment;
         private readonly string _identifier;
 
-        public ManipulateAfterReturnStatement(string identifier, bool increment)
+        public ManipulateAfterReturnStatement(string identifier, bool increment, Token firstToken) : base(firstToken)
         {
             _identifier = identifier;
             _increment = increment;
@@ -442,7 +504,7 @@ namespace OdeLang
 
         internal override Value Eval(InterpretingContext context)
         {
-            var value = context.GetVariable(_identifier);
+            var value = context.GetVariable(_identifier, Column, Line);
             context.SetVariable(_identifier,
                 _increment
                     ? NumericalValue(value.GetNumericalValue() + 1)

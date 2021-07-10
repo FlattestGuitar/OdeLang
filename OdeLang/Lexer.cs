@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using OdeLang.ErrorExceptions;
 using static OdeLang.Tokens;
 
 namespace OdeLang
@@ -120,8 +121,8 @@ namespace OdeLang
                 }
                 else
                 {
-                    throw new ArgumentException(
-                        "Illegal number of spaces at start of line. The number should be divisible by 2.");
+                    throw new OdeException("Bad spacing at start of line. Should be multiple of 2.", lineNum,
+                        columnNum);
                 }
             }
 
@@ -182,7 +183,7 @@ namespace OdeLang
                 }
                 else
                 {
-                    throw new ArgumentException($"Unexpected character {character}, at {lineNum}:{columnNum}");
+                    throw new OdeException($"Unexpected character {character}.", lineNum, columnNum);
                 }
             }
 

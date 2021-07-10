@@ -1,13 +1,33 @@
 ﻿using System;
+using OdeLang.ErrorExceptions;
 
 namespace OdeLang
 {
     internal class Operators
     {
-
-        internal static Func<Value, Value> ArithmeticTokenToUnaryOperation(TokenType type)
+        
+        internal static Func<Value, Value, Value> PlusOperation = (a, b) =>
         {
-            switch(type)
+            try
+            {
+                return Value.NumericalValue(a.GetNumericalValue() + b.GetNumericalValue());
+            }
+            catch (ValueTypeException e)
+            {
+                return Value.StringValue(a.GetStringValue() + b.GetStringValue());
+            }
+        };
+        
+        internal static Func<Value, Value, Value> MinusOperation = (a, b) => Value.NumericalValue(a.GetNumericalValue() - b.GetNumericalValue());
+        internal static Func<Value, Value, Value> AsteriskOperation = (a, b) => Value.NumericalValue(a.GetNumericalValue() * b.GetNumericalValue());
+        internal static Func<Value, Value, Value> SlashOperation = (a, b) => Value.NumericalValue(a.GetNumericalValue() / b.GetNumericalValue());
+        internal static Func<Value, Value, Value> ModuloOperation = (a, b) => Value.NumericalValue(a.GetNumericalValue() % b.GetNumericalValue());
+        
+        
+
+        internal static Func<Value, Value> ArithmeticTokenToUnaryOperation(Tokens.Token token)
+        {
+            switch(token.TokenType)
             {
                 case TokenType.Plus:
                     return value => value;
@@ -16,47 +36,27 @@ namespace OdeLang
                 case TokenType.Not:
                     return value => Value.BoolValue(!value.GetBoolValue());
                 default:
-                    throw new ArgumentException($"Cannot apply {type} operator to type");
+                    throw new OdeException($"{token.Value} is not a unary operator!", token);
             }
         }
-        internal static Func<Value, Value, Value> ArithmeticTokenToOperation(TokenType type)
+        internal static Func<Value, Value, Value> ArithmeticTokenToOperation(Tokens.Token token)
         {
-            if (type == TokenType.Plus)
+            if (token.TokenType == TokenType.Plus)
             {
-                return (a, b) =>
-                {
-                    try
-                    {
-                        return Value.NumericalValue(a.GetNumericalValue() + b.GetNumericalValue());
-                    }
-                    catch (ArgumentException e) //todo catching exceptions in normal logic is ugly
-                    {
-                        //noop
-                    }
-
-                    try
-                    {
-                        return Value.StringValue(a.GetStringValue() + b.GetStringValue());
-                    }
-                    catch (ArgumentException e)
-                    {
-                        //todo more verbose errors
-                        throw new ArgumentException("Cannot apply '+' operator to types");
-                    }
-                };
+                return PlusOperation;
             }
 
 
-            switch (type)
+            switch (token.TokenType)
             {
                 case TokenType.Minus:
-                    return (a, b) => Value.NumericalValue(a.GetNumericalValue() - b.GetNumericalValue());
+                    return MinusOperation;
                 case TokenType.Asterisk:
-                    return (a, b) => Value.NumericalValue(a.GetNumericalValue() * b.GetNumericalValue());
+                    return AsteriskOperation;
                 case TokenType.Slash:
-                    return (a, b) => Value.NumericalValue(a.GetNumericalValue() / b.GetNumericalValue());
+                    return SlashOperation;
                 case TokenType.Modulo:
-                    return (a, b) => Value.NumericalValue(a.GetNumericalValue() % b.GetNumericalValue());
+                    return ModuloOperation;
                 case TokenType.MoreThan:
                     return (a, b) => Value.BoolValue(a.GetNumericalValue() > b.GetNumericalValue());
                 case TokenType.LessThan:
@@ -70,7 +70,7 @@ namespace OdeLang
                 case TokenType.Or:
                     return (a, b) => Value.BoolValue(a.GetBoolValue() || b.GetBoolValue());
                 default:
-                    throw new ArgumentException("Can't fetch operation type for non-arithmetic token");
+                    throw new OdeException($"{token.Value} is not a valid binary operator!", token);
             }
         }
     }
