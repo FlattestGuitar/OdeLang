@@ -402,7 +402,7 @@ namespace OdeLang
             }
         }
 
-        private Statement Statement(int nestingLevel)
+        private Statement LineStatement(int nestingLevel)
         {
 
             EatWhitespace(nestingLevel);
@@ -449,7 +449,9 @@ namespace OdeLang
                     return Assignment();
                 }
 
-                return Expression();
+                var res = Expression();
+                EatAndAdvance(TokenType.Newline);
+                return res;
             }
 
             throw UnexpectedTokenException();
@@ -483,15 +485,15 @@ namespace OdeLang
             var firstToken = PopCurrentToken();
             var identifier = (string) firstToken.Value;
             var assignmentType = PopCurrentToken().TokenType;
+            var expr = Expression();
+            
             if (assignmentType == TokenType.Assignment)
             {
-                var expression = Expression();
-                return new VariableAssignmentStatement(expression, identifier, firstToken);
+                return new VariableAssignmentStatement(expr, identifier, firstToken);
             }
 
             if (assignmentType == TokenType.PlusAssignment)
             {
-                var expr = Expression();
                 return new VariableAssignmentStatement(
                     new BinaryStatement(new VariableReadStatement(identifier, firstToken), expr,
                         PlusOperation, firstToken), identifier, firstToken);
@@ -499,7 +501,6 @@ namespace OdeLang
 
             if (assignmentType == TokenType.MinusAssignment)
             {
-                var expr = Expression();
                 return new VariableAssignmentStatement(
                     new BinaryStatement(new VariableReadStatement(identifier, firstToken), expr,
                         MinusOperation, firstToken), identifier, firstToken);
@@ -507,7 +508,6 @@ namespace OdeLang
 
             if (assignmentType == TokenType.AsteriskAssignment)
             {
-                var expr = Expression();
                 return new VariableAssignmentStatement(
                     new BinaryStatement(new VariableReadStatement(identifier, firstToken), expr,
                         AsteriskOperation, firstToken), identifier, firstToken);
@@ -515,7 +515,6 @@ namespace OdeLang
 
             if (assignmentType == TokenType.SlashAssignment)
             {
-                var expr = Expression();
                 return new VariableAssignmentStatement(
                     new BinaryStatement(new VariableReadStatement(identifier, firstToken), expr,
                         SlashOperation, firstToken), identifier, firstToken);
@@ -523,7 +522,6 @@ namespace OdeLang
 
             if (assignmentType == TokenType.ModuloAssignment)
             {
-                var expr = Expression();
                 return new VariableAssignmentStatement(
                     new BinaryStatement(new VariableReadStatement(identifier, firstToken), expr,
                         ModuloOperation, firstToken), identifier, firstToken);
@@ -674,7 +672,7 @@ namespace OdeLang
                     break; //end of the compound statement
                 } 
 
-                statements.Add(Statement(nestingLevel));
+                statements.Add(LineStatement(nestingLevel));
             }
 
             return new CompoundStatement(statements, start);
@@ -691,10 +689,10 @@ namespace OdeLang
             return iterator - _i;
         }
 
-        private ArgumentException UnexpectedTokenException()
+        private OdeException UnexpectedTokenException()
         {
             var token = CurrentToken();
-            return new ArgumentException($"Unexpected token {token.Value} at {token.Line}:{token.Column}");
+            return new OdeException($"Unexpected token {token.Value}", token);
         }
     }
 }
