@@ -74,11 +74,13 @@ namespace OdeLang
 
         private void EatAndAdvance(TokenType type)
         {
-            var token = PopCurrentToken();
+            var token = CurrentToken();
             if (token.TokenType != type)
             {
                 throw UnexpectedTokenException();
             }
+
+            PopCurrentToken();
         }
 
         private NumberStatement Number()
@@ -466,12 +468,33 @@ namespace OdeLang
                     return Assignment();
                 }
 
+                if (PeekNextToken().TokenType == TokenType.OpenSquareBracket && RestOfLineContainsAssignmentToken()) //god forgive me
+                {
+                    return CollectionAssignmentStatement();
+                }
+
                 var res = Expression();
                 EatAndAdvance(TokenType.Newline);
                 return res;
             }
 
             throw UnexpectedTokenException();
+        }
+
+        private bool RestOfLineContainsAssignmentToken()
+        {
+            int iter = _i;
+            while (_tokens[iter].TokenType != TokenType.Newline)
+            {
+                if (_tokens[iter].TokenType == TokenType.Assignment)
+                {
+                    return true;
+                }
+
+                iter++;
+            }
+
+            return false;
         }
 
         private void EatWhitespace(int nestingLevel)
@@ -545,6 +568,23 @@ namespace OdeLang
             }
 
             throw new ArgumentException("Incorrect assignment type");
+        }
+        private Statement CollectionAssignmentStatement()
+        {
+            var firstToken = PopCurrentToken();
+            var identifier = (string) firstToken.Value;
+            EatAndAdvance(TokenType.OpenSquareBracket);
+            var index = Expression();
+            EatAndAdvance(TokenType.ClosedSquareBracket);
+            EatAndAdvance(TokenType.Assignment);
+            var value = Expression();
+            EatAndAdvance(TokenType.Newline);
+
+            return new CollectionAssignmentStatement(
+                new VariableReadStatement(identifier, firstToken), 
+                    index,
+                    value,
+                    firstToken);
         }
 
         private Statement GlobalFunctionCall()

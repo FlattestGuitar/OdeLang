@@ -45,6 +45,10 @@ namespace OdeLang
                     "insert",
                     new OdeFunction("insert", new Action<int, Value>(internalList.Insert))
                 },
+                {
+                    "set",
+                    new OdeFunction("set", new Action<int, Value>((index, val) => internalList[index] = val))
+                },
                 {"clear", new OdeFunction("clear", new Action(internalList.Clear))},
                 {"length", new OdeFunction("length", new Func<int>(() => internalList.Count))},
                 {ToStringFunctionName, new OdeFunction("to_string", new Func<string>(toString))}

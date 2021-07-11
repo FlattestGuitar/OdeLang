@@ -434,11 +434,13 @@ print(x.length())
 @"
 x = [1, [6, 3], 3]
 x.get(1).append(5)
+
+x[0] = 5
 print(x)
 ";
             var context = Run(code);
 
-            Assert.AreEqual("[1,[6,3,5],3]", context.GetOutput());
+            Assert.AreEqual("[5,[6,3,5],3]", context.GetOutput());
         }
         
         [Test]
@@ -451,13 +453,15 @@ x = {
 ""b"": 2,//this is a comment
 ""c"": [6, 4, ""test""] //this is another comment
 }
+
+x[""d""] = 4
 print(x)
 print(x.get(""a""))
 print(x[""b""])
 ";
             var context = Run(code);
 
-            Assert.AreEqual("{a:1,b:2,c:[6,4,test]}12", context.GetOutput());
+            Assert.AreEqual("{a:1,b:2,c:[6,4,test],d:4}12", context.GetOutput());
         }
         
         [Test]

@@ -27,5 +27,22 @@ fn main()
             Assert.Throws<OdeException>(
                 delegate { Run(code); });
         }
+        
+        
+        [Test]
+        public void BadArrayAssignment()
+        {
+            string code =
+@"
+x = [1, 2, 3]
+fn getX() 
+  return x
+
+getX()[0] = 1
+";
+
+            Assert.Throws<OdeException>(
+                delegate { Run(code); });
+        }
     }
 }

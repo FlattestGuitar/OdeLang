@@ -470,8 +470,6 @@ namespace OdeLang
     }
     internal class CollectionAccessStatement : Statement
     {
-
-
         private readonly Statement _collection;
         private readonly Statement _index;
 
@@ -496,6 +494,41 @@ namespace OdeLang
             {
                 throw new OdeException("The [] operator must be used on an array or dictionary.", this);
             }
+        }
+    }
+    
+    internal class CollectionAssignmentStatement : Statement
+    {
+        private readonly Statement _collection;
+        private readonly Statement _index;
+        private readonly Statement _value;
+
+        internal CollectionAssignmentStatement(Statement collection, Statement indexToAccess, Statement value, Token firstToken) : base(firstToken)
+        {
+            _collection = collection;
+            _index = indexToAccess;
+            _value = value;
+        }
+
+        internal override Value Eval(InterpretingContext context)
+        {
+            var collection = _collection
+                .Eval(context)
+                .GetObjectValue();
+
+            var index = _index.Eval(context);
+
+            var value = _value.Eval(context);
+
+            if (collection.GetType() == typeof(OdeArray))
+            {
+                return ((OdeArray) collection).CallFunction("set", new List<Value>() {index, value});
+            }if (collection.GetType() == typeof(OdeDictionary))
+            {
+                return ((OdeDictionary) collection).CallFunction("put", new List<Value>() {index, value});
+            }
+
+            throw new OdeException("The [] operator must be used on an array or dictionary.", this);
         }
     }
 
