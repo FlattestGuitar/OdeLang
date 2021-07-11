@@ -407,10 +407,11 @@ print(test())
 x = [1, 2, 3]
 x.append(4)
 print(x)
+print(x[1])
 ";
             var context = Run(code);
 
-            Assert.AreEqual("[1,2,3,4]", context.GetOutput());
+            Assert.AreEqual("[1,2,3,4]2", context.GetOutput());
         }  
         
         [Test]
@@ -452,10 +453,11 @@ x = {
 }
 print(x)
 print(x.get(""a""))
+print(x[""b""])
 ";
             var context = Run(code);
 
-            Assert.AreEqual("{a:1,b:2,c:[6,4,test]}1", context.GetOutput());
+            Assert.AreEqual("{a:1,b:2,c:[6,4,test]}12", context.GetOutput());
         }
         
         [Test]

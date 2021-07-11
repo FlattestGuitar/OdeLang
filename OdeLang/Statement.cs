@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.ExceptionServices;
 using OdeLang.ErrorExceptions;
 using static OdeLang.Tokens;
 using static OdeLang.Value;
@@ -465,6 +466,36 @@ namespace OdeLang
                     )
                 ).ToList()
             ));
+        }
+    }
+    internal class CollectionAccessStatement : Statement
+    {
+
+
+        private readonly Statement _collection;
+        private readonly Statement _index;
+
+        internal CollectionAccessStatement(Statement collection, Statement indexToAccess, Token firstToken) : base(firstToken)
+        {
+            _collection = collection;
+            _index = indexToAccess;
+        }
+
+        internal override Value Eval(InterpretingContext context)
+        {
+            try
+            {
+                return _collection
+                    .Eval(context)
+                    .GetObjectValue()
+                    .CallFunction(
+                        "get",
+                        new List<Value> {_index.Eval(context)});
+            }
+            catch (ArgumentException)
+            {
+                throw new OdeException("The [] operator must be used on an array or dictionary.", this);
+            }
         }
     }
 

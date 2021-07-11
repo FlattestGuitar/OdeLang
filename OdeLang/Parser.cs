@@ -221,13 +221,30 @@ namespace OdeLang
         {
             var statement = Value();
 
-            while (CurrentToken().TokenType == TokenType.Period)
+            while (CurrentToken().TokenType == TokenType.Period || CurrentToken().TokenType == TokenType.OpenSquareBracket)
             {
-                EatAndAdvance(TokenType.Period);
-                statement = ObjectFunctionCall(statement);
+                if (CurrentToken().TokenType == TokenType.Period)
+                {
+                    EatAndAdvance(TokenType.Period);
+                    statement = ObjectFunctionCall(statement);    
+                }
+                else
+                {
+                    statement = CollectionAccessStatement(statement);
+                }
+                
             }
 
             return statement;
+        }
+
+        private Statement CollectionAccessStatement(Statement collection)
+        {
+            var firstToken = PopCurrentToken();
+            var indexToAccess = Expression();
+            EatAndAdvance(TokenType.ClosedSquareBracket);
+
+            return new CollectionAccessStatement(collection, indexToAccess, firstToken);
         }
 
         private Token PeekNextToken(int offset)

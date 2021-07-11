@@ -27,7 +27,7 @@ namespace OdeLang.ErrorExceptions
 
         public int Column { get; }
 
-        public string displayError()
+        public string DisplayError()
         {
             return $"{Line}:{Column} | {Message}";
         }
