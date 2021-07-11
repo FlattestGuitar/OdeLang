@@ -442,6 +442,19 @@ print(x)
 
             Assert.AreEqual("[5,[6,3,5],3]", context.GetOutput());
         }
+
+        [Test]
+        public void GeneratedArrayTest()
+        {
+            string code =
+@"
+for i in range(5)
+  print(i)
+";
+            var context = Run(code);
+
+            Assert.AreEqual("01234", context.GetOutput());
+        }
         
         [Test]
         public void DictionaryTest()

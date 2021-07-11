@@ -2,9 +2,9 @@
 
 namespace OdeLang
 {
-    internal class CustomFunction
+    internal class UserFunction
     {
-        internal CustomFunction(List<string> arguments, Statement statement)
+        internal UserFunction(List<string> arguments, Statement statement)
         {
             this.arguments = arguments;
             this.statement = statement;

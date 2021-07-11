@@ -17,7 +17,7 @@ namespace OdeLang
                 new Stack<Dictionary<string, Value>>(); //only the latest entry is visible at all times
 
         private Dictionary<string, OdeFunction> _builtInFunctions = new Dictionary<string, OdeFunction>();
-        private Dictionary<string, CustomFunction> _userDefinedFunctions = new Dictionary<string, CustomFunction>();
+        private Dictionary<string, UserFunction> _userDefinedFunctions = new Dictionary<string, UserFunction>();
         private List<Dictionary<string, Value>> _loopIterators = new List<Dictionary<string, Value>>();
 
         private string _output = "";
@@ -129,7 +129,7 @@ namespace OdeLang
             ClearLoopArguments();
         }
 
-        private void SeedFunctionArguments(string name, CustomFunction definedFunc, List<Value> arguments)
+        private void SeedFunctionArguments(string name, UserFunction definedFunc, List<Value> arguments)
         {
             var requiredArgCount = definedFunc.Arguments.Count;
 
@@ -170,7 +170,7 @@ namespace OdeLang
                 throw new OdeException($"Function {name} is already defined!", statement);
             }
 
-            _userDefinedFunctions[name] = new CustomFunction(argumentNames, statement);
+            _userDefinedFunctions[name] = new UserFunction(argumentNames, statement);
         }
 
         internal void ValidateCanReturn()
@@ -193,6 +193,19 @@ namespace OdeLang
                 {
                     Print(s);
                     Print("\n");
+                })));
+            
+            InjectGlobalFunction(new OdeFunction(
+                "range",
+                new Func<int, List<int>>(i =>
+                {
+                    var res = new List<int>();
+                    for(int q = 0; q < i; q++)
+                    {
+                        res.Add(q);
+                    }
+
+                    return res;
                 })));
         }
 
