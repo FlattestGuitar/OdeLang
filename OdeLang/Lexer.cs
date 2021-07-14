@@ -165,21 +165,21 @@ namespace OdeLang
                         columnNum++;
                     }
 
-                    columnNum++;
                     result.Add(String(resultString, lineNum, columnNum));
+                    columnNum++;
                 }
                
                 else if (IsDigit(character))
                 {
                     var numberString = NumberAtStartOfStringRegex.Match(line.Substring(columnNum)).ToString();
-                    columnNum += numberString.Length;
                     result.Add(Number(float.Parse(numberString, CultureInfo.InvariantCulture), lineNum, columnNum));
+                    columnNum += numberString.Length;
                 }
                 else if (IsLegalStartOfIdentifier((character)))
                 {
                     var id = IdentifierAtStartOfStringRegex.Match(line.Substring(columnNum)).ToString();
-                    columnNum += id.Length;
                     result.Add(Identifier(id, lineNum, columnNum));
+                    columnNum += id.Length;
                 }
                 else
                 {

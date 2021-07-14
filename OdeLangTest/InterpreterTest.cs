@@ -455,7 +455,7 @@ for i in range(5)
 
             Assert.AreEqual("01234", context.GetOutput());
         }
-        
+
         [Test]
         public void DictionaryTest()
         {
