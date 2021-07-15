@@ -57,7 +57,7 @@ namespace OdeLang
                 return _odeObject;
             }
 
-            throw new ValueTypeException("object", GetType());
+            throw new ValueTypeException("object", GetVarType());
         }
 
         public float GetNumericalValue()
@@ -74,7 +74,7 @@ namespace OdeLang
                     : 0;
             }
 
-            throw new ValueTypeException("number", GetType());
+            throw new ValueTypeException("number", GetVarType());
         }
 
         public string GetStringValue()
@@ -129,7 +129,7 @@ namespace OdeLang
             return false;
         }
 
-        private string GetType()
+        private string GetVarType()
         {
             if (_boolean != null)
             {

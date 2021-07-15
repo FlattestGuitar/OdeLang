@@ -50,7 +50,7 @@ namespace OdeLang
             {
                 return _tokens[_i];
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
                 return null;
             }
@@ -255,7 +255,7 @@ namespace OdeLang
             {
                 return _tokens[_i + offset + 1];
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
                 return null;
             }
@@ -513,7 +513,7 @@ namespace OdeLang
                 {
                     EatAndAdvance(TokenType.Whitespace);
                 }
-                catch (ArgumentException e)
+                catch (ArgumentException)
                 {
                     throw new OdeException($"Bad indentation. Expected {nestingLevel} levels.", CurrentToken().Line, 0);
                 }

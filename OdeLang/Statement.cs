@@ -313,11 +313,11 @@ namespace OdeLang
                     runs++;
                     _body.Eval(context);
                 }
-                catch (LoopBreakException e)
+                catch (LoopBreakException)
                 {
                     return NullValue();
                 }
-                catch (LoopContinueException e)
+                catch (LoopContinueException)
                 {
                     //noop
                 }

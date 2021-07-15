@@ -12,7 +12,7 @@ namespace OdeLang
             {
                 return Value.NumericalValue(a.GetNumericalValue() + b.GetNumericalValue());
             }
-            catch (ValueTypeException e)
+            catch (ValueTypeException)
             {
                 return Value.StringValue(a.GetStringValue() + b.GetStringValue());
             }
