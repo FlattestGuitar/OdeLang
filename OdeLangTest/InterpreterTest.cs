@@ -508,6 +508,42 @@ print(x)
             Assert.AreEqual("6778", context.GetOutput());
         }
 
+        
+        [Test]
+        public void OutsideVariableInForLoopTest()
+        {
+            string code =
+@"
+fn main()
+  myvar = 5
+  for i in range(3)
+    print(i)
+    print(myvar)
+
+main()
+";
+            var context = Run(code);
+
+            Assert.AreEqual("051525", context.GetOutput());
+        }
+        
+        [Test]
+        public void OverwrittenVariableTest()
+        {
+            string code =
+@"
+fn main()
+  i = 5
+  for i in range(3)
+    print(i)
+
+main()
+";
+            var context = Run(code);
+
+            Assert.AreEqual("012", context.GetOutput());
+        }
+
         [Test]
         public void ForLoopTest()
         {

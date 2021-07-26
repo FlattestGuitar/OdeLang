@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OdeLang.ErrorExceptions;
 
 namespace OdeLang
@@ -14,7 +15,7 @@ namespace OdeLang
 
         private Stack<Dictionary<string, Value>>
             _functionContextVariables =
-                new Stack<Dictionary<string, Value>>(); //only the latest entry is visible at all times
+                new Stack<Dictionary<string, Value>>();
 
         private Dictionary<string, OdeFunction> _builtInFunctions = new Dictionary<string, OdeFunction>();
         private Dictionary<string, UserFunction> _userDefinedFunctions = new Dictionary<string, UserFunction>();
@@ -75,11 +76,13 @@ namespace OdeLang
 
             if (CurrentlyInFunctionContext())
             {
-                var variablesInContext = _functionContextVariables.Peek();
-                if (variablesInContext.ContainsKey(name))
+                try
                 {
-                    return variablesInContext[name];
+                    return _functionContextVariables
+                        .First(vars => vars.ContainsKey(name))[name];
                 }
+                catch (InvalidOperationException)
+                {}
             }
 
             if (_globalVariables.ContainsKey(name))
