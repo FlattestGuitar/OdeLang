@@ -542,6 +542,25 @@ main()
             var context = Run(code);
 
             Assert.AreEqual("012", context.GetOutput());
+        }  
+    
+        [Test]
+        public void BetterOverwrittenVariableTest()
+        {
+            string code =
+@"
+fn main()
+  number = 2
+  for a in range(2)
+    number = 1
+    print(number)
+  print(number)
+
+main()
+";
+            var context = Run(code);
+
+            Assert.AreEqual("111", context.GetOutput());
         }
 
         [Test]

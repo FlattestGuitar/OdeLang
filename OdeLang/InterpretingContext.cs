@@ -53,18 +53,20 @@ namespace OdeLang
 
         internal void SetVariable(string name, Value value)
         {
-            if (CurrentlyInFunctionContext() && !_globalVariables.ContainsKey(name))
+            try
             {
-                var contextVars = _functionContextVariables.Peek();
-                contextVars[name] = value;
+                var layerContainingVar = _functionContextVariables
+                    .First(vars => vars.ContainsKey(name));
+
+                layerContainingVar[name] = value;
             }
-            else
+            catch (InvalidOperationException)
             {
                 _globalVariables[name] = value;
             }
         }
 
-        internal Value GetVariable(string name, int line, int column)
+        internal Value GetVariable(string name, int column, int line)
         {
             for (var i = _loopIterators.Count; i > 0; i--)
             {
@@ -82,7 +84,8 @@ namespace OdeLang
                         .First(vars => vars.ContainsKey(name))[name];
                 }
                 catch (InvalidOperationException)
-                {}
+                {
+                }
             }
 
             if (_globalVariables.ContainsKey(name))
@@ -92,8 +95,8 @@ namespace OdeLang
 
             throw new OdeException($"Variable undefined: {name}", line, column);
         }
-        
-        
+
+
         public Value CallGlobalFunction(string name, List<Value> arguments)
         {
             if (_userDefinedFunctions.ContainsKey(name))
@@ -197,13 +200,13 @@ namespace OdeLang
                     Print(s);
                     Print("\n");
                 })));
-            
+
             InjectGlobalFunction(new OdeFunction(
                 "range",
                 new Func<int, List<int>>(i =>
                 {
                     var res = new List<int>();
-                    for(int q = 0; q < i; q++)
+                    for (int q = 0; q < i; q++)
                     {
                         res.Add(q);
                     }
