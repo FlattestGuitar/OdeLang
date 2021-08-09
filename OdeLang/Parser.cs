@@ -248,22 +248,19 @@ namespace OdeLang
 
             return new CollectionAccessStatement(collection, indexToAccess, firstToken);
         }
-
-        private Token PeekNextToken(int offset)
+        
+        // just one token of lookahead makes us LL(1)
+        //...if it wasn't for the whitespace lookaheads
+        private Token PeekNextToken()
         {
             try
             {
-                return _tokens[_i + offset + 1];
+                return _tokens[_i + 1];
             }
             catch (ArgumentOutOfRangeException)
             {
                 return null;
             }
-        }
-
-        private Token PeekNextToken()
-        {
-            return PeekNextToken(0);
         }
 
         private UnaryStatement UnaryOperatorFactor()
@@ -307,6 +304,11 @@ namespace OdeLang
 
             return new VariableReadStatement((string) id.Value, startToken);
         }
+
+        // IF -> if(expr) statement ElseIfElseEnd
+        // ElseIfElseEnd -> elif statement ElseIfElseEnd
+        // ElseIfElseEnd -> else statement
+        // ElseIfElseEnd -> ε
 
         private ConditionalStatement ConditionalStatement(int nestingLevel)
         {
