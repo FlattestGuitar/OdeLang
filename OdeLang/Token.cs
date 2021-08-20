@@ -237,7 +237,6 @@
             internal int Line { get; }
             internal int Column { get; }
 
-            //todo how do I hide this constructor from things outside of the Tokens class
             internal Token(TokenType type, object value, int line, int column)
             {
                 TokenType = type;

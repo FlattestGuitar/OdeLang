@@ -21,7 +21,7 @@ namespace OdeLang
 
         private static readonly Regex LegalStartOfIdentifier = new Regex(@"[a-zA-Z_]", RegexOptions.Compiled);
 
-        private static readonly Regex IdentifierAtStartOfStringRegex =
+        private static readonly Regex IdentifierRegex =
             new Regex(@"[a-zA-Z_]+[a-zA-Z_0-9]*", RegexOptions.Compiled);
 
         private static readonly Regex NewlineRegex = new Regex(@"\r?\n", RegexOptions.Compiled);
@@ -177,7 +177,7 @@ namespace OdeLang
                 }
                 else if (IsLegalStartOfIdentifier((character)))
                 {
-                    var id = IdentifierAtStartOfStringRegex.Match(line.Substring(columnNum)).ToString();
+                    var id = IdentifierRegex.Match(line.Substring(columnNum)).ToString();
                     result.Add(Identifier(id, lineNum, columnNum));
                     columnNum += id.Length;
                 }

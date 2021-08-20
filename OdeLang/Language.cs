@@ -114,7 +114,6 @@ namespace OdeLang
             
             if (type.GetGenericTypeDefinition() == typeof(List<>))
             {
-                //todo handle non-array
                 var array = (OdeArray) val.GetObjectValue();
 
                 var listParam = type.GetGenericArguments()[0];
