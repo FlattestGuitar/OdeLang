@@ -115,6 +115,21 @@ namespace OdeLang
                     }))
                 },
                 {
+                    "remove",
+                    new OdeFunction("remove", new Action<Value>(val =>
+                    {
+                        try
+                        {
+                            var toRemove = internalList.Find(tuple => tuple.Item1 == val.GetStringValue());
+                            internalList.Remove(toRemove);
+                        }
+                        catch (ArgumentNullException)
+                        {
+                        }
+
+                    }))
+                },
+                {
                     "length",
                     new OdeFunction("length", new Func<int>(() => internalList.Count))
                 },
